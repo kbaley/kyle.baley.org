@@ -1,0 +1,35 @@
+---
+layout: post
+title: Who's the next guy?
+date: 2008-04-11 18:30:43.000000000 -04:00
+categories: []
+tags:
+- Conscientious Coding
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1004'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Have been playing with testing against an in-memory database recently but that's not the subject of this post. Tt was one of the enablers for it, though.</p>
+<p>One of the ideas I talked about on my <a href="http://kyle.baley.org" target="_blank">old home</a> was Conscientious Coding, which is capitalized solely in case the term takes off so I can later claim a copyright. There's not much to it really. The underlying principle is: Someone else is eventually going to have to deal with your code. Be nice to them.</p>
+<p>It's a subjective principle, to be sure. And as I've been working on what could very well turn into someone else's <a href="http://www.igloocoder.com/archive/2007/12/23/what-is-brownfield.aspx" target="_blank">Brownfield application</a>, I can't help wondering what that fellow is getting himself into if I ever get hit by a runaway dolphin.</p>
+<p>The app I'm working on is for my dad's company, a small- to medium-sized land surveying company, and a good twenty percent of the staff is comprised of the entirety of my immediate family, save the missus and the young'un. The company is based in Virden, Manitoba (population 2500 - 3000 depending on how many times you count sister-wives and brother-uncles) with an office in Brandon (known locally as &quot;The City&quot;).</p>
+<p>I've mentioned before that the application is an update of one I whipped up nigh on eight years ago over a couple of weekends. It was in classic ASP and made heavy use of ADO, XMLHTTP, and JavaScript. It didn't do a whole lot but they quickly become utterly dependent on it such that I didn't need any formal notification system to tell me when our hosting company went down because they'd be on the phone to me if it so much as hiccuped.</p>
+<p>It's not the cleanest code I've written but I've been able to add a couple of little features here and there (like the ability to delete) without requiring a day to re-learn the app each time I went back to it.</p>
+<p>Now here I am two months into the re-write and I haven't even managed to duplicate what the existing app does yet. This is partially due to my veering off to hone some skillz and learn new technologies but it's also because I'm not quite as cavalier about my code as I used to be. The new version now has more VS projects than the old version had physical .asp files. In case you think I'm kidding, the old app consists of: AddEditJob.asp, JobSearch.asp, SearchResults.asp, and DeleteJob.asp. Plus supporting CSS, JavaScript, images, and XSLT files.</p>
+<p>Now we get to my would-be successor. Typically, a company of their size wouldn't hire an intermediate-with-senior-aspirations developer to build custom software to run their business. They're having a hard enough time simply finding time to update their website. It's just a happy coincidence that the one black sheep in the family can actually help streamline things a bit.</p>
+<p>So I've been thinking about who they would potentially get to maintain the software I'm writing for them. There's a very high probability, it would be a junior person, possibly even a network person with grandiose ideas of being a rock star programmer. And I'm imagining his reaction when he opens the solution (assuming he's familiar with Subversion) for the first time and finds things like a) a very large number of objects aren't &quot;created&quot; anywhere, and b) there are no SQL statements or stored procedures. This is not to mention what he'll make of the .build file in the root folder.</p>
+<p>In a large company, where I work as a part of a team, I don't pay this no never mind. They have the resources to retain a senior resource who should either be familiar with IoC and O/RM or be able to figure it out without much trouble. Junior developers on that team would almost always have someone they can turn to in times of crisis. But what about this lowly single-developer application owned by a company whose IT department consists of whoever comes into the office first to turn on all the computers? What are the odds they would be able to find someone in their area who could look after it?</p>
+<p>Assuming they find someone relatively keen, how much can I assume of this person? Can I assume they'll be able to Google their way through NHibernate, StructureMap and/or Windsor, NAnt, CruiseControl.NET, Linq, NUnit, and MVC? Will he look at my repositories and think, &quot;why doesn't he just call stored procedures directly on the database?&quot; followed by &quot;where the &amp;*%$ or the stored procedures?&quot;</p>
+<p>These are moot points in some ways because I see little justification for &quot;dumbing down&quot; anything I do in the off-chance this application outlives me. At this point, a well-crafted readme file is probably all that is in order to assuage my guilt of using all this new-fangled technology. One that outlines the technologies that are used and where to start looking if they need help. This is kind of an extension on a <a href="http://kyle.baley.org/HellBeMissed.aspx" target="_blank">post I did</a> just over a year ago on how to make sure your family's IT department will continue to run after your untimely demise, basically saying in my own terse way that you should document everything.</p>
+<p>I like this approach because it doesn't assume the next person is incapable of handling it while still providing guidance if they aren't familar with all the little gadgets embedded in it. Assuming it remains more current than the comments in the code...</p>
+<p>Kyle the Death-Wished</p>

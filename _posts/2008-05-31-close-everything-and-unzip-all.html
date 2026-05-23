@@ -1,0 +1,48 @@
+---
+layout: post
+title: Close everything and unzip all
+date: 2008-05-31 13:04:39.000000000 -04:00
+categories: []
+tags:
+- Utilities
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '554480661'
+  hl_twitter_has_auto_tweeted: 'New post: Close everything and unzip all, Full text:
+    http://blog.baley.org/?p=135'
+  pvc_views: '1112'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Couple o' quick productivity tips.</p>
+<p>The first I posted on Twitter yesterday. That is, in Visual Studio, you can map Ctrl-Alt-F4 so that it closes all open document windows. It's a noticeable time saver for me because I often get to the stage where I'm holding down Ctrl-F4 for about ten seconds waiting for it to close everything up.</p>
+<p>Instructions:</p>
+<ul>
+<li>In Visual Studio, go to Tool | Options </li>
+<li>Under Environment select Keyboard </li>
+<li>In Show commands containing, enter Window.CloseAllDocuments. You should get a single entry in the listbox below it </li>
+<li>Put the cursor in Press shortcut keys and press Ctrl-Alt-F4. </li>
+<li>Click OK </li>
+</ul>
+<p>You can use whatever combination you like but check to see if it's used by something else. I originally wanted Ctrl-Shift-F4 but ReSharper was using it for &quot;Close recent tool&quot;. Haven't determined what that means yet.</p>
+<p>Next tip. When I get zip files, ninety-nine percent of the time, I do the same thing with them: Extract to &lt;foldername&gt;. That requires right-clicking on the file, navigating to the 7-Zip folder in the context menu, and selecting the appropriate option. I'm using <a href="http://www.7-zip.org/" target="_blank">7-Zip</a> as my archiver of choice primarily because it's free, fast, and hasn't gone the Paintshop Pro route of bloatedness like WinZip has.</p>
+<p>(NOTE: You can configure 7-Zip's context menu to get rid of things you don't use, like Zip and E-mail. You can also make the menu non-cascading. The options are a little buried in the application but you'll find them.)</p>
+<p>7-Zip has a command-line version, as I suspect most archivers do. So after a browse through the documentation, I created a batch file as follows:</p>
+<pre name="code">@echo off
+set zipPath=%~dpn1
+&quot;C:Program Files7-Zip7z.exe&quot; x &quot;%1&quot; -o%zipPath% -y
+pause</pre>
+<p>I've completely forgotten what the value after &quot;set zipPath=&quot; means but it was on the interwebs here somewhere. Sorry folks, the Hillbilly can't be expected to remember everything he did last month. Like if he showered or not.</p>
+<p>The next step here is to link this batch file to .zip files. I went the low-tech way by right-clicking a zip file, and selecting Choose Program... from the Open With context menu:</p></p>
+<p>Select your newly-minted batch file and now zip files are extracted to &lt;foldername&gt; with a single click (or with an Enter for the keyboarders).</p>
+<p>Notice that the zip file has a &quot;pause&quot; in the last line. That's precautionary and can be removed if you like. I added it so I could see if there were any errors during the process.</p>
+<p>That is all.</p>
+<p>Kyle the Productive</p>

@@ -1,0 +1,52 @@
+---
+layout: post
+title: 'Part 2: Annotated Timok Project, or "How to secure your home"'
+date: 2007-10-30 11:31:54.000000000 -04:00
+categories: []
+tags:
+- Patterns
+- Tools
+- Web development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1191'
+  dsq_thread_id: '358070721'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Oy vay, the hillbilly has to be more careful adding Part 1 to the beginning of a post. Too many implications about his commitment involved.</p>
+<p>This is a follow up to a <a href="http://kyle.baley.org/Part1AnnotatedTimokProjectOrQuotHowToKnowWhatYoureRenderingquot.aspx" target="_blank">post</a> I did to help guide new MonoRailers through the <a href="http://using.castleproject.org/display/MR/Samples" target="_blank">Timok sample application</a>. If you're just joining us, or have hit me from a random search engine (oh, let's just say it: Google), the intent is to help get up to speed with <a href="http://www.castleproject.org/monorail/index.html" target="_blank">MonoRail</a> by explaining the steps one might go through when looking through a sample application. I haven't been diving too deeply into the topics because I'm not really a deep-diver by nature, unless it is required. Scared I might get the coding equivalent of the bends.</p>
+<p style="border-right: #666666 1px solid; padding-right: 0.5em; border-top: #666666 1px solid; padding-left: 0.5em; float: right; padding-bottom: 0.5em; margin: 0.5em; border-left: #666666 1px solid; width: 300px; padding-top: 0.5em; border-bottom: #666666 1px solid; background-color: #cccccc">A friendly reminder/disclosure/EULA that, for the most part, I'll avoid any "I think"s and "It looks like"s and "My guess is"es for the sake of readability. Consider this your unqualified qualification that anything I say here is the result of my own investigations with a liberal helping of my previous web experience.</p>
+<p>When we left off, we had gone through how MonoRail routes requests to an appropriate controller and how that controller determines which HTML to render on the page. We walked through a request to /home/index.rails which led us to the default.vm layout in the Views/layouts folder and the index.vm view in the Views/Home folder in Timok.Rbr.Portal.Web. index.vm contains the HTML that will be rendered within the default.vm layout (akin to a "master page"). But before we div---er, wade into index.vm, we need to back up a bit.</p>
+<p><strong>I tried to navigate to /home/index.rails but was redirected to a login page. WHAT GIVES?!?</strong></p>
+<p>Open up HomeController.cs again and notice that it derives from SecureController, which in turn derives from ControllerBase, which in turn derives from SmartDispatcherController. SmartDispatcherController is the main MonoRail controller class and all your controllers must derive from it (or its own base class, Castle.MonoRail.Framework.Controller, but that isn't as common).</p>
+<p>It's common for MonoRail applications to create their own ControllerBase derivation, similar to creating your own PageBase in traditional web forms. In this case, we also further derive a SecureController class which, as its name implies, allows you to secure access to any controllers that derive from it.</p>
+<p><strong>How does SecureController restrict access to controllers?</strong></p>
+<p>The class has the following attributes:</p>
+<blockquote><pre class="code">[<span style="color: rgb(0,128,128)">Filter</span>(<span style="color: rgb(0,128,128)">ExecuteEnum</span>.BeforeAction, <span style="color: rgb(0,0,255)">typeof</span>(<span style="color: rgb(0,128,128)">AuthenticationFilter</span>), ExecutionOrder=1)]</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p></blockquote>
+<p>This tells MonoRail that before any action can be performed on this controller, we need to first process a filter of type AuthenticationFilter. ExecutionOrder is helpful when more than one filter is applied to a controller, which isn't the case here.</p>
+<p>Note that the controllers.config file contains an entry for our AuthenticationFilter class. While the above&nbsp;attribute indicates that we have to use a class of type AuthenticationFilter for the filter, it doesn't say which class specifically needs to process the request. This is another example of how MonoRail uses <a href="http://www.castleproject.org/container/index.html" target="_blank">Windsor</a>, the IoC container. By registering AuthenticationFilter in the controllers.config file, we tell MonoRail "if you need a class of type AuthenticationFilter somewhere and one hasn't been specifically requested, use this one".</p>
+<p><strong>OK, fine, so how does *AuthenticationFilter* restrict access to controllers then?</strong></p>
+<p>I'm not sure I like your tone, kiddo. Maybe I should just leave you to figure this out on your own, yesno?</p>
+<p><strong>No, no, no. I didn't mean it like that. I apologize. Please continue.</strong></p>
+<p>That's better. AuthenticationFilter (which derives from MonoRail's Filter class) overrides OnBeforeAction. This code will be executed before any action is performed on a controller that uses this filter. And there isn't anything particularly MonoRail-ish in this code. It checks to see if&nbsp;users are&nbsp;logged in using plain old System.Web.Security.FormsAuthentication. If they aren't, they are redirected to the login page. Or rather, they are redirected to the Index action of the Login controller.</p>
+<p>If they are authenticated, OnBeforeAction returns true, which means the request will filter through to the originally requested action (in our case, the Index action on the Home controller). The last line of OnBeforeAction says "return false". The code never makes it this far because it either returns true or redirects to the login page before it gets here. But if it did get to this line and returned false, this tells the controller using this filter that it didn't "pass the test". The controller will then display a blank page which you can verify by commenting out both SendToLoginPage lines.</p>
+<p><strong>Summary</strong></p>
+<p>Two posts and we still haven't actually rendered anything yet. Yeah, well, security has a tendency of grinding everything to a halt. Here we discussed:</p>
+<ul>
+<li>Applying filters to controllers to execute code before an action is processed</li>
+<li>Deriving your own controller hierarchy</li>
+<li>Using Windsor again to provide a class when one isn't specifically requested</li>
+<li>Being polite to the hillbilly</li>
+</ul>
+<p>Next up: We'll finally look at some rendered code and, with luck, what happens when you do something on the page.</p>
+<p>Kyle the Insecure</p>
