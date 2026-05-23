@@ -36,36 +36,26 @@ const services = [
   }
 ];
 
-const cases = [
+const workingPrinciples = [
   {
-    title: "Modernizing a Complex Lending Platform",
-    problem: "A lending system had years of business logic spread across fragile areas of the application.",
-    approach: "Create clearer module boundaries, improve test coverage around critical flows, and modernize incrementally.",
-    result: "Reduced change risk and gave the team a safer path for ongoing product work."
+    title: "Incremental Modernization",
+    body: "Prefer steady, reversible improvements over risky rewrites. Stabilize the parts that matter, create room for change, and keep delivery moving while the system gets healthier."
   },
   {
-    title: "Feature-Level Release Workflows",
-    problem: "Deployments were too broad, making small changes feel risky and coordination-heavy.",
-    approach: "Design release workflows that isolate feature changes and make promotion steps more visible.",
-    result: "Improved confidence in releases and shortened the path from ready work to production."
+    title: "Maintainability for the Actual Team",
+    body: "Design around the capabilities, constraints, and daily realities of the people who will operate the system. A clever solution that the team cannot comfortably own is unfinished work."
   },
   {
-    title: "Docker-Based On-Premise Deployments",
-    problem: "Customer-hosted installs needed more predictable setup, updates, and troubleshooting.",
-    approach: "Package application services with Docker and document operational patterns for support teams.",
-    result: "Made environments easier to reproduce and reduced install drift across customers."
+    title: "Clear Decision Logs",
+    body: "Capture architectural and delivery decisions where the team can find them, with as much automation as practical. Good context reduces repeated debates and makes future tradeoffs easier."
   },
   {
-    title: "Azure Operational Improvements",
-    problem: "App Service, SQL, and storage resources needed clearer operational defaults and maintenance practices.",
-    approach: "Review configuration, deployment paths, and runtime behavior with a focus on reliability and cost awareness.",
-    result: "Improved day-to-day operations and made the platform easier to reason about."
+    title: "Sustainable Processes",
+    body: "Build release, support, and development habits that people can keep using after the urgent project phase passes. The best process is boring enough to survive a busy Tuesday."
   },
   {
-    title: "Blazor/.NET Application Architecture",
-    problem: "A growing UI needed structure that would not become difficult to change as business workflows expanded.",
-    approach: "Define component boundaries, application services, and patterns for data access and state management.",
-    result: "Created a steadier foundation for feature development and future maintenance."
+    title: "Pragmatic Tooling",
+    body: "Use tools because they reduce friction, reveal risk, or improve reliability. Automation, AI assistance, Docker, CI/CD, and documentation all earn their place by helping real work flow."
   }
 ];
 
@@ -100,8 +90,8 @@ const stacks = [
           <a class="text-link" href="/writing/archive/">Blog Archive</a>
         </div>
       </div>
-      <div class="hero-media" aria-label="Engineering workspace with architecture notes">
-        <img src="/assets/architecture-workbench.png" alt="Laptop and notebook with software architecture diagrams on a quiet desk" />
+      <div class="hero-media" aria-label="Kyle Baley speaking at a software conference">
+        <img src="/assets/presenting.jpg" alt="Kyle Baley presenting on stage at a software conference" />
       </div>
     </div>
     <div class="container">
@@ -141,23 +131,21 @@ const stacks = [
     </div>
   </section>
 
-  <section class="section" id="case-studies">
+  <section class="section" id="how-i-work">
     <div class="container">
       <div class="section-heading">
-        <h2>Experience / Case Studies</h2>
+        <h2>How I Work</h2>
         <p>
-          These are editable placeholders for the kinds of engagements this site should surface:
-          modernization, release discipline, deployment reliability, customer-aware delivery,
-          and application architecture that helps teams move without guessing.
+          I care about systems that work in production and make sense to the people closest to them.
+          That means practical modernization, clear communication, and technical choices that support
+          stable delivery instead of adding theater.
         </p>
       </div>
-      <div class="case-grid">
-        {cases.map((item) => (
-          <article class="card case-card">
+      <div class="principle-grid">
+        {workingPrinciples.map((item) => (
+          <article class="card principle-card">
             <h3>{item.title}</h3>
-            <div class="case-row"><strong>Problem</strong><p>{item.problem}</p></div>
-            <div class="case-row"><strong>Approach</strong><p>{item.approach}</p></div>
-            <div class="case-row"><strong>Result</strong><p>{item.result}</p></div>
+            <p>{item.body}</p>
           </article>
         ))}
       </div>

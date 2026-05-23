@@ -138,7 +138,7 @@ h3 {
 
 h1 {
   max-width: 900px;
-  font-size: clamp(2.7rem, 5.4vw, 4.7rem);
+  font-size: 2.7rem;
 }
 
 h2 {
@@ -194,8 +194,9 @@ h3 {
 
 .hero-media img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
+  object-position: center top;
 }
 
 .proof-row {
@@ -271,7 +272,7 @@ h3 {
 }
 
 .service-grid,
-.case-grid,
+.principle-grid,
 .stack-grid {
   display: grid;
   gap: 16px;
@@ -281,7 +282,7 @@ h3 {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.case-grid {
+.principle-grid {
   grid-template-columns: repeat(2, 1fr);
 }
 
@@ -301,19 +302,8 @@ h3 {
   color: var(--muted);
 }
 
-.case-card {
-  display: grid;
-  gap: 16px;
-}
-
-.case-row strong {
-  display: block;
-  color: var(--text);
-  font-size: 0.92rem;
-}
-
-.case-row p {
-  margin: 4px 0 0;
+.principle-card {
+  min-height: 180px;
 }
 
 .stack-list {
@@ -455,7 +445,7 @@ h3 {
 
   .proof-row,
   .service-grid,
-  .case-grid,
+  .principle-grid,
   .stack-grid {
     grid-template-columns: 1fr;
   }
@@ -471,7 +461,7 @@ h3 {
   }
 
   h1 {
-    font-size: 2.55rem;
+    font-size: 2.35rem;
   }
 
   .archive-post,
