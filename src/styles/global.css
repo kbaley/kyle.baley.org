@@ -201,7 +201,7 @@ h3 {
 
 .proof-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   margin-top: 28px;
   border: 1px solid var(--line);
@@ -247,6 +247,43 @@ h3 {
 .proof-item span {
   color: var(--muted);
   font-size: 0.96rem;
+}
+
+.book-feature {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+  margin-top: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 22px;
+}
+
+.book-feature img {
+  width: 100%;
+  border-radius: 4px;
+  box-shadow: 0 14px 34px rgba(29, 37, 37, 0.16);
+}
+
+.book-feature .eyebrow {
+  margin-bottom: 10px;
+}
+
+.book-feature h2 {
+  max-width: 720px;
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+}
+
+.book-feature p:not(.eyebrow) {
+  max-width: 760px;
+  margin: 14px 0 0;
+  color: var(--muted);
+}
+
+.book-link {
+  margin-top: 14px;
 }
 
 .section {
@@ -501,11 +538,16 @@ h3 {
   }
 
   .proof-row,
+  .book-feature,
   .service-grid,
   .principle-grid,
   .experience-grid,
   .remote-note {
     grid-template-columns: 1fr;
+  }
+
+  .book-feature img {
+    max-width: 150px;
   }
 
   .hero {
