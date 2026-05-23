@@ -1,0 +1,46 @@
+---
+layout: post
+title: Architectural changes, or “How to decide if and when to start over”
+date: 2010-04-09 21:06:20.000000000 -04:00
+categories: []
+tags:
+- GWT
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '349964815'
+  pvc_views: '996'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Still heads down in start-up mode with GWT these days, which sounds more glamorous than it is in practice. That said, we’re looking for a <a href="http://www.linkedin.com/jobs?viewJob=&amp;jobId=921858&amp;svfId=534523&amp;trk=">junior Java developer</a> and a <a href="http://www.linkedin.com/jobs?viewJob=&amp;jobId=921847&amp;svfId=534526&amp;trk=">Web Marketing Assistant</a> so send on your details if you’re interested. I’d suggest reading the rest of this post first though…</p>
+<p>This week, the progress report to my boss essentially read:</p>
+<blockquote><p>The app has now returned to the same state it was at a week ago. But it now uses a new architecture that sure makes me feel all warm and fuzzy.</p>
+</blockquote>
+<p>This isn’t as clandestine as I make it out to be. We had a chat on Sunday after I’d spent a few hours prototyping the new architecture and had a brief bout of conscience wondering if switching things so drastically was just a way to satisfy some primal developer itch. I mean, in a company of 10,000 people, it’s easier to justify in many cases. Especially if the company has a tendency to swap out CMS products semi-annually. That, to me, says “we need to spend our budget on <em>something</em> this year or we won’t get it again next year.” But on a project of this scale, architectural changes cost much more relative to the income they generate, which at this stage is nothing.</p>
+<p>During that chat, I made some estimates on how long it would take to revamp things. Optimistic estimate was two days, pessimistic/realistic one: five days. I hit the pessimistic one more closely than the optimistic one but frankly, I’m just glad the estimate fell in between the two.</p>
+<p>Based on that, my cohort essentially said it would be stupid not to do it. We are early enough into the project that the long-term payoff will be substantial. Five days of work does indeed sound like it would be easy to make up over the lifetime of the application.</p>
+<p>But there are other considerations than just plain time. The libraries I was replacing are <a href="http://code.google.com/p/gwt-dispatch/">gwt-dispatch</a> and <a href="http://code.google.com/p/gwt-presenter/">gwt-presenter</a>. Both relatively proven, actively developed, and by all accounts, very good at what they do. Based on my own limited experience, I was very happy with both.</p>
+<p>The replacement is <a href="http://code.google.com/p/gwt-platform/">gwt-platform</a>, which by contrast, had its first check-in on March 3. When I joined the discussion group, I became member number 9. So there’s some risk involved with such a fundamental shift to a fairly unproven library. Another consideration: although gwt-platform has some nice features to it, there’s a very real possibility that they’ll be implemented in some form in gwt-dispatch and gwt-presenter.</p>
+<p>And I wasn’t even looking to change. I effectively stumbled on to the library while checking up on Andreas Borglin’s <a href="http://borglin.net/gwt-project">adventures in GWT</a> and he has yet to steer me wrong.</p>
+<p>So the question remained: do we take the risk of switching to a new library with a more uncertain future for the sake of easing our development now?</p>
+<p>In the end, we decided yes, we would. Because the risk doesn’t seem all that great, really. It’s an open source project. And not one like NHibernate where if it went belly-up, you’d be scared to navigate the code (and if you’re not, then this post isn’t aimed at you). The product is still fairly small and according to the <a href="http://code.google.com/p/gwt-platform/wiki/PlannedFeatures">upcoming features page</a>, plans to stay that way.</p>
+<p>My partner put it best during our discussion: “don’t be afraid to rip things out and start over if there is real business value.” But as a developer, I’m very much aware of my personal bias so it’s often hard for me to judge “business value”. Especially in this case where I wasn’t altogether unhappy with the existing products and there was an element of <a href="http://www.igloocoder.com/archive/2009/04/26/the-oooo.shiney-developer.aspx">“Ooooh, Shiny!”</a> to the decision.</p>
+<p>The nice thing in this case was that the project is in its infancy and a major upheaval of this sort is only a week’s worth of effort. Not totally insignificant but still within the realm of justifiable spike, even for a start-up. In fact, it’s because we’re a start-up that I think the decision to switch was so easy. Trading uncertain future for present development time? That means “possibility of having to look at code we didn’t write” vs. “saving a trailerful of money”.</p>
+<p>Besides which, after scanning the library and the corresponding <a href="http://code.google.com/p/puzzlebazar">sample project</a>, it includes solutions to quite a few issues I had been ignoring until I had time to revisit them:</p>
+<ul>
+<li>Lazy loading presenters </li>
+<li><a href="http://code.google.com/webtoolkit/doc/latest/DevGuideCodeSplitting.html">Code splitting</a> </li>
+<li>Resource (i.e. CSS, images) management </li>
+<li>Internationalization </li>
+<li>Ability to use nested presenters, especially with UI Binder </li>
+</ul>
+<p>So between making things easier going forward and solving problems I had not even thought about yet, it certainly warranted an evaluation. And after spending a week with the framework, it has proven itself extremely valuable in crystallizing a number of concepts I was having trouble with. Many kudos to Philippe Beaudoin for his effort in that alone.</p>
+<p>Kyle the Upheaved</p>

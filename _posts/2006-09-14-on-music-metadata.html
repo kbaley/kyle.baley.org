@@ -1,0 +1,35 @@
+---
+layout: post
+title: On music metadata
+date: 2006-09-14 01:44:51.000000000 -04:00
+categories:
+- Flamingo
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '711'
+  dsq_thread_id: '460954987'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Before I get started, Atlas has an <a href="http://weblogs.asp.net/scottgu/archive/2006/09/11/_2200_Atlas_2200_-1.0-Naming-and-Roadmap.aspx">official name</a> but I can't be bothered to change the category name so until I do, it's still Atlas on this site.</p>
+<p>I'm still working on my <a href="http://www.suvius.com/musicplayer">music app</a>, tentatively named Flamingo mostly because since I've moved to the Bahamas, I've always wanted to give an app that name. (It's the national bird and the source of a very entertaining albeit somewhat creepy <a href="http://www-us.flickr.com/photos/44905403@N00/183031170/in/set-72157594216113270/">routine</a> at the local zoo). I've gone back to the basics and decided I need to get some features on it before playing around with the cutting edge crap.</p>
+<p>One of those tasks is to have a reasonably easy way to update the database periodically as new music is added (and occasionally dropped lest I give the <a href="http://graysmatter.codivation.com/CalgaryCodeCamp2AJAXATLASTheHotnessContinues.aspx">wrong impression</a>). And let me tell you, dealing with metadata for MP3s and WMAs is a hideous process for someone with minor obsessive compulsive disorder.</p>
+<p>The first problem comes when key fields are simply not filled in. I'm currently working through a list of approximately one hundred MP3s that have no official title. </p>
+<p>That's the easy part. Next problem: People are absolutely horrible at tagging these things. Never mind the filenames_that_include_every_single_piece_of_data_within_them. Worse is when it's just plain wrong. The Guess Who sings Secret Agent Man? Leonard Cohen and Joe Cocker doing a duet on First We Take Manhattan? John Williams wrote the Back to the Future theme? The Rolling Stones doing I Saw Her Standing There?!?! Is one thing to be lazy, it's another to be on &amp;*$%# crack, people!</p>
+<p>These are hard things to fix because they don't show up unless you're actually listening to the song. And in most cases, you aren't in any position to actually correct the data.</p>
+<p>I'm also extending this problem to one of my main pet peeves about metadata. I hate the fact that all of these fields are atomic. I.E. They take one value and one value only<sup>*</sup>. Again, my OCD kicks in here and it drives me crazy that I have to file Leon Redbone's and Zooey Deschanel's duet of Baby, It's Cold Outside under *either* R or D in the artist. Plus now I've created a brand new artist in the eyes of WMP: Redbone, Leon &amp; Deschanel, Zooey. Any searches for other tunes by Leon Redbone will not bring up this little gem.</p>
+<p>Same goes for albums and genres. The song Let It Be is probably on no less then seventeen different albums when you include soundtracks, greatest hits, compilations, not to mention live recordings. Shouldn't I be able to search for any one of those albums and pull up Let It Be? If a song is on the Bobby Jo's Last Supper soundtrack as well as The Stanton "Family" Reunion's Greatest Hits, a decent music search should reflect that.</p>
+<p>The genre field is even more useless as a single-valued field. I haven't the slightest clue what the difference is between R&amp;B, hip hop, urban jazz, funk fusion and progressive adult contemporary (which is a term I just made up but I'm sure has already been used).&nbsp;And people have a tendency to use Soundtrack as a genre unto its own which confuses things further. I can't even begin to try to categorize songs like this one.</p>
+<p>So my intention is to not only make these fields multi-valued, but to allow the songs themselves to be tagged. With anything. You think a song is a combination of jazz and boogie? Log 'em both. Fumbling Toward Ecstasy is a good song to make out to? Tag it. You think Paradise By the Dashboard Light would make a good wedding song? Thy voice be heard.</p>
+<p>It's coming, campers. The musical revolution will be heard.&nbsp;At least as&nbsp;long as the local electric company can keep the &amp;*$% island powered.</p>
+<p>*<font size="1">My experience is limited to how Windows Media Player tags its music. I have no doubt that some other apps have addressed this but I'm leery about dealing with them since the last time I tried, it was with Satan's music player, MusicMatch.</font></p>

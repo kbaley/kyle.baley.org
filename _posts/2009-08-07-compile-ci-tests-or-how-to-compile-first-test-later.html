@@ -1,0 +1,30 @@
+---
+layout: post
+title: Compile => CI => Tests, or "How to compile first, test later"
+date: 2009-08-07 16:44:23.000000000 -04:00
+categories: []
+tags:
+- Brownfield
+- Continuous Integration
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '583030521'
+  pvc_views: '1234'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>A common piece of feedback we got for early reviews of <a href="http://manning.com/baley">Brownfield Application Development</a> is that the automated testing chapter should come before the automated build/continuous integration chapter. This was an awesome bit of feedback mostly because we could ignore it and instead get some air time on my blog on why we're doing it this way.</p>
+<p>When I come into a project, my most immediate goal is usually to get it into a continuous integration environment as soon as possible. And the bare minimum for that is to get the source code and compile it. If there are tests and they pass, that's an added bonus. I'll add them to the CI process afterward.</p>
+<p>For me, it comes down to treating your environment just as incrementally as your code. I want my CI environment up and running now. Maybe the tests pass, maybe they don't. If I dump them in there now, that adds a variable into the mix I don't want to deal with at the moment.</p>
+<p>There's some element of personal preference, I suppose. But it's also borne from experience. At one time, I had some minor frustration trying to do everything in the automated build before dumping it on the CI server and having it fail. Just like we check in smaller bits of code more often, I like to enhance my CI process in small chunks more often.</p>
+<p>Incidentally, CI is why we cover version control first. Not because we think you don't know anything about version control, but so that you can get your source repository prepared for continuous integration. Any hack can dump code into SVN. The important thing is whether you can get it back in an immediately useful state. Continuous integration can help determine if it's immediately useful.</p>
+<p>Alas, the rest of the feedback for the book was not so easily dismissed. Damn you people and your "values".</p>
+<p>Kyle the Edited</p>

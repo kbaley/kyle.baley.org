@@ -1,0 +1,40 @@
+---
+layout: post
+title: On Livelink Bugs
+date: 2006-12-18 17:28:12.000000000 -05:00
+categories: []
+tags:
+- Livelink
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1691'
+  dsq_thread_id: '352208237'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I've mentioned before that I like working with Livelink which is not the same as recommending the product. I have been working pretty extensively with the Livelink Physical Objects and Records Management modules and those two modules are pretty hideous. I have yet to work with a buggier enterprise-level product, and they are both at version 3 already.</p>
+<p>Here is a laundry list of issues that my current client alone has reported to Livelink:</p>
+<ul>
+<li>The PhysObjAssignToBox LAPI function fails. Always</li>
+<li>The PhysObjGenerateLabel LAPI function fails. Always</li>
+<li>The PhysObjAssignLocator LAPI function fails when the locator doesn't exist. But not in the way it's supposed to.</li>
+<li>There is a PhysObjChargeOut LAPI function but no PhysObjChargeIn.</li>
+<li>When browsing a folder, boxes will always show as containing 0 items, even if they have items in them</li>
+<li>When checking out a box, the locator is not removed. I.E. The box still "occupies space" in its locator</li>
+<li>When browsing a folder, subfolders do not automatically appear at the top as they do in Windows</li>
+</ul>
+<p>This is a seriously trimmed down list because most of the other items are too complicated or too frustrating to talk about.</p>
+<p>As an aside, these types of errors are part of the reason I like working with the product. As I mentioned in a previous post, you are able to step through the entire codebase for Livelink as its running. And when I encounter these problems, it's very empowering to be able to determine if the bug is mine or theirs. Again, it doesn't mean I'd recommend it (at least for records management) but as a developer, I like working with it.</p>
+<p>The other big problem I have is that the product is not very extensible. I'll need to explain because that counters pretty much everything anyone knows of the product. What I mean is that in order to extend Livelink, very often you need to do a customization. And very often, that means overriding an existing request handler or function or feature somewhere.</p>
+<p>So while you can do this easily, I have been doing my best to avoid it. I have been asking for nigh on eight months now what the upgrade path is if we do override existing functionality and upgrade to newer versions of a module or the core product. No one seems to know. And my guess for the answer is that you will essentially have to go through all of your customizations and make sure they don't break or interfere with new functionality.</p>
+<p>Which is what you would do normally but in this case, the customizations are at a very low level. As in they often talk directly to the database. As in the presentation is pretty tightly coupled to the business logic and sometimes even the database. So while I would love to fix the bug where boxes always show as containing 0 items, this would involve making changes that are very likely to be overridden in the next version of Livelink. In short, upgrading a Livelink installation with a lot of customized code is not to be taken lightly.</p>
+<p>Compare that to SharePoint or other products where the entire application is designed to be customized and extended. There is a rich API that doesn't require (or even allow) you to go so far into the bowels of its inner workings.</p>
+<p>Besides which, the API errors alone do not inspire a lot of confidence. There is absolutely no excuse for the first two items in my list above. These two API functions just plain fail. In every single scenario. There is no way to call them without getting an error back. Which says to me that Open Text didn't perform even basic unit testing on them. Or any kind of testing. They just compiled it and hoped for the best. (In fact, the PhysObjGenerateLabel API function shouldn't even technically compile because it references a non-existent feature.)</p>

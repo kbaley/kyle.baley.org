@@ -1,0 +1,45 @@
+---
+layout: post
+title: It ain't SQL Server unless it includes Profiler
+date: 2006-04-24 16:43:00.000000000 -04:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '613'
+  dsq_thread_id: '362997254'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I think I'm finally getting used to user instances in SQL Server Express to the point that I now know that they're called &#8220;user instances&#8221;. The annoyance I mentioned in a previous post is explained <a href="http://msdn.microsoft.com/sql/express/default.aspx?pull=/library/en-us/dnsse/html/sqlexpuserinst.asp">here</a>. Specifically:</p>
+<blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+<p>The other main issue with user instances occurs because SQL Server opens database files with exclusive access. This is necessary because SQL Server manages the locking of the database data in its memory. Thus, if more than one SQL Server instance has the same file open, there is the potential for data corruption. If two different user instances use the same database file, one instance must close the file before the other instance can open it.</p>
+</blockquote>
+<p dir="ltr" style="MARGIN-RIGHT: 0px">Who knew reading documentation could be so helpful? We've come a long way in such a short time.</p>
+<p dir="ltr" style="MARGIN-RIGHT: 0px">The net effect of this is that it'll be a while before I change my habits enough to use SQL Server Express effectively. And frankly, there are only two cases I can think of for using it at all:</p>
+<ul dir="ltr">
+<li>
+<div style="MARGIN-RIGHT: 0px">Windows Forms applications that use a local database (i.e. the database is for that instance of the application and nothing else)</div>
+</li>
+<li>
+<div style="MARGIN-RIGHT: 0px">Web applications built specifically for people to download as test code</div>
+</li>
+</ul>
+<p style="MARGIN-RIGHT: 0px">The second one is where I first encountered SQL Server Express which is why I had all my problems. I saw this database in some sample code and said, &#8220;Cool, I can work with the database directly in Visual Studio&#8221; not knowing the repercussions of my funky way of debugging. In the meantime, I'll stick with SQL Server Developer Edition and export to an Express database should the need arise. (*UPDATE*: Easier said than done)</p>
+<p style="MARGIN-RIGHT: 0px">Also, it looks like there are a bunch of SQL Server downloads this week, including SP1 for <a href="http://www.microsoft.com/downloads/details.aspx?familyid=cb6c71ea-d649-47ff-9176-e7cac58fd4bc&amp;displaylang=en">all versions</a> of SQL Server (NOTE: SP1 for Express is a <a href="http://www.microsoft.com/downloads/details.aspx?familyid=11350b1f-8f44-4db6-b542-4a4b869c2ff1&amp;displaylang=en">separate download</a> than other versions). Includes a full-fledged, non-CTP version of Management Studio for SQL Server Express so if you're using that version, have at it. Some other related downloads with Advanced Somethings and Toolkit Thingies but none of them looked interesting enough just yet.</p>
+<p style="MARGIN-RIGHT: 0px"><strong>PART 2<br /></strong>Was going to post this separately but I don't want to look like I'm padding. Plus it's related to Part 1</p>
+<p style="MARGIN-RIGHT: 0px">I've discovered another reason I don't like SQL Server Express. In another post, I mentioned that I love me some SQL Profiler. This is even more important in the Visual Studio 2005 world because of how easy it is not to write code. I've been playing with binding GridViews to ObjectDataSources and it's pretty cool when everything works. Last night, I went through this long exercise of building up the database for the second part of my search article and building a quick search interface that uses a GridView bound to an ObjectDataSource.</p>
+<p style="MARGIN-RIGHT: 0px">So I configured my table adapter, configured my GridView, configured my data source, and clicked GO. Net effect: a blank page. No errors, no warnings, just a blank page.</p>
+<p style="MARGIN-RIGHT: 0px">So what went wrong? I can't tell because: a) there's no code to step through, and b) even if there was, it's not going to tell me exactly what SQL was executed. SQL Profiler, on the other hand, can. I started up a profiling session, refreshed the page, and there&nbsp;it was:&nbsp;the exact stored procedure call complete with parameter values.</p>
+<p style="MARGIN-RIGHT: 0px">By the way, I've found that you can get more use out of Profiler if you set up your own template with a filter of: Application Name LIKE .Net SqlClient Data Provider. This ensures only activity performed by your application is recorded in the trace. I imagine you can probably tweak the included TSQL template to do the same thing but I'm not much of a DBA. Once I get something working in that regard, I just want to get back to my code.</p>
+<p style="MARGIN-RIGHT: 0px">Last little whing against Express, I promise. I use a subst'd drive for my projects, in this case P:. All versions of SQL Server work less than well when you try to connect to them&nbsp;from a subst'd drive. So when I throw a database into my app that is resting in P:RumRunner, I get errors from the git go. I essentially have to toss out the solution and reconnect to the app from the absolute path.</p>
+<p style="MARGIN-RIGHT: 0px">This problem might go away because I've since learned about <a href="http://www.sysinternals.com/utilities/junction.html">junction</a> over at <a href="http://www.sysinternals.com">www.sysinternals.com</a>. I'm giving some consideration to this approach rather than subst'd drives after listening to a podcast on the tool. (OK, it was Hanselman's podcast again but I'm not linking to him because he's gotten enough press from me. Oh, <a href="http://www.hanselminutes.com/default.aspx?showID=16">all right</a>.)</p>
+<p style="MARGIN-RIGHT: 0px">But now that I think about it, I like having a separate drive for my projects. More than I like having to navigate through the tree view in Management Studio to get to&nbsp;database files&nbsp;the long way. And the obsessive compulsive in me is not going to take lightly to a bunch of junction'd drives&nbsp;cluttering my C: drive.&nbsp;Then again,&nbsp;the ADD in me might win out long enough to try it...</p>

@@ -1,0 +1,48 @@
+---
+layout: post
+title: Thinking about the user, or “How to consider the experience”
+date: 2011-02-20 02:02:21.000000000 -05:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1706'
+  dsq_thread_id: '349718696'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Over at my <a href="http://corp.bookedin.net/blog/simple-is-hard/">day, evening, and night job</a>, I just posted something on simplicity. The audience for that blog is such that I don’t really like to go into as much detail as I normally do. Lucky for me, I have all of you...</p>
+<p>We just went through a fairly detailed critique of our application’s UI right down making sure the number of pixels used in the borders for all our dialogs were the same. Nitpicky, you say? Perfectionist? Downright anal, even? I’d be lying if I claimed I didn’t think the same thing at first. (Side note: After trying to parse that last sentence about five times, it probably has no business in a post about simplicity. But you all know what I mean so I’m going anyway.)</p>
+<p>After looking at the final product and doing a bunch of reflection and stuff, I’ve decided it was probably one of the best learning experiences of my recent career.</p>
+<p>Here are three dialogs that I had just done a bunch of clean-up work on (click for larger versions):</p>
+<p><a href="http://kyle.baley.org/content/binary/Windows-Live-Writer/d46f1e542c63_129AE/Edit%20Staff_2.jpg"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="Edit Staff" border="0" alt="Edit Staff" src="/assets/Edit%20Staff_thumb.jpg" width="244" height="195" /></a><a href="http://kyle.baley.org/content/binary/Windows-Live-Writer/d46f1e542c63_129AE/Book%20Appointment_2.jpg"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="Book Appointment" border="0" alt="Book Appointment" src="/assets/Book%20Appointment_thumb.jpg" width="232" height="244" /></a><a href="http://kyle.baley.org/content/binary/Windows-Live-Writer/d46f1e542c63_129AE/Edit%20Service_2.jpg"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="Edit Service" border="0" alt="Edit Service" src="/assets/Edit%20Service_thumb.jpg" width="244" height="219" /></a></p>
+<p>All looking pretty spiffy if I do say so myself.</p>
+<p>Now here they are in the format that was given back to me after submitting my work:</p>
+<p><a href="http://kyle.baley.org/content/binary/Windows-Live-Writer/d46f1e542c63_129AE/dialog_layout_2.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="dialog_layout" border="0" alt="dialog_layout" src="/assets/dialog_layout_thumb.png" width="479" height="484" /></a></p>
+<p>Here are some variations on what went through my head when reading this:</p>
+<ul>
+<li>Who’s gonna notice? </li>
+<li>There’s more important stuff to work on </li>
+<li>WTF? </li>
+</ul>
+<p>But being the passive-aggressive hillbilly that I am, I went about correcting the problems and grumbling about looming deadlines like any good <a href="http://www.igloocoder.com/archive/2009/04/23/the-hero-developer.aspx">hero programmer</a> should.</p>
+<p>Now let’s assume that I’m being honest with myself and summarize my grumblings a little differently:</p>
+<ul>
+<li>Yes, this is important but it’s also boring and I want to move on to some <em>real</em> development. </li>
+</ul>
+<p>(Let it not be said that self-awareness is all it’s cracked up to be.)</p>
+<p>This is a symptom of a larger “disease” I had contracted (other than misusing “double quotes”). As a consultant in the software industry, I like solving problems. Once solved, I want to move on to the next one. But a lot of times, the problem is solved only in my head. In this example, I have three fully functional screens. All work to the specifications laid out before me. Individually, there’s nothing wrong here and because of that, in my mind, I had already moved ahead to the next problem.</p>
+<p>But user experience is a problem. Judging from our competitors, it’s a rampant one. (Hoo-ah! Bet you didn’t think the hillbilly was capable of that kind of potshottery.) Reflecting on this recent experience, my mindset is partly (possibly mostly) to blame. I didn’t put enough emphasis on the user experience and so my thinking was: In order to succeed, we need to pump out features at any cost. This is what my thirteen-odd years in the business has taught me. As long as you don’t totally screw up the user interface, the user will adapt. And when in doubt, do what Microsoft does.</p>
+<p>Now, me taking on the persona I have on this here blog thingy, I can tell you first-hand that simple isn’t easy. (Given how much I’ve edited this post, writing about it ain’t exactly a swing o’ the possum either.) But there’s a reward to getting the user experience right, though. Yes, there’s an emotional response that the user gets and they become champions for your software and blah, blah, blah. That’s all well and good. But thinking more selfishly, I have to work with and use this software for the rest of my career (&lt;random deity&gt; willing). If it has a bunch of little quirks in it that I will never get around to fix it, it’s going to start eating away at me.</p>
+<p>QA person: “There’s a bug in the Edit Staff dialog”    <br />Me (to myself): “Woman, that screen has always bugged me with the buttons being slightly too high and everything being a little off-centered.”     <br />Me (to QA person): “Assign it to <a href="http://corp.bookedin.net/our-team.shtml">Mayumi</a>”</p>
+<p>Ha ha! I jest, of course. We have no QA person. Why do you think I spent so much time <a href="http://kyle.baley.org/RunningCucumberTestsAgainstGWTAppEngineInTeamCityOrLdquoHowToCIWithUIrdquo.aspx">automating our UI tests</a>? </p>
+<p>Time to wrap this up. Closing point: Creating a good user experience is a lot of work but worth the effort. For us, it’s meant taking out features that were already built until we could get the UI right. The nice thing is: once you start enforcing UI standards from the beginning, it’s much easier to maintain them going forward.</p>
+<p>Kyle the Experienced</p>

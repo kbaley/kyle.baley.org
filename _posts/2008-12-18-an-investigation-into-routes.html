@@ -1,0 +1,70 @@
+---
+layout: post
+title: An investigation into routes
+date: 2008-12-18 23:59:26.000000000 -05:00
+categories: []
+tags:
+- ASP.NET MVC
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '193110900'
+  pvc_views: '1632'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>This post would probably be more entertaining if I dictated it because then you could all have a good chuckle on my Canadian pronunciation on &quot;route&quot;. For the record, it is supposed to be pronounced &quot;root&quot;, which is clean, terse, and polite. Not &quot;r-OW-t&quot;, which, if done correctly (like in Texas), requires your jaw to be double-jointed.</p>
+<p>To date, routes have always been something I've kinda, sorta had figured out. I use the default ones as much as possible and when I stray from that, I end up plugging away until they work for my current situation. Sometimes this involves creating hard-coded ones, other times simply re-arranging the order has the desired effect.</p>
+<p>Oh sorry, did I just make you throw up a little?</p>
+<p>But now it's time to tackle these little beasties head-on, thanks in no small part to Ben Scheirman's <a href="http://flux88.com/blog/fluent-route-testing-in-asp-net-mvc/" target="_blank">recent addition to MvcContrib</a>, wherein you can test your routing strategy with a call as simple as:</p>
+<pre class="c-sharp" name="code">&quot;~/Still/AddIngredient/Dandelion&quot;.Route().ShouldMapTo<stillcontroller>( c =&gt; c.AddIngredient( &quot;Dandelion&quot; ) );</stillcontroller></pre>
+<p>First, let's take a look at a concrete example to define the problem space. Here is a sample route table:</p>
+<pre class="c-sharp" name="code">routes.Add(new Route(&quot;{controller}/{action}&quot;, new MvcRouteHandler()) 
+   { 
+       Defaults = new RouteValueDictionary(new {action = &quot;Index&quot;}), 
+   }); 
+
+routes.Add(new Route(&quot;{controller}/{id}/{action}&quot;, new MvcRouteHandler()) 
+   { 
+       Defaults = new RouteValueDictionary(new {action = &quot;Index&quot;, id = &quot;&quot;}), 
+   }); </pre>
+<p>With something like this, and in fact, with routes in general, order is important. More so than I'd like, quite frankly. A URL like ~/Still/Mix will match the first one but one like ~/Still/101/Dismantle matches the second. Note that in this scenario, the default values in the second one seem meaningless. If no action or id are provided, the first route will be used so there is no need for defaults. We'll come back to that.</p>
+<p>It should also be noted that the routes come into play not only when parsing URLs but when generating them. This is actually what led to this post. In one of our controllers, we used the RedirectToRoute result. For those of you that can't parse out Pascal casing, this just allows you to redirect to another route from within an action.</p>
+<p>The final line of that action was: <font face="Courier New" size="2">return RedirectToRouteResult( &quot;Ferment&quot;, &quot;Hooch&quot;, new { id = 123 } );</font></p>
+<p>Given the above route table, what do you suppose would be the URL that this generates? If you say ~/Hooch/123/Ferment, give yourself a pat on the back. But it'll be just because you're a nice guy/gal because it's actually wrong. The correct answer is: ~/Hooch/Ferment?id=123.</p>
+<p>Here's the thought process as I imagine it to be. The route generator checks the first route in the dictionary, which is &quot;{controller}/{action}&quot; and says &quot;Can I make these values match that route?&quot; Well, of course it can. It's got a controller and an action. Everything else can be tacked on in the query string.</p>
+<p>This URL turned out to be a bit of an issue for me because of another problem that this uncovered. At some point in our controller, we reference <font face="Courier New">ViewContext.RouteData.Values[&quot;id&quot;]</font>. And with the id as part of the query string, this bit of code returns null. The debugger shows that for a URL of ~/Hooch/Ferment?id=123, the RouteData collection contains two values: controller = Hooch and action = Ferment. The id is nowhere to be found, at least by the RouteData.</p>
+<p>So how *do* we get the RedirectToRouteResult to generate a shinier URL? Why, we fiddle with the routes until they work, of course! It's the principle that bug fixing is based upon.</p>
+<p>I jest, of course. But only partly. We do need to fiddle with the routes but we should really write a test to verify that the ViewContext.RouteData is being set properly. Unfortunately, this isn't easy without some funky mocking.</p>
+<p>One would think that you could just examine the RedirectToRouteResult coming back from the controller action but alas! It appears correct. I.e. It has all three components (controller, action, and id) set properly. I suppose the ViewContext.RouteData is set somewhere else in the bowels of the framework. So I'll skip the test because I'm already over my allotted time. Plus we're using Preview 5 still and this could very well be different in the beta.</p>
+<p>Let's reverse the order of the routes in the table and see what happens. Here's what that looks like:</p>
+<pre class="c-sharp" name="code">routes.Add(new Route(&quot;{controller}/{id}/{action}&quot;, new MvcRouteHandler()) 
+   { 
+       Defaults = new RouteValueDictionary(new {action = &quot;Index&quot;, id = &quot;&quot;}), 
+   }); 
+
+routes.Add(new Route(&quot;{controller}/{action}&quot;, new MvcRouteHandler()) 
+   { 
+       Defaults = new RouteValueDictionary(new {action = &quot;Index&quot;}), 
+   }); </pre>
+<p>This immediately caused problems. The URL ~/Still/Mix now maps to the first route. That is, it is invoking the Index action on the Still controller with an id of Mix. Again, the defaults are screwing us over like some sort of mot--...actually, let's leave the simile out of that one. Part of the reason for our problem is because the {action} is in a different place in each route. But with the defaults in place, this set up will essentially ensure the second route will never be used.</p>
+<p>Instead, we need to take out the defaults altogether, like so:</p>
+<pre class="c-sharp" name="code">routes.Add(new Route(&quot;{controller}/{id}/{action}&quot;, new MvcRouteHandler()) 
+   { 
+       Defaults = new RouteValueDictionary(new {}), 
+   }); 
+
+routes.Add(new Route(&quot;{controller}/{action}&quot;, new MvcRouteHandler()) 
+   { 
+       Defaults = new RouteValueDictionary(new {action = &quot;Index&quot;}), 
+   }); </pre>
+<p>Now we're cooking. The URL ~/Still/Mix no longer matches the first route because we haven't provided an id. But ~/Still/101/Dismantle does meet the requirements. Furthermore, generating a <font face="Courier New">RedirectToRouteResult( &quot;Ferment&quot;, &quot;Hooch&quot;, new { id = 123 } )</font> now gives us a URL in the format: ~/Hooch/123/Ferment. Again, this is because it examines the first route in the table and finds a match.</p>
+<p>I've omitted quite a bit of context here, like why we have {id} second in the route and why we're referencing ViewContext.RouteData.Values[&quot;id&quot;] in the first place. There is a good reason for all of that. At least as far as you know...</p>
+<p>Kyle the Evasive</p>

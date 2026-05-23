@@ -1,0 +1,65 @@
+---
+layout: post
+title: Re-review of Kinesis
+date: 2009-04-25 01:58:39.000000000 -04:00
+categories: []
+tags:
+- Hardware
+- Tools
+- Utilities
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '350519221'
+  pvc_views: '1762'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I’m over a month in with my <a href="http://codebetter.com/blogs/kyle.baley/archive/2009/03/21/kinesis-advantage-review-1-or-how-to-relearn-to-tysppe.aspx">new keyboard</a> and, as promised, here is the follow-up.</p>
+<p>Typing speed has returned to more sporting level, as I had expected. The exercises included with the keyboard, while not Pulitzer Prize material, do help. I’d work on them on my host machine while waiting for my VM to boot up in the morning. Doing that, I was able to get through the ones I cared about in about a week.</p>
+<p>I’m still not *quite* at the same typing speed but I’m close enough. It’s the old 80/20 rule. I’ll get up to 80% of my old speed after 20% of effort. The last 20% will probably take orders of magnitude longer. That said, the keyboard does exactly what it advertises, which is reduce strain. All (keyboard-related) pain in my right arm has ceased. Whether it’s psychosomatic or the new keyboard layout or the fact that the keyboard releases a rush of endorphines every time I press Ctrl-Alt-E, I don’t much care. The fact is, the pain is gone. That alone makes the keyboard worth it’s weight in whatever metal is selling these days. As a bonus, I also discovered that Robin Williams used one in the blockbuster hit, Flubber. If that’s not endorsement enough, well, you can’t save everybody.<a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/e6e978b62f73_FF95/image_2.png"><img title="image" style="border-top-width: 0px; display: inline; border-left-width: 0px; border-bottom-width: 0px; margin: 5px; border-right-width: 0px" height="134" alt="image" src="/assets/image_thumb.png" width="240" align="right" border="0" /></a> </p>
+<p>To be fair, there have been a whack of other little adjustments I’ve made that have contributed to my new pain-free typing experience. I described a few in the original post:</p>
+<ul>
+<li>Using Executor </li>
+<li>Remapping CapsLock and F1 to Esc (the former because it’s more convenient, the latter because the F1 key is the MOST ANNOYING KEY ON THE FACE OF THE PLANET!) </li>
+<li>Using AutoHotKey to remap Left-Control + Right-Control to Alt-Tab and Left-Control + Right-Win to Shift-Alt-Tab </li>
+</ul>
+<p>In addition to this, I’ve also done the following:</p>
+<ul>
+<li>Changed the default keystroke to Executor to Right-Control + Backspace </li>
+<li>Turn off the annoying double-click when you press CapsLock (aka Esc). This is a keyboard function and it was heavenly when I found out it could be disabled. </li>
+<li>Remapped the left backslash key on the keyboard to Insert. </li>
+<li>Mapped Win + F10, F11, F12 to Volume Mute, Volume Up and Volume Down respectively (with AutoHotKey) </li>
+<li>Made heavier use of ViEmu and Vimperator </li>
+</ul>
+<p>With regard to the third point, for whatever reason, the keyboard comes with two backslash keys. This is strange given how sparse they are about duplicating other common keys (alt, win, etc.) and simply not including others (Insert, for example). Whatever the case, I’ve used the built-in keyboard remapping capability to remap the left-hand backslash to Insert which has helped immensely for logging into VMs.</p>
+<p>The last point is important. When I first tried both of these tools some months ago, I used them for a month and gave up, thinking I’d given them the good ol’ college try. Coming back to them, I was surprised how much I actually remembered. Which is good because it meant I could then learn some more keystrokes without having to also try to keep the original ones in my brain. The experiment was so successful that I added ViEmu for Word and ViEmu for SQL Server to my toolkit. All of them have helped me to avoid the arrow keys, PageUp, PageDown, Home and End, all of which are still not as intuitive as they ought to be. Oddly, I tried Vim itself for a few days and it was way too wacky for me. So I’m sticking with Notepad2 as my default text editor. I end up typing jjj and kkk a lot when I want to navigate but I can only take so much freakishly-obscure tools and hardware at once.</p>
+<p>Both ViEmu and Vimperator are as configurable as Vim, which may mean something to you if you know that Vim is very highly configurable. So I’ve added the following configurations to ViEmu for all versions:</p>
+<ul>
+<li>noremap &lt;Space&gt; &lt;C-d&gt; </li>
+<li>noremap &lt;BS&gt; &lt;C-u&gt; </li>
+</ul>
+<p>I’m not 100% sure what noremap does compared to map or nnoremap. Just know that adding the above two lines to _viemurc and _viemuwrc makes things happen. In this case, pressing Space will move text down half a page and pressing Backspace will move it back up again. This may seem odd to you but considering where these two keys are on a Kinesis, it’s very aesthetically-pleasing actually.</p>
+<p>For Vimperator, I essentially stole the configuration from someone else. The highlights of it are:</p>
+<ul>
+<li>set complete=l </li>
+<li>au LocationChange .* js modes.passAllKeys = /(www.google.com/reader)|(rememberthemilk.com)/.test(buffer.URL) </li>
+<li>com gui :set guioptions+=mTb </li>
+<li>com nogui :set guioptions-=mTb </li>
+</ul>
+<p>This is what these commands do:</p>
+<ul>
+<li>Enable auto-completion when you open a url (either with :open or :tabopen) </li>
+<li>create a command called :gui which enables all the toolbars. The :nogui command hides them again. </li>
+<li>disable Vimperator for Google Reader and RememberTheMilk (i.e. automatically switch to pass-through mode for these sites) </li>
+</ul>
+<p>For the last one, I had, at one point, also disabled Vimperator for GMail because it collided with many of the GMail shortcuts. The latest version of Vimperator is much saner with GMail so I’ve enabled it again. Still get an error when deleting mail with # and I can’t press Y to archive but it’s much better than before.</p>
+<p>There is still one major pain point: The location of some rather common characters in C#. Namely: []{}&lt;&gt;. These are all located in the same corner and I’m still tripping over myself as I type them. I’m working on a macro that will allow me to type out “left curly brace” and have it substitute { in its place.</p>
+<p>Kyle the Laconic</p>

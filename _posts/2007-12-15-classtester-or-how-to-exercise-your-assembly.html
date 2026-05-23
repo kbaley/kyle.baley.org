@@ -1,0 +1,74 @@
+---
+layout: post
+title: ClassTester, or "How to exercise your assembly"
+date: 2007-12-15 17:01:55.000000000 -05:00
+categories: []
+tags:
+- Refactoring
+- Utilities
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1000'
+  dsq_thread_id: '380895302'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Fear not, brethren and...uhhh....sistren. The <a href="http://codebetter.com/blogs/kyle.baley/archive/2007/12/14/refactoring-by-rote-or-quot-how-to-have-a-resharper-orgy-quot.aspx">resistance</a> is still alive. But the revolutionary jargon will get in the way here so I'm reverting to a more traditional means of expression.</p>
+<p>Among the things we've implemented as part of our project clean-up is the aptly-named <a href="http://www.codeplex.com/classtester">ClassTester</a>. It's a neat little tool that takes some of the pain out of routine testing of constructors and properties by, for example, setting a property then checking to make sure you get the same value back from the getter. Here's some sample syntax for testing the properties of an object:</p>
+<pre class="code">    ClassTester tester = new ClassTester(new myObject());<br />    tester.TestProperties();
+<a href="http://11011.net/software/vspaste"></a></pre>
+<p>Now, hillbillies are not what you might call amenable to writing boilerplate code for every single class in their domain. Leads to some problems you can only imagine in your nightmares. So in an attempt to avoid duplication, I decided instead to walk through all the classes in the assembly:</p>
+<pre class="code">       [<span style="color: rgb(43,145,175)">Test</span>]
+1       <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">void</span> Test_general_constructors_and_properties()
+2       {
+3           <span style="color: rgb(43,145,175)">Assembly</span> assembly = <span style="color: rgb(43,145,175)">Assembly</span>.GetAssembly(<span style="color: rgb(0,0,255)">typeof</span> (<span style="color: rgb(43,145,175)">Still</span>));
+4           <span style="color: rgb(43,145,175)">Type</span>[] types = assembly.GetTypes();
+5           <span style="color: rgb(0,0,255)">foreach</span> (<span style="color: rgb(43,145,175)">Type</span> type <span style="color: rgb(0,0,255)">in</span> types)
+6           {
+7               <span style="color: rgb(0,0,255)">if</span> ( type.IsClass 
+8                    &amp;&amp; !type.IsAbstract 
+9                    &amp;&amp; type.Namespace == <span style="color: rgb(163,21,21)">&quot;Suvius.Applications.HoochDeriver.Domain&quot;</span> ))
+10              {
+11                  <span style="color: rgb(43,145,175)">ClassTester</span>.TestConstructors(type, <span style="color: rgb(0,0,255)">false</span>);
+12                  <span style="color: rgb(0,0,255)">object</span> item = assembly.CreateInstance(type.FullName);
+13                  <span style="color: rgb(43,145,175)">ClassTester</span> tester = <span style="color: rgb(0,0,255)">new</span> <span style="color: rgb(43,145,175)">ClassTester</span>(item);
+14
+15                  tester.TestProperties();
+16              }
+17          }
+18      }</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Some points of interest:</p>
+<ul>
+<li>I could use any domain object in line 3. I'm interested only in getting the assembly that houses all the domain objects</li>
+<li>Line 8: The ClassTester doesn't much like abstract classes</li>
+<li>Line 9: This line may seem redundant but it is necessary because of the way I run my builds (which, credit where it's due, I pilfered from <a href="http://www.jpboodhoo.com">JP Boodhoo</a>). Namely, in the build file, we compile all .cs files into a single assembly and run the tests against it. Which means line 3, will retrieve the assembly containing (almost) every class in the application. Compare this with compiling in the IDE where all domain classes are in one assembly by themselves. So running this test from the IDE, where it will compile the assemblies separately, we don't need the check for the namespace. Running it in the build file however, we do.</li>
+</ul>
+<p>There are in fact two separate tests here, one for constructors and one for properties. If you want to argue that these should be separate tests, I'll agree. If you want to argue against that, I'll agree too. That's how much I care about it.</p>
+<p>Anyway, this code is nice in theory. At present, the tester handles only very routine cases. If there are any validation rules, you'll get validation errors. For example, if you have a Percent property where you throw an exception if the value is not 'twixt 0 and 100, the ClassTester will throw this exception most of the time because it generates a random number to set the properties and doesn't know about your little rules. The ClassTester does allow you to ignore individual properties though, which is useful when testing classes individually.</p>
+<p>The second problem with looping through every class is that not every class can be tested, even with no validation rules. In our case, we had some classes that were inheriting from CollectionBase (did I mention it was ported over from .NET 1.1?) and the ClassTester failed on all of these because of the Capacity property (which I didn't know existed).</p>
+<p>The end result is that we had to include a list of classes to ignore from the domain and make sure they were tested separately through more conventional methods. Whether or not this is worth it depends on how many classes you need to ignore. In our case, it was only the collection classes which have since been removed anyway because of the generic collections in .NET 2.0.</p>
+<p>And to prove it was all worthwhile, the ClassTester found and located no less than three bugs in our getters and setters, each one a variation on this theme:</p>
+<pre class="code">    <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">decimal</span> AmountOfHopsToAdd
+    {
+        <span style="color: rgb(0,0,255)">get
+</span>        {
+            <span style="color: rgb(0,0,255)">if</span> (DandelionBase != null)
+            {
+<span style="color: rgb(0,128,0)">                // Return some complicated formulaic value based on DandelionBase</span></pre>
+<pre class="code">            }
+            <span style="color: rgb(0,0,255)">else</span> <span style="color: rgb(0,0,255)">return</span> 0.0M;
+        }
+        <span style="color: rgb(0,0,255)">set</span> { _amountOfHopsToAdd = <span style="color: rgb(0,0,255)">value</span>; }
+    }</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>In this specific case, the setter is all but useless since _amountOfHopsToAdd is never actually used anywhere. The other examples gave similar fodder for pondering and our code is shinier and happier for it.</p>
+<p>Kyle the Testable</p>

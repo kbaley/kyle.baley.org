@@ -1,0 +1,56 @@
+---
+layout: post
+title: Audit Fields in Google AppEngine
+date: 2012-04-07 19:53:28.000000000 -04:00
+categories: []
+tags:
+- Google App Engine
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '5614'
+  dsq_thread_id: '640812376'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Executive summary: Here’s how we’re implementing audit fields in AppEngine. IT’S BETTER THAN THE WAY YOU’RE DOING IT!</p>
+<p>I considered saying “I hope there’s a better way of doing it” but I believe I’ll get more responses if I frame it in the form of a challenge.</p>
+<p>For all entities in our datastore, we want to store:</p>
+<ul>
+<li>dateCreated  </li>
+<li>dateModified  </li>
+<li>dateDeleted  </li>
+<li>createdByUser  </li>
+<li>modifiedByUser  </li>
+<li>deletedByUser</li>
+</ul>
+<p>Here are the options we’ve considered</p>
+<h2>Datastore callbacks/Lifecycle callbacks</h2>
+<p><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; float: right; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="Audit" border="0" alt="Audit" align="right" src="/assets/Audit.png" width="240" height="159" />AppEngine supports <a href="https://developers.google.com/appengine/docs/java/datastore/callbacks">datastore callbacks</a> natively. If you use Objectify, they have <a href="http://code.google.com/p/objectify-appengine/wiki/IntroductionToObjectify#Lifecycle_Callbacks">lifecycle callbacks</a> for @PrePersist and @PostLoad. The former works fantastic for dateCreated, dateModified, and dateDeleted. Objectify can handle all three easily as well provided you use soft deletes, which we do. (And they <a href="http://weblogs.asp.net/fbouma/archive/2009/02/19/soft-deletes-are-bad-m-kay.aspx">aren’t as bad</a> as <a href="http://ayende.com/blog/4157/avoid-soft-deletes">people would have you believe</a>, especially in AppEngine. You’d be surprised how many user experience problems you discover strolling through deleted data.)</p>
+<p>Both of these led to problems for us when we tried to use them for the createdByUser et al methods. We store the current user in the session and access it through a UserRetrievalService (which, at its core, just retrieves the current HttpSession via a Guice provider).</p>
+<p>If we want to use this with the Objectify lifecycle callbacks, we would need to inject either our UserRetrievalService or a Provider&lt;HttpSession&gt; into our domain entities. This isn’t something I’m keen on doing so we didn’t pursue this too rigorously.</p>
+<p>The datastore callbacks have an advantage in that they can be stored completely separately from the entities and the repositories. But we ran into two issues.</p>
+<p>First, we couldn’t inject anything into them, either via constructor injection or static injection. It looks like there’s something funky about how they hook into the process that I don’t understand and my guess is that they are instantiated explicitly somewhere along the line. Regardless, it meant we couldn’t inject our UserRetrievalService or a Provider&lt;HttpSession&gt; into the class.</p>
+<p>The next issue was automating the build. When I try to compile the project with a callback in it, the javac task complained about a missing datastorecallbacks.xml file. This file gets created when you build the project in Eclipse but something about how I was doing it via ant obviously wasn’t right. This also leads me to believe there’s something going on behind the scenes.<img style="margin: 5px; display: inline; float: left" align="left" src="/assets/auditing_it_is_tshirt-p235602047235350805z8npz_400.jpg" width="400" height="400" /></p>
+<p>Neither of these problems is unsurmountable, I don’t think. There is obviously some way of accessing the current HttpSession somehow because Guice is doing it. And clearly you can compile the application when there’s a callback because Eclipse does it. All the same, both issues remaining unsolved by us, which is a shame because I kind of like this option.</p>
+<h2>Pass the User to Repository</h2>
+<p>This is what was suggested in the <a href="http://stackoverflow.com/questions/9952538/audit-fields-for-appengine-entities">StackOverflow question</a> I posed on the topic. We have repositories for most of our entities so instead of calling put( appointment ), we’d call put( appointment, userWhoPerformedTheAction ).</p>
+<p>&nbsp;</p>
+<p>I don’t know that I like this solution (as indicated in my comments). To me, passing the current user into the DAO/Repository layer isn’t something the caller should have to worry about. But that’s because in my .NET/NHibernate/SQL Server experience, you can set things up so you don’t have to. Maybe it’s common practice in AppEngine because it’s still relatively new.</p>
+<p>(Side note: This question illustrates a number of reasons why I don’t like asking questions on StackOverflow. I usually put a lot of effort into phrasing the question and people often still end up misunderstanding the goal I’m trying to achieve. Which is my fault more than theirs but still means I tend to shy away from SO as a result.)</p>
+<h2>Add a User property to each Entity</h2>
+<p>I can’t remember where I saw this suggestion. It’s kind of the opposite of the previous one. Each entity would have a User property (marked as @Transient) and when the object is loaded, this is set to the current user. Then in your repositories, it’s trivial to set the user who modified or deleted. This has the same issue I brought up with the last one in that the caller is responsible for setting the User object.</p>
+<p>Also, when new objects are created, we’d need to set the property there as well. If you’re doing this on the client, you may have some issues there since you won’t have access to the HttpSession until you send it off to the server.</p>
+<h2>Do it yourself</h2>
+<p>This is our current implementation. In our repositories, we have a prePersist method that is called before the actual “save this to the datastore” method. Each individual repository can override this as necessary. The UserRetrievalService is injected in and we can use it to set the relevant audit fields before saving to the repository.</p>
+<p>This works just fine for us and we’ve extended it to perform other domain-specific prePersist actions for certain entities. I’m not entirely happy with it though. Our repositories tend not to favour composition over inheritance and as such, it is easy to forget to make a call to super.prePersist somewhere along the way. Plus there’s the nagging feeling that it should be cleaner and more testable than this.</p>
+<p>Related to this is the underlying problem we’re trying to solve: retrieve the user from the session. In AppEngine, the session is really just the datastore (and memcache) with a fancy HttpSession wrapper around it. So when you get the current user from the session, you’re really just getting it from the datastore anyway using a session ID that is passed back and forth from the client. So if we *really* wanted to roll our own here, we’d implement our own session management which would be more easily accessible from our repositories.</p>
+<p>So if you’re an AppEngine user, now’s where you speak up and describe if you went with one of these options or something else. Because this is one of the few areas of our app that fall under the category of “It works but…” And I don’t think it should be.</p>
+<p>Kyle the Pre-persistent</p>

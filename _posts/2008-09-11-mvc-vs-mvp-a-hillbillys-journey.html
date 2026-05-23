@@ -1,0 +1,57 @@
+---
+layout: post
+title: 'MVC vs. MVP: A Hillbilly''s Journey'
+date: 2008-09-11 02:17:15.000000000 -04:00
+categories: []
+tags:
+- ASP.NET MVC
+- User Interface
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '363346536'
+  pvc_views: '1300'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Yes, I know you've read this before so stop rolling your eyes and skip it if you're not interested. I'm not coming at this from the perspective of an expert imparting knowledge but as a hillbilly who has ignored the question too long. And now that I have to dive into it for the <a href="http://manning.com/baley" target="_blank">book</a>, all the vagueness that I've been able to shunt aside to a little corner of my brain has surfaced like a long-lost brother beggin' for college money.</p>
+<p>So since I work from home without a lot of peers, my options are to talk it out here or to my daughter, who cries when her favorite singer is kicked off American Idol.</p>
+<p>Pre-requisite reading:</p>
+<p><a href="http://martinfowler.com/eaaDev/uiArchs.html" target="_blank">Martin Fowler on GUI Architectures</a>     <br /><a href="http://www.martinfowler.com/eaaDev/PassiveScreen.html" target="_blank">Martin Fowler on Passive View</a>     <br /><a href="http://www.martinfowler.com/eaaDev/SupervisingPresenter.html" target="_blank">Martin Fowler on Supverising Controller</a>     <br /><a href="http://www.martinfowler.com/eaaDev/PresentationModel.html" target="_blank">Martin Fowler on Presentation Model</a>     <br /><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/10/31/development-trivial-pursuit-the-difference-between-mvc-and-the-different-flavors-of-mvp.aspx" target="_blank">Jeremy Miller on the difference 'twixt MVC and MVP</a></p>
+<p>I've looked through a number of other links but these are the ones I feel provide sufficient background and are suitably authoritative. Plus, I don't want to rehash the definitions of each pattern.</p>
+<p>So as I was waxing eloquent on Passive View and Supervising Controller, the thought crossed my mind, &quot;I'm not seeing a lot of difference 'twixt these and my understanding of MVC. They have the same components and the diagrams look similar enough...&quot;</p>
+<p>Martin Fowler's contrast between the two didn't help much:</p>
+<blockquote><p>MVP uses a Supervising Controller to manipulate the model. Widgets hand off user gestures to the <a href="http://martinfowler.com/eaaDev/SupervisingPresenter.html">Supervising Controller</a>. Widgets aren't separated into views and controllers. You can think of presenters as being like controllers but without the initial handling of the user gesture. However it's also important to note that presenters are typically at the form level, rather than the widget level - this is perhaps an even bigger difference.</p>
+</blockquote>
+<p>The problem stemmed from the way I'd explained the difference in my recent presentations on MVC. Specifically, I said that in MVP, the entry point was the View (aka. the aspx page) while in MVC, it is the Controller. While this is technically accurate, I now think it's a consequence of the *real* difference.</p>
+<p>Another thing blocking my understanding was that I spent too much time reading the theory and not enough time just reviewing my own code. I've implemented Supervising Controller in a web app before and my tag cloud seems to think I've done some work in MVC recently.</p>
+<p>If I had done that, it would have been quite a bit clearer. In the MVP patterns, there is a lot of synchronization and infrastructure code that is absent from MVC. The presenter and the view communicate back and forth a lot.</p>
+<p>For example, consider a button click in an MVP web page. Being a nice, decoupled view, it would probably look like this:</p>
+<pre class="c-sharp" name="code">protected void buttonFerment_Click( object sender, EventArgs e )
+{
+    _presenter.Ferment( );
+}</pre>
+<p>That is, the view passes the request on to the specific presenter its wired up to. And the presenter in turn would do whatever it needs to, then go back to the view and ask it to update its UI.</p>
+<p>Now let's see what the button click event would look like in an MVC page...</p>
+<p>...except that you wouldn't actually see a click event in an MVC page. In fact, thinking back to the MVC projects I'm working on, the views don't even have code-behind files.</p>
+<p>MVC seems to favour a purer separation of the View and Controller. From Jeremy's post above:</p>
+<blockquote>
+<p>[In MVC, there] is typically little or no direct communication between the View and Controller.</p>
+</blockquote>
+<p>Which is definitely not the case with the flavours of MVP. This also jibes with <a href="http://www.lostechies.com/blogs/chad_myers/" target="_blank">Chad Myers'</a> explanation on <a href="http://twitter.com/chadmyers/statuses/917124075" target="_blank">Twitter</a>. </p>
+<p>It sounds like the MVP patterns are better suited for stateful environments (or stateless environments that someone has gone to great efforts to make appear stateful). MVC is shinier for stateless environments because the controller can collect up the model, dump it to the view, then call it a day. The view doesn't so much launch events as it does tell a front controller that it wants to do something. The front controller re-routes the request to whatever controller is supposed to do the actual work. (Thanks to <a href="http://www.opgenorth.net/" target="_blank">Tom Opgenorth</a> for helping me sort out that bit.)</p>
+<p>Going back to my stock explanation of the differences, I said that the view was the entry point for the MVP patterns and the controller was for MVC. As I mentioned, this is accurate but it's a consequence of MVC having the front controller. Events in MVP are handled by the same page that launched them. In MVC, they are handled &quot;globally&quot; by the routing engine (aka. the front controller).</p>
+<p>Finally, <a href="http://weblogs.asp.net/bsimser/" target="_blank">Bil Simser</a> <a href="http://twitter.com/bsimser/statuses/917103942" target="_blank">summed it up</a> best when he said</p>
+<blockquote>
+<p>Mvc lets me focus on the business problem and not how to update a view</p>
+</blockquote>
+<p>So my ultimate understanding of the difference is that it is based on how intimate the View and Presenter/Controller are. In MVP, they are cosy and familiar, like cousins. In MVC, they are cold and distant, like lawyers.</p>
+<p>Thank ye all for your kind attention while I worked this out in my head. If it has been helpful to anyone else, that's not my fault.</p>
+<p>Kyle the Controlled Presenter</p>

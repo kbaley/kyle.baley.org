@@ -1,0 +1,39 @@
+---
+layout: post
+title: NHibernate and ASP.NET MVC
+date: 2008-01-17 00:07:00.000000000 -05:00
+categories: []
+tags:
+- ASP.NET MVC
+- NHibernate
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1740'
+  dsq_thread_id: '350870548'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Am playing with ASP.NET MVC these days in preparation for a couple o' presentations on it. Jeffrey Palermo's <a href="http://codebetter.com/blogs/jeffrey.palermo/archive/2008/01/05/codecampserver-oss-project-call-for-participation.aspx" target="_blank" mce_href="http://codebetter.com/blogs/jeffrey.palermo/archive/2008/01/05/codecampserver-oss-project-call-for-participation.aspx">CodeCampServer sample app</a> has proven invaluable in this regard even if I have become overly cognizant that I'm ripping off his ideas.</p>
+<p>In my own version, I'm also referencing NHibernate in my data access layer and whenever I do that, I always forget which assemblies it requires to tag along with it. In my sample, I brought over NHibernate.dll, Iesi.Collections.dll, and log4net.dll into my <em>lib</em> folder and added the reference to NHibernate.dll from the project. Wired up all my repositories, hooked in the IoC container (in this case, Windsor) and loaded the page:</p>
+<hr />
+<span></p>
+<h3><i>Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.</i> </h3>
+<p></span><font face="Arial, Helvetica, Geneva, SunSans-Regular, sans-serif "><b>Description: </b>An unhandled exception occurred during the execution of the current web request. Please review the stack trace for more information about the error and where it originated in the code. </p>
+<p><b>Exception Details: </b>System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.</font> </p>
+<hr />
+<p>Not overly helpful and although my lead-up to this has made it painfully obvious, let me tell you when you've also added the IoC container and three other layers 'twixt the UI and the DataAccess layer, 'tweren't altogether clear just what was causing this problem.</p>
+<p>In fact, even when I reverted all the code in the control back to use the simplest possible controller action, I still got this error. The reason being: I still had the reference to the DataAccess project as well as the references to its classes in the Windsor container. Which means it was still trying to load NHibernate.</p>
+<p>And NHibernate (or at least the version of it I have) requires, along with the other assemblies mentioned above, a reference to Castle.DynamicProxy.dll. So I dropped the assembly into the <em>lib</em> folder and it came along for the ride the next time I compiled. Problem solved. Reminder stored.</p>
+<p>Kyle the Proxied</p>
+<p><strong>*UPDATE* </strong>I'm resurrecting this bad boy at the request of one of my more&nbsp;moderate commenters below to reward him for his tact.</p>
+<p>Those of you looking for some resources on using NHibernate with MVC, the best I can think of at the moment would be to review the S#arp Architecture source code and sample application. <a href="http://code.google.com/p/sharp-architecture/">http://code.google.com/p/sharp-architecture/</a></p>
+<p>Even if you can't use the architecture itself, it is a great learning tool for how to work with NHibernate within MVC. While it uses Fluent NHibernate, there are notes on using it with plain NHibernate as well.</p>
+<p>You could also check out Code Camp Server (<a href="http://code.google.com/p/codecampserver/">http://code.google.com/p/codecampserver/</a>) though I haven't looked at it in a while. Also, check out the Summer of NHibernate series: <a href="http://www.summerofnhibernate.com/">http://www.summerofnhibernate.com/</a>. Session 13 is the one on using it in web applications but I'm told it's all gold.</p>

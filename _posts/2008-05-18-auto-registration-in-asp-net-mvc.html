@@ -1,0 +1,143 @@
+---
+layout: post
+title: Auto-registration in ASP.NET MVC
+date: 2008-05-18 16:42:49.000000000 -04:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '191321066'
+  pvc_views: '891'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Coming off a week at <a href="http://www.devteach.com">DevTeach</a>. <a href="http://www.ayende.com/Blog/archive/2008/05/16/DevTeach-SummaryAgain.aspx">Others</a> <a href="http://codebetter.com/blogs/gregyoung/archive/2008/05/15/devteach-after-thoughts.aspx">have</a>&#160;<a href="http://msmvps.com/blogs/peterritchie/archive/2008/05/16/devteach-toronto-2008.aspx">commented</a> on how great it is so I'll just use my own observation as a lead-in for the real meat. DevTeach gives me a renewed interest in learning. After seeing presentations on topics I've kinda sorta grokked/solubled, it's nice to gain further insight into them. So I come away with a laundry list of patterns, techniques, tools, and frameworks to look into.</p>
+<p>And one of those techniques is auto-registration of components in an IoC container. Ayende has talked about this quite a bit with <a href="http://www.ayende.com/Blog/archive/7268.aspx">Binsor</a> and I did get to see it in action. But recently, there have been enhancements to Windsor itself to allow for this in a relatively clean(er) way. Hammett has an example <a href="http://hammett.castleproject.org/?cat=11">here</a> as does <a href="http://www.kenegozi.com/Blog/2008/03/01/windsor-mass-component-registration.aspx">Ken Egozi</a> (who took it directly from the Castle dev list). Note that the syntax is slightly different 'twixt the two (AllTypes&lt;T&gt;.Of vs. AllTypesOf&lt;T&gt;). I just got the latest from the trunk and it appears to be the former syntax at the moment.</p>
+<p>A concrete example. Here is the former code in my ASP.NET MVC application (modified, as usual, from the CodeCampServer sample app):</p>
+<pre class="c-sharp" name="code">foreach ( var type in Assembly.GetExecutingAssembly( ).GetTypes( ) )
+{
+    if ( typeof (IController).IsAssignableFrom( type ) )
+    {
+        _container.AddComponentWithLifestyle( type.Name.ToLower( ), type, LifestyleType.Transient );
+    }
+}</pre>
+<p>And here is the new version:</p>
+<pre class="c-sharp" name="code">_container.Register(
+    AllTypes.Of<icontroller>( )
+        .FromAssembly( Assembly.GetExecutingAssembly( ) )
+        .Configure( c =&gt; c.LifeStyle.Transient.Named( c.Implementation.Name.ToLower( ) ) )
+    );</icontroller></pre>
+<p>Note the call to Configure. In most cases, this won't be necessary. But with MvcContrib, it seems to retrieve controllers from the container based on the controller name in lower case. So we need to register them with that same name.</p>
+<p>Also note that this is based on a version of Windsor from the trunk (I think). Which is why I didn't update the CodeCampServer project myself (though there are already comments in there to do exactly that).</p>
+<p>Here's another comparison. In this case, it's a more &quot;traditional&quot; registration in that we loop through all the classes in an assembly and register it with the container based on its first interface. The before</p>
+<pre class="c-sharp" name="code">var presentationTypes = Assembly.Load( &quot;Trilogy.Gunton.Presentation.Services&quot; )
+    .GetTypes( )
+    .Where(
+        t =&gt; t.IsClass == true
+        &amp;&amp; t.IsAbstract == false 
+        &amp;&amp; t.GetInterfaces( ).Length &gt; 0
+    );</pre>
+<pre class="c-sharp" name="code">foreach ( var type in presentationTypes )
+{
+    _container.AddComponentLifeStyle( type.Name.ToLower( ), type.GetInterfaces( )[0], type, LifestyleType.Transient );
+}</pre>
+<p>And after:</p>
+<pre class="c-sharp" name="code">_container.Register(
+    AllTypes.Pick( )
+        .FromAssemblyNamed( &quot;Trilogy.Gunton.Presentation.Services&quot; )
+        .WithService.FirstInterface( )
+        );</pre>
+<div style="border-right: black 1px solid; padding-right: 0.5em; border-top: black 1px solid; padding-left: 0.5em; font-size: 9pt; float: right; padding-bottom: 0.5em; margin: 0.5em; border-left: black 1px solid; width: 200px; padding-top: 0.5em; border-bottom: black 1px solid; background-color: #cccccc">Side note on the use of var in this code. How many of you looked at it and cared that Where( ) returns an IEnumerable of Type as opposed to an array of Type?</div>
+<p>I do have classes in this assembly that are concrete but it appears the FirstInterface call will ignore them. Not so much when I do it more manually.</p>
+<p>The last example is more interesting. In this case, I have a bunch of repositories, each of which derive from a RepositoryBase<t> class, which implements IRepository<t>. But the classes also implement their own interfaces.</t></t></p>
+<p>For example, <font face="Courier New">JobRepository</font> would derive from <font face="Courier New">RepositoryBase&lt;Job&gt;</font> as well as implement <font face="Courier New">IJobRepository</font>. <font face="Courier New">RepositoryBase&lt;T&gt;</font> implements <font face="Courier New">IRepository&lt;T&gt;</font> while <font face="Courier New">IJobRepository</font> implements <font face="Courier New">IRepository&lt;Job&gt;</font>. A lot of the time, the specific interfaces (like <font face="Courier New">IJobRepository</font>, <font face="Courier New">IOfficeRepository</font>, etc.) will be empty but I've been burned before so I usually create them so I can add functionality later if I need it. Plus it makes things clearer when I'm passing them around.</p>
+<p>For the purpose of container registration, this presents a slight problem because the repositories now implement two interfaces. For example, <font face="Courier New">IJobRepository</font> implements both <font face="Courier New">IJobRepository</font> and <font face="Courier New">IRepository&lt;Job&gt;</font>. But I want it registered against <font face="Courier New">IJobRepository</font> in the container.</p>
+<p>Here's the previous code I had to do this, which I will admit could use some tuning:</p>
+<pre class="c-sharp" name="code">var repositoryTypes = Assembly.Load( &quot;Trilogy.Gunton.DataAccess&quot; )
+    .GetTypes( )
+    .Where( t =&gt; t.IsClass &amp;&amp; t.GetInterfaces( ).Length &gt; 0 );
+foreach ( var type in repositoryTypes )
+{
+    var types = type.GetInterfaces( ).Where(
+            t =&gt; t.IsGenericType == false 
+            &amp;&amp; t.Namespace.StartsWith( &quot;Trilogy.Gunton&quot; ) );
+    if ( types.Count( ) &gt; 0 )
+    {
+        _container.AddComponentLifeStyle( type.Name.ToLower( ), types.ElementAt( 0 ), type, LifestyleType.Transient );
+    }
+}</pre>
+<p>The corresponding code isn't quite as terse:</p>
+<pre class="c-sharp" name="code">_container.Register(
+    AllTypes.Pick( )
+        .FromAssemblyNamed( &quot;Trilogy.Gunton.DataAccess&quot; )
+        .WithService.Select(
+        delegate( Type type )
+            {
+                var interfaces = type.GetInterfaces( )
+                    .Where(
+                    t =&gt; t.IsGenericType == false &amp;&amp; t.Namespace.StartsWith( &quot;Trilogy.Gunton&quot; )
+                    );
+                if ( interfaces.Count( ) &gt; 0 )
+                {
+                    return interfaces.ElementAt( 0 );
+                }
+                return null;
+            }
+        )
+    );</pre>
+<p>But we can extract the delegate into an extension method that we can use similar to the FirstInterface method: </p>
+<pre class="c-sharp" name="code">public static class CastleExtensions
+{
+    public static TypesDescriptor FirstNonGenericTrilogyInterface( this ServiceDescriptor descriptor )
+    {
+        return descriptor.Select(
+                delegate( Type type )
+                {
+                    var interfaces = type.GetInterfaces( )
+                        .Where(
+                        t =&gt; t.IsGenericType == false &amp;&amp; t.Namespace.StartsWith( &quot;Trilogy.Gunton&quot; )
+                        );
+                    if ( interfaces.Count() &gt; 0 )
+                    {
+                        return interfaces.ElementAt( 0 );
+                    }
+                    return null;
+                }
+            );
+    }
+}</pre>
+<p>And now our new code to register repositories is:</p>
+<pre class="c-sharp" name="code">_container.Register(
+    AllTypes.Pick( )
+        .FromAssemblyNamed( &quot;Trilogy.Gunton.DataAccess&quot; )
+        .WithService.FirstNonGenericTrilogyInterface( )
+    );</pre>
+<p>The condition to check that the namespace is mine is because I have a UnitOfWork class in there that implements IDisposable as well as IUnitOfWork. So I want that one in the container only for the IUnitOfWork interface.</p>
+<p>Putting it all together, here is the complete code to register my repositories, services, and controllers in the Windsor container:</p>
+<pre class="c-sharp" name="code">_container.Register(
+    AllTypes.Pick( )
+        .FromAssemblyNamed( &quot;Trilogy.Gunton.DataAccess&quot; )
+        .WithService.FirstNonGenericTrilogyInterface( )
+);
+
+_container.Register(
+    AllTypes.Pick( )
+        .FromAssemblyNamed( &quot;Trilogy.Gunton.Presentation.Services&quot; )
+        .WithService.FirstInterface( )
+);
+
+_container.Register(
+    AllTypes.Of<icontroller>( )
+        .FromAssembly( Assembly.GetExecutingAssembly( ) )
+        .Configure( c =&gt; c.LifeStyle.Transient.Named( c.Implementation.Name.ToLower( ) ) )
+);</icontroller></pre>
+<p>Phew, so much for being billable today...</p>
+<p>Kyle the Registered</p>

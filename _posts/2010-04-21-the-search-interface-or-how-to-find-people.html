@@ -1,0 +1,39 @@
+---
+layout: post
+title: The search interface, or “How to find people”
+date: 2010-04-21 01:21:20.000000000 -04:00
+categories: []
+tags:
+- User Interface
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '206614640'
+  pvc_views: '1005'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>This is kind of a “here’s our thought process” type thing on a specific user experience issue we’re having. It’s inspired partially by <a href="http://www.lostechies.com/blogs/joeydotnet/">Joey Beninghove’s</a> recent <a href="http://starting.30cubits.com/">foray into entrepreneurship</a>, something I’ll be following with interest as my friend and I tackle some of the same issues.</p>
+<p>The discussion we had today was on searching, which has always been kind of a side interest of mine. We’re working on a search screen for clients. <a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/Searchingforclients_AF37/ClientsSearchResults_4.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; margin-left: 0px; border-left-width: 0px; margin-right: 0px" title="ClientsSearchResults" border="0" alt="ClientsSearchResults" align="right" src="/assets/ClientsSearchResults_thumb_1.png" width="244" height="170" /></a>The basic requirement is: user enters text and the screen finds clients. We’ll search for the text in the first name, last name, or email address.</p>
+<p>I’m a fan of the single textbox and single button approach to searching, like the one used in iTunes and Windows Media Player. I can’t imagine having to navigate a complicated search form to search my music library. If I search for “blue”, I like getting “Blue Suede Shoes”, songs by “Blue Rodeo”, the album “Blues Clues Sings the Blues”, songs in the “bluegrass” genre, and anything tagged “songs that Ol’ Blue likes when we’re huntin’” all in one go. So we’re going to use the same approach to all our search screens whenever we can.</p>
+<p>Since this is a client search screen, and not a general “find this text in this document”, it has some interesting considerations. Firstly, the traditional version of word forms doesn’t apply. For example, searching for “Bob” doesn’t mean I want results that contain “bobs” or “bobbing”. But I might want to get someone named Robert or Bobby. And while it should certainly return <a href="http://www.imdb.com/title/tt0103850/">Bob Roberts</a>, what about Jodi Roberts?</p>
+<p>Another issue is misspelled names. As in, how do you know when a name is misspelled? It would be nice if the user entered “Peterson” and it was smart enough to recognize that maybe they meant “Petersen”. Similarly, it would nice if searches for DeWinter brought back Alex De Winter. Come to think about it, how *do* we handle searches for multiple words? Split them up and search individually, collecting the results seems the obvious choice.</p>
+<p>Related to this is the idea of partial searches. I asked a question on Twitter: Should a client search screen handle partial searches? General consensus is that yes, you should. Problem is that I asked a bunch of developers who are used to Google. The main argument is long, complicated names. If you don’t allow partial matches, woe betide Mr. Nahasapeemapetilon if he decides to call in for an appointment.</p>
+<p>But I want to capture the intent of The Average User™. For example, if I search for Peters, would I expect to see all the Petersons and Petersens in the results? Or would that be noise? Why would I type out “Peters” if I wanted “Petersons”?</p>
+<p>To take another example, what if I search for “Ng”. Do I *really* want to see all the Fingoods and Mannings and Hutchingsons and Worthingtons in my search results? Perhaps not, but maybe I’m trying to find Kate Ngwanangwa.</p>
+<p>First names are kind of an odd field to search for in any case. It’s rare someone would search by first name alone but it would make a good qualifier for a common last name. For example, it would be easier to get a hit on Katharga Smith if you add the first name to your search. So then the question becomes, if someone searches just for Peter, does it include all customers named Peter? What is the intent of such a search? To find <a href="http://www.imdb.com/name/nm0676973/">William Petersen</a>? Or <a href="http://msmvps.com/Blogs/PeterRitchie/">Peter Ritchie</a>?</p>
+<p>All of this can be summed up as: it’s hard out here for a hillbilly.</p>
+<p>Partial searches were a particularly in-depth discussion during our back-of-the-sleeve analysis. My position was to use an exact search and include a link at the bottom “didn’t find what you were looking for? Click here for more results.” This is kind of the IMDb approach where it shows exact matches followed by partial matches. In our case, we wouldn’t show partial matches right away because the IMDb search page makes me feel unhappy to look at.</p>
+<p>My friend’s position is that eighty percent of the time, people will search by phone number. Of the remaining twenty percent, about 95% of it will be an exact search. E.g. “John Wilkins” or even just “Wilkins”. If the user has trouble finding someone, there’s always the letter list along the side. For the majority case, he feels the traditional approach of showing partial searches, even if they aren’t highlighted, is a user experience fail and just adds unwanted noise. Given the slogan at the top of my blog, he makes a compelling argument.</p>
+<p>Of course, this isn’t a new problem so we turned to an authoritative source to see how they implemented it, in this case, GMail. Alas, results were mixed. If I search Contacts for John, I get all the Johns and all the Johnsons. But if I search my email for “from:John”, I get all emails from John, my childhood friend, but none from G. Johnson, my plumber. Oddly, the Google suggest that pops up as I’m typing the search criteria *does* show the plumber.</p>
+<p>There’s also a technical angle to this in that Big Table doesn’t support LIKE clauses so it would be non-trivial to implement partial matches. Not that that should dictate features but it does mean that we should think long and hard about whether it is actually required.</p>
+<p>In the end, the goal is to capture the user’s intent, at least most of the time. To that end, we’re going with an exact match for now. If you search for William, you’ll get William F. Buckley but not Roberta Williams. Similarly, looking for John Wilkins will get customers with that name, but John Wilkinson will remain anonymous in that case.</p>
+<p>We feel that this, along with a phone number search (which will likely be far more common), will cover 95% of our needs. This gets us to product delivery faster and for the remaining 5%, the letter list should suffice. So we’re taking a <a href="http://gettingreal.37signals.com/">Getting Real</a> approach and waiting until we hear from real live users before putting any further effort in. And as my friend noted, it’s a lot nicer to add a feature in than it is to take it away after people are using it.</p>
+<p>Kyle the Unfounded</p>

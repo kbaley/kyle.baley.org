@@ -1,0 +1,28 @@
+---
+layout: post
+title: MbUnit Filters, or "How to be implicitly explicit"
+date: 2007-09-05 21:14:44.000000000 -04:00
+categories: []
+tags:
+- BDD/TDD
+- Development
+- Tools
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1736'
+  dsq_thread_id: '368437828'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Quick nugget o' information today 'cause I'm still on the clock.</p>
+<p><a href="http://www.mertner.com/confluence/display/MbUnit/Home">MbUnit</a> has a couple of command line parameters I've been using lately: filter-namespace and filter-type. Both can be useful when you have several hundred tests and don't want to run all of them when you're working on one area of the app.</p>
+<p>The informational nugget: when you use either of these parameters, it will include tests marked with the Explicit attribute in your test run. Assuming, of course, those explicit tests are included in the filter.</p>
+<p>Kyle the Filtered</p>

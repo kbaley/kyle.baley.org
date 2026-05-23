@@ -1,0 +1,33 @@
+---
+layout: post
+title: ASP.NET MVC and the GAAAK!
+date: 2008-12-12 20:00:19.000000000 -05:00
+categories: []
+tags:
+- ASP.NET MVC
+- S#arp Architecture
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '379274710'
+  pvc_views: '1518'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Yes, I know how it's spelled. But &quot;GAC&quot; doesn't fully demonstrate the wretching feeling I typically get when I'm dealing with it. So I'm trying my hand on some onomatopoeia.</p>
+<p>I was recording a <a href="http://www.dimecasts.net" target="_blank">Dimecast</a> this morning on <a href="http://code.google.com/p/sharp-architecture" target="_blank">S#arp Architecture</a> because it's an awesome piece of work. But one of the things it (currently) does with the VS template is create an MVC project. That is, a project explicitly linked to the MVC template. And if you don't have that template installed, you get at least one error.</p>
+<p>So I went about installing the MSI because I was also feeling some pain not having the various MVC item templates anyway. Tried the S@arp template again and all was well for the three hours it took me to record that ten minute webcast.</p>
+<p>Then I switched over to the MVC project I'm working on. It uses an older version of MVC, around preview five-ish. Load up the site and an error appears indicating something like &quot;Html.UrlAction doesn't take 5 parameters&quot; or &quot;Exception: Maybe you ought to take up another line of work&quot; or something. Clearly it is using the assemblies from the GAC rather than the bin directory like I told it.</p>
+<p>The best option running through my head is to uninstall the assemblies from the GAC. I get to keep my templates but don't have to deal with versioning issues. Unfortunately, <a href="http://haacked.com/archive/2008/11/03/bin-deploy-aspnetmvc.aspx" target="_blank">as Phil notes</a>, you can't uninstall an assembly from the GAC if it was installed via MSI. <a href="http://devlicio.us/blogs/derik_whittaker/" target="_blank">Derik Whittaker</a> says I could probably fix it by removing the MVC stuff from the web.config and re-adding it. Too hacky, says I.</p>
+<p>My solution: whine to someone who can possibly solve my problem. In this case, the accommodating <a href="http://devlicio.us/blogs/billy_mccafferty/default.aspx" target="_blank">Billy McCafferty</a> who assures me that S%arp will no longer have a hard dependency on the MVC templates in the near future. Which means I can uninstall MVC and go back to working with my various projects using different versions of the assemblies.</p>
+<p>It's temporary though. At the moment, I can't open up the project I created with S~arp anymore. It gives an error: The project type is not supported by this application. (By the way, the solution to this is to open the .csproj file in a text editor and remove {603c0e0b-db56-11dc-be95-000d561079b0}; from the list of ProjectTypeGUIDs at the top.) In any case, S&amp;arp isn't the only project I've dealt with that is explicitly linked to the MVC templates. </p>
+<p>I imagine in order to even get the templates to work, the assemblies it uses need to be somewhere relatively global. Whatever, all I know as a user is: I don't want them in my GAC but I still want the project and item templates to work.</p>
+<p>Final note: S*arp makes use of <a href="http://www.codeplex.com/t4toolbox" target="_blank">T4Toolbox</a> to do some scaffolding. This project doesn't appear to play well with VisualSVN if you happen to have it installed. The problem I believe is with T4Toolbox but don't quote me. I had to uninstall VisualSVN to get the scaffolding to work. Seems related to <a href="http://groups.google.com/group/visualsvn/browse_thread/thread/ada83dc3f54e40e8" target="_blank">similar issues</a> with ActiveWriter.</p>
+<p>Kyle the Versioned</p>

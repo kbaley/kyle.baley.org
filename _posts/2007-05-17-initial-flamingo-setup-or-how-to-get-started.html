@@ -1,0 +1,57 @@
+---
+layout: post
+title: Initial Flamingo Setup, or "How to Get Started"
+date: 2007-05-17 21:58:16.000000000 -04:00
+categories:
+- Flamingo
+tags:
+- Professional Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '877'
+  dsq_thread_id: '389478082'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Here's the Subversion info for the <a href="http://kyle.baley.org/OnlineProfessionalDevelopmentOrQuotHowToBringAFlamingoBackToLifequot.aspx">online music app</a> I keep referring to sporadically as Flamingo: svn://208.109.223.228/Suvius.Flamingo.</p>
+<p>A couple of notes on the project structure:</p>
+<ul>
+<li>The initial solution was created by <a href="http://www.codeplex.com/TreeSurgeon" target="_blank">TreeSurgeon</a>, whose cause was recently taken up by Bil Simser</li>
+<li>The build file was subsequently modified to account for the fact that TreeSurgeon's NAnt file doesn't work for .NET 2.0 solutions. It was borrowed heavily from various demos by <a href="http://www.jpboodhoo.com/blog" target="_blank">JP</a>. I've removed the deploy dependency from the "all" target because there is nothing to deploy yet. Have also add an &lt;nunit2report&gt; task because for the most part, Hillbillies don't like to read XML natively.</li>
+<li>I'm using <a href="http://www.ayende.com/projects/rhino-mocks.aspx" target="_blank">Rhino Mocks 3.1</a> which is where the funky new <a href="http://www.jameskovacs.com/blog/RhinoMocks305ReleasedWithExplicitRecordPlayback.aspx" target="_blank">mockery.Record( )</a> functionality comes in.</li>
+</ul>
+<p>So download the code and follow along with my professional development and we can explore the various definitions of the word "mock". Keep in mind that this series of posts differs from other demos in that it isn't a demo. It's a record of my learning shiny new things. By no means am I suggesting what I'm doing is a de facto standard or even a smart way of doing things. Quite the contrary, I encourage you to call me out if something doesn't look right.</p>
+<p>The astute reader will probably guess that I have just finished reading Jimmy Nilsson's <a href="http://www.amazon.com/Applying-Domain-Driven-Design-Patterns-Examples/dp/0321268202/ref=pd_bbs_sr_1/002-2575654-3486442?ie=UTF8&amp;s=books&amp;qid=1179436186&amp;sr=1-1" target="_blank">Applied Domain Driven Design and Patterns</a>. Well, you'd be wrong. I'm still a couple of chapters from the end.</p>
+<p>With that, let's get started. The solution contains two projects: Domain.Test and Domain. Like all the hot shot TDDers I'm trying to emulate, I started with a test:</p>
+<pre class="code"><span style="background: rgb(255,255,255)">[ <span style="color: rgb(128,0,0)">Test</span> ]
+<span style="color: rgb(0,0,128)">public</span> <span style="color: rgb(0,0,128)">void</span> <span style="color: rgb(128,0,0)">ShouldBeAbleToRetrieveSongsByAnArtist</span>( )
+{
+    <span style="color: rgb(0,0,128)">string</span> <span style="color: rgb(128,0,0)">artist</span> = </span><span style="background: rgb(192,192,192)">"Frank Crummitt"</span><span style="background: rgb(255,255,255)">;
+    <span style="color: rgb(0,0,128)">int</span> <span style="color: rgb(128,0,0)">numberOfCrummittSongs</span> = <span style="color: rgb(128,0,0)">songRepository</span>.<span style="color: rgb(128,0,0)">GetSongsByArtist</span>( <span style="color: rgb(128,0,0)">artist</span> ).<span style="color: rgb(128,0,0)">Count</span>;
+    <span style="color: rgb(128,128,0)">MockRepository</span> <span style="color: rgb(128,0,0)">mockery</span> = <span style="color: rgb(0,0,128)">new</span> <span style="color: rgb(128,128,0)">MockRepository</span>( );
+    <span style="color: rgb(0,0,128)">using</span> ( <span style="color: rgb(128,0,0)">mockery</span>.<span style="color: rgb(128,0,0)">Record</span>( ) )
+    {
+        <span style="color: rgb(128,128,0)">ISong</span> <span style="color: rgb(128,0,0)">fakeSong</span> = <span style="color: rgb(128,0,0)">mockery</span>.<span style="color: rgb(128,0,0)">DynamicMock</span>&lt;<span style="color: rgb(128,128,0)">ISong</span>&gt;( );
+        <span style="color: rgb(128,128,0)">SetupResult</span>.<span style="color: rgb(128,0,0)">For</span>( <span style="color: rgb(128,0,0)">fakeSong</span>.<span style="color: rgb(128,0,0)">Artist</span> ).<span style="color: rgb(128,0,0)">Return</span>( <span style="color: rgb(128,0,0)">artist</span> );
+        <span style="color: rgb(128,0,0)">songRepository</span>.<span style="color: rgb(128,0,0)">AddSong</span>( <span style="color: rgb(128,0,0)">fakeSong</span> );
+    }
+
+    <span style="color: rgb(128,128,0)">Assert</span>.<span style="color: rgb(128,0,0)">AreEqual</span>( <span style="color: rgb(128,0,0)">numberOfCrummittSongs</span> + 1, <br />        <span style="color: rgb(128,0,0)">songRepository</span>.<span style="color: rgb(128,0,0)">GetSongsByArtist</span>( <span style="color: rgb(128,0,0)">artist</span> ).<span style="color: rgb(128,0,0)">Count</span> );
+}
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>This led to the ISong interface and the SongRepository class, both of which are in the Domain project and neither of which I think belong there. ISong probably should go in a separate Domain.Interfaces project. SongRepository...well, I haven't decided yet.</p>
+<p>Pay no notice if the Song class. It shouldn't be there yet because there is no code testing it (which you can verify by executing the "coverage" target in the build file). I've added it because I keep forgetting the API for the UltraID3 library and I left some sample code in the Song's constructor as a reminder.</p>
+<p>Incidentally,&nbsp;in case it's not&nbsp;readily obvious, I'm starting with the requirement: Should be able to retrieve songs by an artist.</p>
+<p>Some comments on the process to date. Firstly, it's not as easy as it looks coming up with initial tests. It's odd that I've written a test about song objects&nbsp;and still don't need a Song class. Even as I look at the test I've written, I'm wondering if there shouldn't be another to test SongRepository.AddSong.</p>
+<p>Secondly, after reading what Nilsson had to go through to create fake objects in his book, I have an even greater appreciation of Rhino Mocks. Here's hoping Oren Eini doesn't get <a href="http://www.ayende.com/Blog/archive/2007/05/17/On-The-Health-Of-Open-Source-Projects.aspx" target="_blank">hit by a bus</a>.</p>
+<p>But overall, I'm happy with how things have started out. It took a bit to understand the build files I pilfered from JP enough to make my own changes to it but it's effort that translates directly to time saved on future projects.</p>
+<p>Kyle the Initialized</p>

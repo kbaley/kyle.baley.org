@@ -1,0 +1,36 @@
+---
+layout: post
+title: AJAX/Atlas, Atlas/AJAX
+date: 2006-10-04 18:16:22.000000000 -04:00
+categories:
+- Flamingo
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1140'
+  dsq_thread_id: '593281099'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Administrivia first: To those people searching for "hillbilly names" and stumbling across this site, my most humble apologies. Also, I've already abandoned my <a href="http://kyle.baley.org/INVITATIONTOPARADISEDOYOUWANTTOTAKEMEUPONTHEINVITATION.aspx">post-naming convention</a> for fear that they get banned from search engines. And I have a feeling my last post contributed to the trackback spam I'm now encountering...</p>
+<p>So I keep waffling back and forth on my preferred AJAX mechanism for <a href="http://www.suvius.com/musicplayer" target="_blank">Flamingo</a>. The two choices are: roll my own or use Atlas.</p>
+<p>There are some advantages to rolling my own. Less research into the technology. I've been AJAX-ing since the days of Microsoft.XMLDocument and I am pretty comfortable with it. I can page and sort fairly easily.</p>
+<p>Doing it this way also lends itself to adding the app to live.com or Google's personal portal page or wherever. It seems these portals like it best when you stick with standard HTML and Javascript although I have a feeling they may block anything fancy like XMLHTTP calls to a separate web service.</p>
+<p>I can also give the user more visual cues about what's going on. Showing little Processing... messages, clearer error messages, all the things you should do but usually don't.</p>
+<p>You also have more control over the content that is passed to and from the server with the XMLHTTP calls but seriously, who really cares about that anyway?</p>
+<p>On the other hand is Atlas with its all-powerful <a href="http://atlas.asp.net/docs/Walkthroughs/GetStarted/UpdatePanel.aspx">UpdatePanel</a>. The compelling argument here? Sweet Jayzus you can build this stuff fast! No mucking around with XPath queries, no javascript coding to determine what page you're on, no futzing with sort directions. ASP.NET has all of this built-in. Ergo, the UpdatePanel has it all built-in.</p>
+<p>And with controls like the <a href="http://atlas.asp.net/atlastoolkit/UpdatePanelAnimation/UpdatePanelAnimation.aspx">UpdatePanelAnimation</a>, you can't even argue about the lack of feedback to users while "stuff" is happening in the background.</p>
+<p>So for the moment, I'm tilted into the Atlas camp again. This came last night after a couple of hours getting the paging working in the search results page. Faced with the daunting task of now having to wire it all into the selected music list, I decided to flip over to the Atlas version, which didn't have paging yet and see what would be involved in getting that working.</p>
+<p>Total elapsed time:&nbsp;30 minutes including a timeout in the middle to help my daughter <a href="http://www.2kgames.com/pirates/pirates/home.php">sack Eleuthera</a>. For both the search results and the selected music list. And with better paging controls than I had (thanks to what appears to be some upgrades to the paging functionality in .NET 2.0).</p>
+<p>This framework is seriously going to rock when the documentation hits.</p>
+<p>Finally, a word on LiveWriter. Pretty impressed so far but it has an annoying habit. When you are at the very end of your current post, which you frequently are as you write it, you need to avoid holding down the SHIFT key and selecting text using the keyboard. If you hold SHIFT and press the left or up arrows, you select text normally. But after you've selected text, try pressing the right or down arrows. Nothing happens.&nbsp;Even if you've released the SHIFT key.</p>
+<p>In short, if you begin your selection by selecting the final character in your post, you can't de-select anything. My work-around is to start every post with "moo" then begin the post above it.</p>

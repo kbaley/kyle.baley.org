@@ -1,0 +1,37 @@
+---
+layout: post
+title: Project Templates, or "How to Become Classless"
+date: 2007-04-14 17:02:46.000000000 -04:00
+categories: []
+tags:
+- ".NET"
+- BDD/TDD
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1150'
+  dsq_thread_id: '393208551'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>One side effect of TDD seems to be a moderate to gargantuan increase in the number of projects in one's solution. And with almost half of those being Test projects, it was with no small amount of gratitude that I tracked down Steven Rockarts' post on creating a project template with references to NUnit and Rhino.Mocks built-in.</p>
+<p>One of the things Steven did when creating his template is something that has become automatic for most of us. To wit, the first step in creating a class library is to delete Class1.</p>
+<p>So after creating my project template (which by the way, required me to go to Tools | Customize, then the Commands tab, File menu to add the Export Template... menu item to the IDE first), I got to thinking that maybe I'd create my own Class Library template which doesn't include Class1.</p>
+<p>But being a forgetful Hillbilly, I would inevitably forget to use my template the first couple of times and creating a class library would take longer as I'd have to go through the extra stages of deleting my new project, cursing, then creating a new one with my template.</p>
+<p>Better to modify the master. Which on my machine, is located at: C:Program FilesMicrosoft Visual Studio 8Common7IDEProjectTemplatesCacheCSharpWindows1033ClassLibrary.zip</p>
+<p>Once there, I did the following:</p>
+<ul>
+<li>Deleted class1.cs  </li>
+<li>Opened classlibrary.csproj in a text editor and deleted the &lt;Compile&gt; element that referenced Class1.cs in the last &lt;ItemGroup&gt; element  </li>
+<li>Opened csclasslibrary.vstemplate in a text editor and deleted the &lt;ProjectItem&gt; that referenced Class1.cs in the &lt;Project&gt; element at the bottom</li>
+</ul>
+<p>Now&nbsp;my class libraries are created free of Class1.</p>
+<p>In addition to this, I also went to C:Program FilesMicrosoft Visual Studio 8Common7IDEProjectTemplatesCSharpWindows1033 and made the same modifications to the contents of the ClassLibrary.zip file. I'm not 100% certain but I think this is necessary if you ever need to re-install the VS templates (using devenv.exe /installvstemplates), which I did have to do earlier today when my Web User Control template stopped appearing in my list.</p>
+<p>In an even more ideal world, creating a class library would automatically prompt you for the name of your first class, doing nothing if you leave it blank. Haven't found a feature like that in ReSharper but I can't imagine this isn't possible in some third-party tool somewhere.</p>

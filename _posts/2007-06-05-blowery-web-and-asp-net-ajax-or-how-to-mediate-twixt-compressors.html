@@ -1,0 +1,38 @@
+---
+layout: post
+title: Blowery.web and ASP.NET AJAX, or "How to mediate 'twixt compressors"
+date: 2007-06-05 14:21:59.000000000 -04:00
+categories:
+- dasBlog
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2437'
+  dsq_thread_id: '351130384'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Am in the process of upgrading to the latest dasBlog build in an attempt to combat some of the referral spam I've been getting (which is a little odd since I don't show my referrals anywhere). Would like to be able to turn the pingback and trackback services back on here too. I have a feeling <a href="http://www.akismet.com" target="_blank">Akismet</a> isn't going to solve all of these problems but I've got some time on my hands.</p>
+<p>Which is a good thing because I've been putting this off on the grounds that it will take time to get up and running again with a new version of dasBlog. The reason being my hillbilly theme (which is looking more and more like it needs upgrading every day) uses Atlas. Not ASP.NET AJAX Extensions. As in, I got Atlas working with dasBlog <a href="http://kyle.baley.org/AtlasAndDasBlog19TheBetterWay.aspx">many moons</a> ago and never looked back. So there be some work to do not only making sure I upgrade my AJAX installation but also with the client-side scripting I'm using to render the AjaxControlToolkit doohickets I'm using.</p>
+<p>But that's for another post. Today's tidbit involves ASP.NET AJAX and the blowery.web control which dasBlog uses. It seems they don't play nicely together out of the box (or at least not the way dasBlog configures blowery.web by default). After getting the latest dasBlog source, upgrading it to ASP.NET 2.0, and adding my ScriptManager, I get getting a javascript&nbsp;error: Line: 1 Error: Invalid character.<img style="border-right: 0px; border-top: 0px; margin: 5px; border-left: 0px; border-bottom: 0px" height="159" alt="image" src="/assets/image_1.png" width="221" align="right" border="0" /> </p>
+<p>To get the solution out of the way for those looking to get on with their project: Modify the &lt;scriptresourcehandler&gt; node in your &lt;system.web.extensions&gt; section of the web.config:</p>
+<pre class="code"><span style="color: rgb(0,0,255)"><span style="background: rgb(255,255,255)">    &lt;</span><span style="color: rgb(128,0,0)">system.web.extensions</span><span style="color: rgb(0,0,255)">&gt;
+        &lt;</span><span style="color: rgb(128,0,0)">scripting</span><span style="color: rgb(0,0,255)">&gt;
+            &lt;</span><span style="color: rgb(128,0,0)">scriptResourceHandler</span><span style="color: rgb(0,0,255)"> <br />                  </span><span style="color: rgb(255,0,0)">enableCompression</span><span style="color: rgb(0,0,255)">=</span>"false"<span style="color: rgb(0,0,255)"> <br />                  </span><span style="color: rgb(255,0,0)">enableCaching</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">true</span>"<span style="color: rgb(0,0,255)"> /&gt;
+            &lt;</span><span style="color: rgb(128,0,0)">webServices</span><span style="color: rgb(0,0,255)">&gt;
+            &lt;/</span><span style="color: rgb(128,0,0)">webServices</span><span style="color: rgb(0,0,255)">&gt;
+        &lt;/</span><span style="color: rgb(128,0,0)">scripting</span><span style="color: rgb(0,0,255)">&gt;
+    &lt;/</span><span style="color: rgb(128,0,0)">system.web.extensions</span><span style="color: rgb(0,0,255)">&gt;
+</span></span><span style="color: rgb(0,0,255)"><span style="color: rgb(0,0,255)"><font face="Trebuchet MS" color="#000000"></font></span></span></pre>
+<p>This is merely speculation but I suspect that both AJAX and blowery.web are trying to compress the ScriptResource.axd that is output by the ScriptManager. I'm guessing you could also configure blowery.web to exclude ScriptResource.axd&nbsp;instead if you were inclined to let ASP.NET AJAX do its own compression.</p>
+<p>I was going to relate my entire odyssey in discovering the error but now that the solution is in print, it seems kind of moot now. I will point out that I had to switch to Internet Explorer to figure this out though. It may be my configuration but Firefox didn't through any javascript errors at all.</p>
+<p>Kyle the Compressed</p>

@@ -1,0 +1,33 @@
+---
+layout: post
+title: NAnt on Windows Server 2008 64-bit with .NET 3.5
+date: 2009-02-16 16:49:28.000000000 -05:00
+categories: []
+tags:
+- Continuous Integration
+- NAnt
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '349778468'
+  pvc_views: '1561'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Side note: I really miss my <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/01/05/model-view-presenter-in-an-mdi.aspx">“, or How to…”</a> blog post titles.</p>
+<p>The title should have narrowed down the focus for you already. I’ve been bear wrestling with some OSS projects on Team City for a few weeks now. It seems NAnt has some issues with a brand new Windows Server 2008 (64-bit) with .NET 3.5 SP1 (and possibly the .NET SDK). Specifically, it doesn’t recognize that .NET 3.5 is installed and will try to use .NET 2.0 by default.</p>
+<p>I say “seems” because this is all working theory. For almost every project I looked at that used NAnt, I had to configure it to use –t:net-3.5 in the command line parameters to force it to use .NET 3.5. And even then, I still ran into a pretty nasty issue with one of the projects.</p>
+<p>The error was something along the lines of “Microsoft .NET 3.5 is not installed, or not correctly configured.” After several installs/re-installs of various frameworks and SDKs, I finally broke out the NAnt source code and traced it to the installRoot and sdkInstallRoot properties from NAnt.exe.config.</p>
+<p>I’ll cut this off by saying <a href="http://www.nabble.com/NAnt-Fix-for-.NET-3.5-Compiling-Without-Visual-Studio-td21737757.html">a link</a> is worth a thousand words. The two aforementioned properties pointed to the HKLMSOFTWAREMicrosoftMicrosoft SDKsWindowsv6.0a but the key in the server was HKLMSOFTWAREMicrosoftMicrosoft SDKsWindowsv6.1. As suggested in the article, I faked it out by manually adding the keys it was looking for with values I deemed appropriate…</p>
+<p>…and it *still* didn’t work. “Lord Tunderin’ Jayzus,” says I and because I was sufficiently peeved, I added “and Moses on a boat!”</p>
+<p>Try as I might, I could <strong>not</strong> get NAnt to read the registry key. I cussed out deities in all major religious (except Buddhism; eternal damnation I can deal with, karma kinda scares me) until I discovered <a href="http://www.nabble.com/--nant-Bugs-1986551---Fails-when-target-net-3.5-with-NET-SDK-3.5-installed-(No-VS)-td21716462.html">a link worth TWO thousand words</a>. Somewhere in the depths of 64-bit land, Windows is picking up requests to HKLMSOFTWAREMicrosoftMicrosoft SDKsWindowsv6.1 and redirecting them to HKLMSOFTWAREWow6432NodeMicrosoftMicrosoft SDKsWindowsv6.1. So I duplicated the appropriate key once again and I’m shiny and happy and able to sleep once more.</p>
+<p>Note that this is expected to be fixed in some upcoming release of NAnt (and very well may be addressed already). But each of the projects on the server uses NAnt in a different way, some including it in their code repository itself, and I am not in the position to upgrade NAnt in any of them.</p>
+<p>Special shut-out to Tim Barcz for <a href="http://www.timbarcz.com/blog/NantSetupForVisualStudio2008AndNet35.aspx">the link</a> that, while worth only about 850 words tops, got me on the right track nonetheless.</p>
+<p>Kyle the Karmic</p>

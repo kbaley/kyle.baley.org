@@ -1,0 +1,43 @@
+---
+layout: post
+title: Primary Interop Assembly troubles with VSTO2005
+date: 2006-07-22 02:22:00.000000000 -04:00
+categories:
+- VSTO
+tags:
+- Office Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1639'
+  dsq_thread_id: '350192536'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Gotta give some consideration to changing the name of this blog to the Coding Hillbilly with ADD. The topic today is not Atlas, coding conventions or any of my other half-finished topics. It's Visual Studio 2005 Tools for Office. Well, it might be in a coming post because I had some trouble which I'll talk about first.</p>
+<p>The background: I do some side work for someone who has built a spreadsheet. A BIG spreadsheet. Closing in on 14Mb. It's an economic model for oil and gas and judging from this fellow's reputation worldwide, my guess is that it's a pretty damn good one.</p>
+<p>I'll talk a bit about the spreadsheet from a technical standpoint another time but the part I want to mention today is that it has some VBA code behind it. And I wanted to see if VSTO2005 might be able to whip up some holy water and exorcise that little demon. So away I went installing the beast.</p>
+<p>After the installation, I tried to create a new Excel Workbook project from the Visual Studio templates. This message appeared:</p>
+<p style="BORDER-RIGHT: black 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: black 1px solid; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.5em; BORDER-LEFT: black 1px solid; PADDING-TOP: 0.5em; BORDER-BOTTOM: black 1px solid; BACKGROUND-COLOR: lightgrey">The primary interop assembly required by this project is not installed in the global assembly cache. Microsoft Office 2003 includes the primary interop assemblies for each application as an installation option. For details on installing the Office primary interop assemblies, see the Help topic, "Installing Office Primary Interop Assemblies."</p>
+<p>This message, to be frank, scared me. I'm not what you would call an Interop guru. I've never fully understood&nbsp;them because&nbsp;well, they're boring.&nbsp;They kinda freak me out actually. Or, to paraphrase <a href="http://www.youtube.com/watch?v=hcm7uJ74XFI">Frank Zappa</a>, “I, for one, could care less for them.” Zappa was talking about cupcakes but you get the idea.</p>
+<p>But in order to get this to work, it looked like I'd at least have to read up on them. Before that, though, I tried to create&nbsp;a Word project and it worked fine which did NOT bode well for me getting anything remotely productive done this evening.</p>
+<p>I found a <a href="http://support.microsoft.com/?scid=kb;en-us;823996&amp;spid=2488&amp;sid=228">couple</a> of <a href="http://support.microsoft.com/?scid=kb;en-us;827476&amp;spid=2488&amp;sid=50">articles</a> that weren't very helpful. Both suggested the same thing and it didn't work. Basically, they say that the Primary Interop Assembly (PIA) is messed up. That kind of triggered a memory of another problem I had which I'll get to in another post because it is related to this spreadsheet I'm working on. The solution they suggested is to repair Office which didn't work for me, nor did uninstalling and re-installing .NET Programmability Support. Not sure what uninstalling and re-installing Excel would have done but that was a lot closer to the “last resort” end of my list of things to try.</p>
+<p>The other solution was to use regasm to register the PIA. This is where I started to pinpoint the trouble because when I did so, I got a message:</p>
+<p style="BORDER-RIGHT: black 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: black 1px solid; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.5em; BORDER-LEFT: black 1px solid; PADDING-TOP: 0.5em; BORDER-BOTTOM: black 1px solid; BACKGROUND-COLOR: lightgrey">RegASM : error RA0000 : An error occurred while writing the registration information to the registry. You must have administrative credentials to perform this task. Contact your system administrator for assistance</p>
+<p>(On a side note: I love messages that say to contact your system administrator because I've met a lot of system administrators.)</p>
+<p>Of course, I'm running as a local administrator because I'm not ready to admit yet that I have a <a href="http://www.jameskovacs.com/blog/JoinAdministratorsAnonymousTodayOrDevelopingAsANonadmin.aspx">problem</a>. Again, this message&nbsp;appeared&nbsp;when I ran&nbsp;regasm on the Excel interop but not the Word one, which worked fine.</p>
+<p>Enter SysInternals Regmon utility (and congrats, guys, on your newfound <a href="http://www.winternals.com/Company/PressRelease92.aspx">wealth and fame</a>). With it, I zeroed in on the exact registry entry that was causing the trouble: HKCRTypeLib{00020813-0000-0000-C000-000000000046}1.5&nbsp;ACCESS DENIED. Double-click on the entry and check the permissions and lo! my problem is revealed!</p>
+<p>For whatever reason, the 1.5 key had not been granted any access to anyone. I double-checked the same key for the Word interop and it was fine. I can't imagine what on Bill's earth caused this but it is fixed now...sort of. I gave Everyone full control over the key (because I can't be bothered to debug the inevitable security problems that will arise by assigning a more obtuse ACL then promptly forgetting it) and I am now the proud owner of an almost working VSTO2005 installation.</p>
+<p>I saw almost because when I start up Visual Studio 2005 now, I get the following:</p>
+<p style="BORDER-RIGHT: black 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: black 1px solid; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.5em; BORDER-LEFT: black 1px solid; PADDING-TOP: 0.5em; BORDER-BOTTOM: black 1px solid; BACKGROUND-COLOR: lightgrey">The property type library could not be found in the registry.</p>
+<p>An attempt to repair this condition failed because you do not have the permissions to write to the system registry or because the type library could not be loaded.</p>
+<p>This can be fixed (tee hee) by a system administrator running this program once, which will cause the proper file to be registered. If problems persist, then try repairing this application from the setup program.</p>
+<p>I'm hoping another round with Regmon will take care of this one in a jiffy, too, but I'm in no mood to tackle it tonight.</p>
+<p>To wrap up, I'll point out that this little troubleshooting session took a LOT longer than I've implied here. One little quirk that came up is that I originally ran regasm from the V2.0.50727 folder which gave the message described above. When I ran regasm from the V1.1.4322 folder, it was a lot more helpful because it listed the exact registry key that it was trying to access.</p>

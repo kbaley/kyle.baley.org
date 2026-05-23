@@ -1,0 +1,104 @@
+---
+layout: post
+title: Automated deployments
+date: 2008-03-03 14:13:35.000000000 -05:00
+categories: []
+tags:
+- Continuous Integration
+- NAnt
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '349802096'
+  hl_twitter_has_auto_tweeted: 'New post: Automated deployments, Full text: http://blog.baley.org/?p=170'
+  pvc_views: '2007'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>In my <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/03/01/automated-releases-with-a-touch-of-deployments.aspx#comments">last post</a>, I ran on about automated releases. So much so that adding automated deployments at the end seemed like cruel punishment. So instead, I decided to make it a separate post. Still a cruel punishment, but now it is unusually so.</p>
+<p>To recap, our automated release target executes on every check-in and creates a subfolder under the releases folder with the version number of the application. Then a releaseable &quot;package&quot; is placed in it. In this case, it's a web application that is to be deployed.</p>
+<p>The target you are about to see follows from this train of thought. And apologies if the formatting looks off. I've yet to figure out how to embed XML into a post in LiveWriter or Community Server's editor so that it uses the right HTML in the browser and the average RSS reader.</p>
+<pre class="xml" name="code">&lt;target name=&quot;deploy&quot; depends=&quot;version&quot;&gt;
+&#160;&#160;&#160;&#160; &lt;deliisdir vdirname=&quot;${deploy.vdir}&quot; failonerror=&quot;false&quot; /&gt;
+&#160;&#160;&#160;&#160; &lt;delete dir=&quot;${deploy.dir}&quot; failonerror=&quot;false&quot; /&gt;
+&#160;&#160;&#160;&#160; &lt;mkdir dir=&quot;${deploy.dir}&quot; /&gt;
+&#160;&#160;&#160;&#160; &lt;copy todir=&quot;${deploy.dir}&quot; &gt;
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &lt;fileset basedir=&quot;${latest.release.dir}&quot;&gt;
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &lt;include name=&quot;***.*&quot; /&gt;
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &lt;/fileset&gt;
+&#160;&#160;&#160;&#160; &lt;/copy&gt;
+&#160;&#160;&#160;&#160; &lt;property name=&quot;database.name&quot; value=&quot;${database.name.test}&quot; /&gt;
+&#160;&#160;&#160;&#160; &lt;call target=&quot;drop-database&quot; /&gt;
+&#160;&#160;&#160;&#160; &lt;call target=&quot;create-database&quot; /&gt;
+&#160;&#160;&#160;&#160; &lt;mkiisdir dirpath=&quot;${deploy.dir}&quot; vdirname=&quot;${deploy.vdir}&quot; defaultdoc=&quot;Default.aspx&quot; /&gt;
+&#160;&#160;&#160;&#160; &lt;loadtasks assembly=&quot;${tools.dir}nantVitreo.Nant.dll&quot; /&gt;
+&#160;&#160;&#160;&#160; &lt;iisappmap vdirname=&quot;${deploy.vdir}&quot; extension=&quot;.mvc&quot;
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; executable=&quot;C:WINDOWSMicrosoft.NETFrameworkv2.0.50727aspnet_isapi.dll&quot;
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; verbs=&quot;GET,POST&quot;
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; checkfileexists=&quot;false&quot; /&gt; 
+&lt;/target&gt; </pre>
+<p>As before, a list of variables:</p>
+<table cellspacing="0" cellpadding="2" width="90%" border="1">
+<tbody>
+<tr>
+<td valign="top" width="200">deploy.vdir</td>
+<td valign="top">The name of the IIS virtual directory we are deploying to</td>
+</tr>
+<tr>
+<td valign="top" width="200">deploy.dir</td>
+<td valign="top">The folder that the virtual directory will point to</td>
+</tr>
+<tr>
+<td valign="top" width="200">latest.release.dir</td>
+<td valign="top">Path to the folder containing the latest release. e.g. C:projectsLineageOrganizerreleasesLatest</td>
+</tr>
+<tr>
+<td valign="top" width="200">database.name.test</td>
+<td valign="top">The name of the database we are pointing to in the deployed environment (i.e. the Test environment)</td>
+</tr>
+<tr>
+<td valign="top" width="200">tools.dir</td>
+<td valign="top">Path to tools used during the build process. e.g. C:projectsLineageOrganizertools</td>
+</tr>
+</tbody>
+</table>
+<p>And again, a brief synopsis of what the target does:</p>
+<ol>
+<li>Delete the existing IIS virtual directory if it exists. (The <font face="Courier New">&lt;deliisdir&gt;</font> and <font face="Courier New">&lt;mkiisdir&gt;</font> tasks are included in <a href="http://nantcontrib.sourceforge.net/" target="_blank">NAntContrib</a>) </li>
+<li>Delete the deploy folder if it exists and re-create it. </li>
+<li>Copy the latest release to the deploy folder. </li>
+<li>Drop and re-create the test database (the drop-database and create-database targets use the <font face="Courier New">&lt;updateSqlDatabase&gt;</font> task from vincent-vega, which appears to be off-limits today but you can get a copy from <a href="http://code.google.com/p/codecampserver/" target="_blank">CodeCampServer</a>). </li>
+<li>Re-create the IIS virtual directory </li>
+<li>Create a mapping for the .mvc extension for ASP.NET MVC. (<font face="Courier New">&lt;iisappmap&gt;</font> task is courtesy of <a href="http://www.persistall.com/archive/2007/06/11/Nant-Task-for-Creating-IIS-Application-Mappings.aspx" target="_blank">Brian Donahue</a>, who I'd recommend adding to your blogroll). </li>
+</ol>
+<p>The last step is necessary only if you need to create an IIS mapping, which you do when deploying an ASP.NET MVC application into an IIS 6 environment. Otherwise, you can skip this step.</p>
+<p>In the post on releases, I snuck in a teaser on the folder where I store the latest version of the application. In that target, I created a folder with the same name as the application version and released to it. Then I copied the entire contents of this folder to another one called Latest. The reason for this will be clear shortly. First, I need to talk about when this target is executed.</p>
+<p>The deployments don't happen at the same interval as the build. That is, the application is not deployed on every build. This would be pretty chaotic if you re-deployed the application several times a day while the testers were trying to work.</p>
+<p>So they have to be on a different schedule or, as in my case, triggered manually. This means setting up a separate CruiseControl.NET project for them. So for our LineageOrganizer application, we would have two CC.NET projects: one for the main build and one to deploy the application. Both use the same build file and both have the same root folder. In fact, the CC.NET project for the deploy is relatively simple:</p>
+<pre class="xml" name="code">&lt;project name=&quot;LineageOrganizer.deploy&quot;&gt;
+&#160; &lt;webURL&gt;http://ccnetservername/server/local/project/LineageOrganizer.deploy/ViewProjectReport.aspx&lt;/webURL&gt; 
+&#160; &lt;workingDirectory&gt;C:dataccnetTrilogy.Gunton&lt;/workingDirectory&gt;
+&#160; &lt;triggers /&gt;
+&#160; &lt;tasks&gt;
+&#160;&#160;&#160; &lt;nant&gt;
+&#160;&#160;&#160;&#160;&#160; &lt;executable&gt;c:dataccnetTrilogy.Guntontoolsnantnant.exe&lt;/executable&gt;
+&#160;&#160;&#160;&#160;&#160; &lt;buildFile&gt;Trilogy.Gunton.build&lt;/buildFile&gt;
+&#160;&#160;&#160;&#160;&#160; &lt;targetList&gt;
+&#160;&#160;&#160;&#160;&#160;&#160;&#160; &lt;target&gt;deploy&lt;/target&gt;
+&#160;&#160;&#160;&#160;&#160; &lt;/targetList&gt;
+&#160;&#160;&#160; &lt;/nant&gt;
+&#160; &lt;/tasks&gt;
+&lt;/project&gt;</pre>
+<p>There's no <font face="Courier New">&lt;sourcecontrol&gt;</font> tag nor are there any merge files to take care of. Just execute the target and that's it.</p>
+<p>Here's where the concept of a Latest folder comes in. The releases are created based on the application's version number. And the version number is based partially on the CruiseControl version. But now we have two different CC.NET projects, each with their own version number in CruiseControl. So the latest version for the main build, which is the one that creates the releases, is different than the one that deploys the application. I.E. If we try to get the path to the latest release folder based on the version number within the deploy target, it would create a path based on the <em>deployment</em> CC.NET project, not the original one.</p>
+<p>So to get around this, after every release, we copy the release to a statically named folder called Latest. That way, both the build CC.NET project and the deploy CC.NET project know where it is.</p>
+<p>Another way to do this would be to write the current version number to a file. This was going to be my first course of action until <a href="http://www.igloocoder.com">Donald</a> suggested the static Latest folder which I like better although only because it feels better.</p>
+<p>This process is still a work-in-progress for me but it's worked out reasonably well so far on my one-man team. Though I will admit that the deploy target does fail on occasion if someone is using the app when it is running. Seems to be locking files so that the deploy folder can't be deleted/re-created. When that becomes annoying enough to fix, you can be sure I'll pad my blog resume with the solution.</p>
+<p>Kyle the Deceptively Simpleww</p>

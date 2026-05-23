@@ -1,0 +1,103 @@
+---
+layout: post
+title: Options for upgrading an App Engine application
+date: 2010-09-28 13:41:23.000000000 -04:00
+categories: []
+tags:
+- Google App Engine
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1292'
+  dsq_thread_id: '369902063'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><strong>Executive Summary</strong>: If you can’t figure it out from the title, then perhaps you should skip to the next post in your reader.</p>
+<p>Now that we have a version of our application in the wild, and we’ve been forced to address a problem I’ve been able to avoid until now: How do we upgrade an AppEngine application when the data model has changed?</p>
+<p>Let’s take two potential scenarios on why this is an issue. In the first, say the username was stored in a case-sensitive string and we’d like to ensure the username is case-insensitive. This is one case where SQL database proponents will snicker because this isn’t that easy in AppEngine. There’s no LCASE function embedded in the language.</p>
+<p>To implement this is trivial. You ensure the username is all in lowercase <em>before</em> dumping it in the datastore. But if you already have existing data, that will need to be converted first.</p>
+<p>Second scenario: Say you stored user passwords unencrypted and you realize <a href="http://xkcd.com/792/">there isn’t anything fun to do with all those passwords</a> so you decide to encrypt them. Again, we’ll need some process to run through the existing data to convert it to a new format.</p>
+<p>Seems simple on the surface but there are some ramifications. And no shortage of options. I’ll start with the obvious</p>
+<h3>The Big Bang</h3>
+<p>This is the tried and mostly true approach. Here are the steps involved:</p>
+<ol>
+<li>Notify customers of downtime </li>
+<li>Take app offline </li>
+<li>Backup data </li>
+<li>Upgrade application </li>
+<li>Run upgrade scripts/code on data </li>
+<li>Bring app online </li>
+<li>Switch to decaf for a week until your nerves have returned to normal </li>
+</ol>
+<p><strong>Pros:</strong></p>
+<p>This is an intuitive approach that has been used to varying degrees of success since the dawn of time. ASP.NET apps have support for it virtually built-in via the app_offline.htm file. Also, the backout plan is easy to understand. If anything goes wrong, restore the data and switch back to the old version.</p>
+<p><strong>Cons:</strong></p>
+<p>It’s kinda sad that users have come to expect downtime, even for an upgrade. One would think there is a better way by now…</p>
+<p>Also, taking the app offline isn’t as easy as one might think in App Engine. The way I see it going down, we’d deploy a “down for maintenance” version of the app, then make that the default whenever we want to take the app offline. Then we’d switch the default version to the one we just deployed after we were done.</p>
+<p>Another downside, you can’t test on live data like you can with other approaches (unless you do a data dump of production to a staging area).</p>
+<p>Finally, backing up and converting will take longer and longer as the app grows in popularity and the size of the data increases. Which means a longer and longer downtime for upgrades. That doesn’t sit well with the hillbilly when one of App Engine’s main selling points is scalability.</p>
+<h3>The Two-Pass Approach</h3>
+<p>With the two-pass approach, we never change the meaning of a property on our entity. We either add or delete. Talking one of our examples above:</p>
+<ol>
+<li>Add a property to our User object called EncryptedPassword </li>
+<li>Deploy the application </li>
+<li>Run a script that reads the Password field, encrypts it, and stores it in EncryptedPassword. This can be run while the app is running. </li>
+<li>Ensure the code checks EncryptedPassword first. If empty, then use Password. </li>
+<li>At some point, when all passwords have been converted, we can delete the property and re-deploy the application with the property deleted. If we <em>really</em> want to be complete, we could later rename EncryptedPassword back to Password (and change all the code that touches it: see Cons below) </li>
+</ol>
+<p><strong>Pros</strong></p>
+<p>Could be done in-place without taking the application down. Plus, there’s a built-in rollback plan. If something goes wrong, we still have the old data hanging around if we need it.</p>
+<p><strong>Cons</strong></p>
+<p>Logistics. Having code around that understands two versions of the model might make it hard to manage.</p>
+<h3>Version Individual Entities</h3>
+<p>This is an intriguing idea which should tip you off that it wasn’t mine. It came from our senior dev, Phil, and like many of his ideas, it’s easy to dismiss at first but grows on you once you think about it:</p>
+<ol>
+<li>Each entity has a version property. For the current model, which doesn’t, we assume a version of zero </li>
+<li>Each entity has a series of commands for converting it from one version to the next. For example, the version 0 to 1 converter in one of our scenarios would convert the username to lowercase. </li>
+<li>When we upgrade the application, we increase the current version of each entity but we don’t do anything to the existing data. That is, the application expects all entities to be version one but they are actually version zero. </li>
+<li>Whenever we retrieve an entity from the datastore in our repositories, we check the version. If it’s not current, we start applying upgrade commands until it is current. Then we save it back to the data store. In either case, the repository will always be guaranteed to return a current version of the entity </li>
+</ol>
+<p><strong>Pros</strong></p>
+<p>Upgrades can be done in-place. They’ll also be pretty quick too because there’s no data conversion process to worry about. At least not all at once.</p>
+<p>This approach is also flexible in that we can use it to do a Big Bang upgrade if we so desire. For instance, we could take the app down, then run through a script that retrieves each entity. This will trigger the upgrade scripts to upgrade them.</p>
+<p><strong>Cons</strong></p>
+<p>Datastore will have different versions of various entities at any given time. Each specific entity will only have one version but in a given table, you will likely see many different versions, especially from customers that don’t use the app frequently.</p>
+<p>That said, whether this matters to you is a matter of taste. For me, it would take some getting used to. It almost feels like the datastore would be in an inconsistent state with all these differently-versioned entities in it. There’s a certain psychological chaos involved.</p>
+<p>Regardless, there is some extra code involved in the form of the upgrade commands for entities. Nice thing, though, is that they can be easily isolated.</p>
+<p>There’s also the issue of rollbacks. If you discover some issue with the conversion code, you could have a pretty big mess to dig through.</p>
+<p>Another issue, and this one just occurred to me know, is that it will make querying more difficult in some cases. Take our lowercase user example. If some users have a guaranteed-lowercase username and some don’t, we aren’t really fixing the problem for existing users.</p>
+<h3>Namespacing</h3>
+<p>This is an option that’s brand new to App Engine and thus, is one I don’t totally understand. In a recent App Engine update, there is support for multi-tenancy through namespaces, which helps to maintain silos of data. But you can also use namespaces for upgrading:</p>
+<ol>
+<li>Deploy the new version of the app to a different namespace. It’s “silo” would be empty to start with. </li>
+<li>Migrate the data from the existing version’s namespace to the new one’s, converting as you go. Note that the new version would not be live at this point. Customers would still use the existing version </li>
+<li>Test out the new version with the converted data. </li>
+<li>Once satisfied, take app offline. </li>
+<li>Re-import the data from version 1 to version 2 (to catch any changes that happened while testing) </li>
+<li>Make version 2 the default version </li>
+</ol>
+<p><strong>Pros</strong></p>
+<p>Allows for testing the application against real live data easily without having to migrate it to a separate staging environment.</p>
+<p><strong>Cons</strong></p>
+<p>Doesn’t scale if your datastore starts getting bigger. Also makes it harder to do multi-tenancy on a customer basis if you’re using namespacing for versions. It’s possible…but, well, if you have to say “it’s possible…”, you generally should look for alternatives.</p>
+<p>Also, you have to import the data twice and you still have to take the application offline, or write some synchronization code.</p>
+<h3>Google Approved</h3>
+<p>Since starting this post, I sent an email to Fred Sauer, Developer Advocate for GWT and App Engine, and got this option back:</p>
+<ol>
+<li>Deploy a version of the app that understands both the old and new model but will upgrade or create new models only </li>
+<li>Use the <a href="http://googleappengine.blogspot.com/2010/07/introducing-mapper-api.html">Mapper API</a> (or your own task queues) to migrate existing entities </li>
+<li>Once migrated, remove support for the old model in a future deployment </li>
+</ol>
+<p>This sounds very much like the Two-Pass Approach described above. At first, I wasn’t too keen on it but on reflection, it offers several benefits (no downtime) at the expense of a bit of temporary code. And unlike the Version Individual Entities approach, the data store doesn’t have different versions of various entities lingering around.</p></p>
+<hr />
+<p>One thing I totally ignored in this discussion is cost. For example, in the namespacing option, you are essentially doubling the size of your datastore, if only for a short time. This may have an impact on the decision but the pricing is such that it probably won’t.</p>
+<p>The issue is still under <a href="http://groups.google.com/group/google-appengine/browse_thread/thread/60b8df646094704b?pli=1">semi-active discussion</a> on the Google Group thread and unfortunately, there isn’t much consensus. Even within our own company, we are trying to decide between one of two options. And that didn’t include the one Google recommends until I got the response back from them this morning…</p>
+<p>Kyle the Downgraded</p>

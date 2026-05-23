@@ -1,0 +1,38 @@
+---
+layout: post
+title: Adding Atlas to dasBlog (almost)
+date: 2006-07-31 15:13:00.000000000 -04:00
+categories:
+- dasBlog
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1040'
+  dsq_thread_id: '360303951'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Yeah, I've been playing with themes. Ya wanna make something of it? It's a work in progress so if something looks wonky, let me know.</p>
+<p>My current project du jour is to integrate <a href="http://atlas.asp.net/">Atlas</a> into dasBlog. Specifically, some of the controls in the Atlas Control Toolkit. Hence my desire to migrate to VS2005. I notice there is already a dasBlog <a href="http://www.process64.com/thinkjot/">"port"</a> for VS2005 but frankly, that project kind of baffles me. Not sure how they can get away with rebranding it like that and calling it version 1.0 but more power to them if they feel like taking something like that on.</p>
+<p>Before I get started, I'll be making claims about dasBlog here based on my limited experimentation. I'm relying on more knowledgeable people to correct me.</p>
+<p>I followed the instructions to <a href="http://atlas.asp.net/docs/Overview/install.aspx">add Atlas</a> to an existing applications and lo, it compiled! And ran! Next step: add a ScriptManager, which is where I hit my first snag.</p>
+<p>I added it to the top of default.aspx before the placeholder and got an error. The ScriptManager needs to exist in a server-side control, usually a &lt;form runat="server"&gt;.&nbsp;By putting it in the default.aspx, dasBlog parses it into the &lt;head&gt; tag. You are allowed to put a ScriptManager in a &lt;head&gt; tag but it must have runat="server" in it and it seems you can't do this in dasBlog. The &lt;head&gt; tag is part of the template and adding runat="server" to it does exactly nothing.</p>
+<p>Instead, I added it programmatical in the Page_Load event in the SharedBasePage:</p>
+<p><span style="FONT-SIZE: 11px; COLOR: black; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">ScriptManager manager <span style="FONT-SIZE: 11px; COLOR: red; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">=</span> <span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">new</span> ScriptManager( );<br /><span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">this</span>.Controls.Add( manager );</span></p>
+<p>Re-compile and refresh and success! We have a ScriptManager on the page in the form of a Javascript reference to WebResource.axd. Note that this requires that the Web.Core page have a reference to the Microsoft.Web.Atlas assembly.</p>
+<p>Fast-forward a bit. I added a <a href="http://atlas.asp.net/atlastoolkit/TextBoxWatermark/TextBoxWatermark.aspx">TextBoxWatermark</a> extender to the search textbox. This required fiddling with the Search.ascx control so that it used an ASP.NET TextBox rather than an INPUT but that wasn't too much trouble.</p>
+<p>Re-compile and refresh and succe---waitaminute. It loaded with no errors but my watermark was nowhere to be found. I checked the source code and all the pieces were there: the WebResource.axd and the Atlas pageManager with my TextBoxWatermark reference.</p>
+<p>To condense a couple of hours of digging, the reference to WebResource.axd was in the HTML but it didn't return anything. The reason for this is that it was being compressed by some component in dasBlog. The fix is to modify the &lt;blowery.web&gt; section of the web.config (additions in red):</p>
+<p>&nbsp; &lt;blowery.web&gt;<br />&nbsp;&nbsp;&nbsp; &lt;httpCompress preferredAlgorithm="gzip" compressionLevel="high"&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;excludedMimeTypes&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;add type="image/jpeg"/&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;add type="image/gif"/&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/excludedMimeTypes&gt;<br /><font color="#ff0000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;excludedPaths&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;add path="WebResource.axd" /&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/excludedPaths&gt;<br /></font>&nbsp;&nbsp;&nbsp; &lt;/httpCompress&gt;<br />&nbsp; &lt;/blowery.web&gt;</p>
+<p>Now, my WebResource.axd is no longer compressed and voila! A nice shiny TextBoxWatermark....</p>
+<p>...locally at least. For whatever reason, when I migrated to my server, it complained that the ScriptManager needed to be in a &lt;form runat="server"&gt; tag which I thought it was. So despite all this, that's why you aren't seeing "Enter your search text" in the textbox above.</p>
+<p>Hopefully to be fixed soon. When it does, I have a bigger problem because this was the easy part. Adding <a href="http://atlas.asp.net/atlastoolkit/RoundedCorners/RoundedCorners.aspx">RoundedCorners</a> (or any extender, for that matter) to the sections in the nav bar, not so much.</p>

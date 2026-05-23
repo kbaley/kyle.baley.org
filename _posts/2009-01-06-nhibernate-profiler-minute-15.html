@@ -1,0 +1,71 @@
+---
+layout: post
+title: 'NHibernate Profiler: Minute 15'
+date: 2009-01-06 22:35:22.000000000 -05:00
+categories: []
+tags:
+- NHibernate
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '364891150'
+  pvc_views: '1512'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I've said this before and I'll say it again: Lord Tunderin' Jayzus!</p>
+<p>The target this time is <a href="http://www.nhprof.com" target="_blank">NHibernate Profiler</a>. As of this moment, I've had it &quot;installed&quot; for all of fifteen minutes and I've already reduced the query count of one page from 205 to 1. Such is the story you will read about today. I suspect typing it out will take longer than it took me to optimize the page I'm about to describe.</p>
+<p>By the way, I put &quot;installed&quot; in quotes because installing the application consists of unzipping it to a folder of your choosing. Means you need to set up shortcuts on your own but I like the minimalist approach myself.</p>
+<p>The app <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/12/24/many-to-many-relationships-with-data-attached-in-nhibernate.aspx" target="_blank">I've already described</a>. To sum up, Surveyors have many MonumentAssignments. Here is the (original) Fluent NHibernate mapping for review:</p>
+<pre class="c-sharp" name="code">public SurveyorMap() {
+    WithTable(&quot;Surveyor&quot;);
+
+    Id(x =&gt; x.ID, &quot;SurveyorID&quot;)
+        .WithUnsavedValue(0)
+        .GeneratedBy.Identity();
+
+    // Boring stuff
+
+    HasMany<monumentassignment>( x =&gt; x.Monuments )
+        .Cascade.AllDeleteOrphan( )
+        .WithKeyColumn( &quot;SurveyorID&quot; );
+}</monumentassignment></pre>
+<p>Notice how I put (original) in brackets there. That's what we in the legitimate journalism field like to call &quot;foreshadowing&quot; (or, more likely, foreboding).</p>
+<p>The page in question provides a list of Surveyors. First name, last name, commission number. That's it. It isn't displaying anything from the Monuments collection. (See? More foreshadowing.)</p>
+<p>So it was much to my surprise when I profiled this application that it outlined a total of 205 SQL statements for 202 Surveyors. &quot;Odd&quot; says I, and I proceeded to work my way through NHibernate Profiler to see what it can tell me.<a href="http://codebetter.com/blogs/kyle.baley/WindowsLiveWriter/2db37cb98c42_EEE3/image_4.png"><img style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; margin: 5px; border-right-width: 0px" height="157" alt="image" src="/assets/image_thumb_1.png" width="369" align="right" border="0" /></a></p>
+<p>Quite a bit as it turns out. The screenshot at right shows a summary of the alerts. The one that jumped out at me was 199 SELECT N+1 alerts.</p>
+<p>The ellipsis took me to <a href="http://www.nhprof.com/Learn/Alert?name=SelectNPlusOne" target="_blank">this page</a> which was pretty helpful. It says if I'm going to iterate over the collection, I should consider eager loading. Well, you won't accuse me of not being eager so that's what I did. My GetAll method now looked like this:</p>
+<pre class="c-sharp" name="code">public IList<surveyor> GetAll()
+{
+    var criteria = DetachedCriteria.For<surveyor>( );
+    <strong>criteria.SetFetchMode( &quot;Monuments&quot;, FetchMode.Eager );</strong>
+    return criteria.GetExecutableCriteria( Session ).List<surveyor>( );
+}</surveyor></surveyor></surveyor></pre>
+<p>That baby reduced my query count from 205 to 3. And my alerts consisted of two &quot;<a href="http://www.nhprof.com/Learn/Alert?name=DoNotUseImplicitTransactions" target="_blank">Use of implicit transactions discouraged</a>&quot; and one &quot;<a href="http://www.nhprof.com/Learn/Alert?name=UnboundedResultSet" target="_blank">Unbounded result set</a>&quot;. &quot;Acceptable&quot; says I!</p>
+<p>But then something occurred to me. I'm not using the Monuments collection in this page. Why is it even retrieving them? Maybe I *am* being too eager after all...</p>
+<p>As it turns out, the HasMany call in my map doesn't retrieve the Monuments lazily by default as I had expected it would. So with a flourish of my hand, I remedy that:</p>
+<pre class="c-sharp" name="code">public SurveyorMap() {
+    WithTable(&quot;Surveyor&quot;);
+
+    Id(x =&gt; x.ID, &quot;SurveyorID&quot;)
+        .WithUnsavedValue(0)
+        .GeneratedBy.Identity();
+
+    // Boring stuff
+
+    HasMany<monumentassignment>( x =&gt; x.Monuments )
+        .Cascade.AllDeleteOrphan( )
+        .WithKeyColumn( &quot;SurveyorID&quot; )
+        <strong>.LazyLoad();</strong>
+}</monumentassignment></pre>
+<p>I also reverted my previous eager change because it was no longer necessary and poof! I am now down to a single SQL query for the page, which is as it should be. I still prefers that I limit my result set and put things in an explicit transaction so I'll be tackling those shortly. But for now, I'm agog, AGOG I TELL YOU!!1!</p>
+<p>Granted, exposing my ignorance is not exactly an Olympic event. But just this morning, I made some facetious remark (no, it's true) that I wanted to make an application that was wildly successful in spite of itself. Several people responded with variations of &quot;is there any other kind?&quot; Given what I know of its <a href="http://www.ayende.com" target="_blank">creator</a>, I'm hoping this is an exception: an application that is wildly successful because it fills a niche *and* because it is reliable and well-built.</p>
+<p>That said, Ayende, if you're reading, it'd be nice if you could clear individual sessions from the list...</p>
+<p>Kyle the Reduced</p>

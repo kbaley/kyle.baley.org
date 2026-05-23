@@ -1,0 +1,33 @@
+---
+layout: post
+title: Sony Survey, or "How to See Into the Minds of Sony's Web Programmers"
+date: 2007-04-29 13:57:13.000000000 -04:00
+categories: []
+tags:
+- Miscellaneous
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '766'
+  dsq_thread_id: '657764050'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The following is an offshoot of my recent <a href="http://kyle.baley.org/personal/SonyStrikesAgain.aspx">Sony troubles</a>. In summary, I bought a Bravia in Miami, shipped it to the Bahamas, had a technical problem and called tech support. The full version is sexier.
+<p>The inevitable customer satisfaction survey came the next day. I was pretty fair I think, commending the CSR on her politeness and troubleshooting skills while making it clear I still have a problem. But I had to take the survey twice. The first time, I received the following when I submitted it:</p>
+<p><img src="/assets/Survey.jpg" style="margin: 0.5em 1em 0.5em 0.5em; float: left;" border="0" />  </p>
+<p>Astute readers will recognize Firefox's open dialogue and that Firefox&nbsp;is trying to open an&nbsp;ASPX page as an external file type. I retook the survey in Internet Explorer and everything went through fine. Tried a third time in Firefox and got the same dialogue.</p>
+<p>Not quite sure what's happening but you'd better believe I opened that page in VS2005. It is attached below. You'll notice it's a .NET 1.0 or 1.1 page and that there isn't any actual server-side code in it. No technical reason for it to be an ASPX page although I'd probably make it one myself in the chance server-side code needs to be added to it later.</p>
+<p>Also note that the page that launched this, the actual survey, is a plain old ASP page. Not sure why Firefox isn't able to open the page while IE is. If I had to guess, it would be because ASPX pages aren't registered properly at Sony in IIS and IE is being forgiving. Actually that doesn't sound right now that I think about it.</p>
+<p>Regardless, it seems Sony's survey site doesn't support my version of Firefox. But&nbsp;here is the <a href="http://www.surveys.sony.com/surveyma/cisc_survey10.asp" target="_blank">URL</a> for the survey (with the EventID stripped) if you want to play around with it yourself.</p>
+<p>And Sony really should invest in a default page for <a href="http://www.survey.sony.com" target="_blank">http://www.survey.sony.com</a>.</p>
+<p>** UPDATE **</p>
+<p>After taking a look at the original survey page's HTML, it might be a .NET page, evidenced by the fact that the submit button has runat="server" attached to it.</p>
+<p><a href="http://kyle.baley.org/content/binary/CISC_Survey_2.aspx">CISC_Survey_2.aspx (5.51 KB)</a></p>

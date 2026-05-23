@@ -1,0 +1,69 @@
+---
+layout: post
+title: Refactoring guard clauses, or “How to ask politely”
+date: 2009-06-01 15:51:21.000000000 -04:00
+categories: []
+tags:
+- Refactoring
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '379273204'
+  pvc_views: '1037'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>This post is brought to you by the letters M and V and P. I mention that at the beginning to set the pre-requisites.</p>
+<p>I woke up this morning, broke open our application, and am currently staring at this method in our presenter.</p>
+<pre class="c-sharp" name="code">public void Start( )
+{
+    if ( !IsAuthorized( ) ) return;
+    if ( !ValidateHeritage( ) ) return;
+
+    if ( !IsCousin( ) ) return;
+    if ( HasSiblings( ) ) return;
+}</pre>
+<p>My first reaction to this was that it didn’t actually do anything. The way it’s currently set up, it appears to check a bunch of guard clauses and exit if they are met. But there isn’t any actual code being executed if the guard clauses aren’t met.</p>
+<p>Digging deeper, I discovered that the guard clauses are actually doing more than guarding. They are calling methods on the View and otherwise changing state. For example, the IsCousin method:</p>
+<pre class="c-sharp" name="code">public bool IsCousin( )
+{
+    if ( _user.AuntsAndUncles.Contains( _prospect.Mother ) 
+         || _user.AuntsAndUncles.Contains( _prospect.Father ) )
+    {
+        _viabilityCount++;
+        View.DisableSafetyChecks( );
+        return true;
+    }
+
+    return false;
+}</pre>
+<p>Clearly, this is ain’t your mother’s guard clause. It’s updating a local variable and doing some fanciness in the UI as well as guarding.</p>
+<p>So maybe it’s just an issue with naming. Obviously, it’s not a guard clause, so maybe I could rename it to make that clearer. An obvious name isn’t leaping out but in any case, something <em>feels</em> wrong about having all these methods return a boolean.</p>
+<p>An alternative I’m considering is separating the guard clauses from the actions:</p>
+<pre class="c-sharp" name="code">public void Start()
+{
+    if ( IsAuthorized( ) == false )
+    {
+        SetNotAuthorized( );
+        return;
+    }
+    if ( ValidHeritage( ) == false ) return;
+
+    if ( IsCousin( ) == false ) return;
+
+    if ( HasSiblings( ) == false ) return;
+    
+    IncreaseViability( );
+    DisableSafetyChecks( );
+}</pre>
+<p>Clearly, this is more verbose. But it looks better to me because the guard clauses don’t actually do anything except check the state of something. The actual flow of code is more obvious (isn’t it?).</p>
+<p>Maybe the original method is fine and I’ve been reading too much on Command-Query Separation lately. Or maybe there’s an alternative. In which case, I’d love to hear it, even given the very limited context I’ve provided.</p>
+<p>And in order to solicit as many opinions as possible, and because I know how much we all love to prove each other wrong, I’ll make the claim that my alternative is THE DEFINITIVE way of doing this.</p>
+<p>Kyle the Reversed</p>

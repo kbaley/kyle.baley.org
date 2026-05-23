@@ -1,0 +1,40 @@
+---
+layout: post
+title: Coding under the influence
+date: 2006-02-07 23:20:00.000000000 -05:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '700'
+  dsq_thread_id: '362998519'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The article is coming. Keep your pants on. The Coding Hillbilly wishes to opine on performance first.</p>
+<p>There are a lot of articles and essays on performance. Judging from my inbox, my own performance could use some work but I prefer less humbling performance problems so I'm sticking to coding.</p>
+<p>My overall opinion is that there is an over-emphasis on performance. For example, the Database class in the Microsoft's Enterprise Library Data application block has a method called GetStoredProcCommandWrapperWithSourceColumns. (NOTE: This is a new method in the June 2005 update). The method allows you to create a stored procedure command wrapper without having to explicitly create the parameters. Instead, you specify a string array of column names from the DataTable you plan to update.</p>
+<p>Here's an example of how it is used:</p>
+<p></p>
+<div style="BORDER-RIGHT: black 1px solid; BORDER-TOP: black 1px solid; BORDER-LEFT: black 1px solid; BORDER-BOTTOM: black 1px solid; FONT-FAMILY: monospace; BACKGROUND-COLOR: lightgrey">&nbsp;Database database = DatabaseFactory.CreateDatabase( );</p>
+<p>&nbsp;DBCommandWrapper insertCommand = <br />&nbsp;&nbsp;database.GetStoredProcCommandWrapperWithSourceColumns( <br />&nbsp;&nbsp;&nbsp;"add_suspected_pappy", new string[] <br />&nbsp;&nbsp;&nbsp;{ "FirstName", "LastName", "SuspectedOccupation", <br />&nbsp;&nbsp;&nbsp;"AlternateRelationshipToMother" } );</p>
+<p>&nbsp;database.UpdateDataSet( myDataSet, <br />&nbsp;&nbsp;"Pappies", insertCommand, null, null, UpdateBehavior.Standard );</div>
+<p>In this example, we are updating a database with the information stored in a DataTable (called Pappies) in a DataSet. For those of you familiar with the UpdateDataSet method, we are assuming that the table contains only inserted or unmodified rows. For the rest of you, I'll cover this in a later article. For now, assume that the UpdateDataSet call will loop through each row in the table and execute the add_suspected_pappy stored procedure on that row if it has a RowState of Added.</p>
+<p>There is a lot going on in this code behind the scenes but the relevant point is that there are at least two calls to the database: one to retrieve information about the parameters of the add_suspected_pappy stored procedure, and one to execute the stored procedure.</p>
+<p>It has been argued many times to me that this is inefficient. That we should create the parameters on the command wrapper manually. We know what the parameters are and we could save valuable time doing this work ourselves. Well, I say NAY!</p>
+<p>The part I disagree with is "valuable time", and in particular "valuable". It is true that we will save time database access time writing this code ourselves. I argue that the time we save is negligible. Database access is pretty fast these days, especially since the connections are usually cached.</p>
+<p>In this case, it doesn't matter much either way. There are only four parameters and it wouldn't be much of a stretch to add insertCommand.AddInParameter calls for them. And even with two dozen parameters, you could cut and paste your merry way through them in no time, although it does add the possibility of human error in.</p>
+<p>The point is that the time you save in this case is probably not enough to justify the extra code. There could be other justifications for writing it out longhand but on performance alone, I don't buy it.</p>
+<p>Put another way, if the entire user action that uses this code has a noticeable delay, the problem will not be with GetStoredProcCommandWrapperWithSourceColumns.</p>
+<p>Nitpicking on performance issues like this harkens back to the old days when storing dates in two numbers made sense. Nowadays, there are other sources for performance problems: network connections, whether you are retrieving too much data for what you need, integration with other applications. In most cases, these are the things that take time, not whether you should convert a Bubble Sort to Quick Sort. The problem is that these aren't very interesting issues and they aren't ones you learn about in Data Structures 101.</p>
+<p>And I don't want to suggest that you should blatantly flaunt obvious performance flaws. But in the heat of a deadline, don't over-exert yourself&nbsp;flipping through algorithm texts&nbsp;for the "optimal" solution. Chances are,&nbsp;your server&nbsp;is fast enough that you'll never know the difference.</p>
+<p>So how do you know when to use something like GetStoredProcCommandWrapperWithSourceColums and when to create the parameters yourself? That's the subject for another op-ed piece.</p>
+<p>Until then, the Coding Hillbilly reminds you not to drink and code.</p>

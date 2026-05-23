@@ -1,0 +1,35 @@
+---
+layout: post
+title: 'AutoMockingContainer and ASP.NET MVC: Round 1'
+date: 2008-01-10 13:53:11.000000000 -05:00
+categories: []
+tags:
+- ASP.NET MVC
+- Mocking
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '359120014'
+  pvc_views: '997'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I resolved to pace myself a little better in '08 on this blog. But then, I also resolved not to keep any of my resolutions. Mostly because I like the circular reference.</p>
+<p>I'm delving a little more deeply into the ASP.NET MVC framework these days in preparation for a couple of upcoming presentations. And I've really liked using Jacob Llewallen's <a href="http://blog.eleutian.com/2007/02/23/TestsAutoMockingIoCContainer.aspx" target="_blank">AutoMockingContainer</a> in other projects so naturally, I wanted to take that into MVC and use it to create my controllers:</p>
+<pre class="c-sharp" name="code">    controller = container.Create&lt;SongControllerTester&gt;( mocks );</pre>
+<p>(NOTE: I'm using the Test Specific Subclasses espoused in <a href="http://haacked.com/archive/2007/12/09/writing-unit-tests-for-controller-actions.aspx" target="_blank">Phil Haack's post</a> on the subject but it doesn't matter if you use the subclasses or the actual base controllers.)</p>
+<p>This fails with the error: <font face="Courier New">MissingMethodException: Can't find a constructor with matching arguments</font>.</p>
+<p>Luckily, the AutoMockingContainer's source is available. Even more luckily, so is Windsor's. So after some digging, here is what appears to be happening:</p>
+<p>When the AutoMockingContainer attempts to create <font face="Courier New">SongControllerTester</font> class, it adds the class's type to its own internal Windsor container. It then attempts to resolve that type, thus retrieving an instance of the object from the container.</p>
+<p>During that retrieval process, Windsor loops through the object's properties and tries to resolve the ones that it can (for the properties that are objects). Typically, they can't be resolved unless they've also been added to the container. But the cool thing about the AutoMockingContainer is that it wires itself into this process and will create dynamic mocks for the objects that represent these properties. However, these objects must have a default constructor.</p>
+<p>The MVC Controller object has a <font face="Courier New">ControllerContext</font> property and the <font face="Courier New">ControllerContext</font> object does not have a default constructor. Hence, no dynamic mock for it.</p>
+<p>And unfortunately, I haven't found a way around this yet. Marking <font face="Courier New">ControllerContext</font> as non-dynamic, stubbed, or non-mocked won't work, nor am I able to get the AutoMockingContainer to create an instance of <font face="Courier New">ControllerContext</font> (there is no setter on its Controller property).</p>
+<p>So in lieu of the amount of time I've already spent looking into this, I'll have to switch to more traditional methods of creating my controllers and mocking their dependencies.</p>
+<p>Kyle the Mockable</p>

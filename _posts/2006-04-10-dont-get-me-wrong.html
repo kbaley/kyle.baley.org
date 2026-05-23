@@ -1,0 +1,29 @@
+---
+layout: post
+title: Don't get me wrong...
+date: 2006-04-10 22:15:00.000000000 -04:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '984'
+  dsq_thread_id: '362997880'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>So I've been developing in ASP.NET 2.0 and SQL Server Express and I'm happy with them in general.&nbsp;Some of the changes are a little jarring, though. To the point where&nbsp;they're starting to hinder my progress enough to waste time complaining about them:</p>
+<p>Firstly, is the idea of web sites being a different type of project. I.E. There's no .csproj file. I read about why they did this and promptly forgot because frankly, I don't care. What I do care about is the fact that when I download code samples, there isn't anything I can double-click to open it in VS 2005. Yes, I can open VS 2005 and select Open Web Site... You can also click File | Close to close most of your apps but when was the last time you did that? What if you were forced to?</p>
+<p><font color="#ff0000">*UPDATE* Thanks to </font><a href="http://www.hanselminutes.com"><font color="#ff0000">www.hanselminutes.com</font></a><font color="#ff0000"> for pointing me to this little </font><a href="http://weblogs.asp.net/scottgu/archive/2006/04/05/442032.aspx"><font color="#ff0000">number</font></a><font color="#ff0000"> to fix this annoyance. Some great-looking additions, too. Like the ability to create a virtual directory from within VS2005 and publishing to an FTP server.</font></p>
+<p>Secondly is the method of debugging. I like that you don't have to create a website in IIS for every web project you're working on. But here's my problem with that: I don't generally run web apps through VS 2005. My method of debugging is old school. I open the project in Visual Studio and I open the site in IE. I make changes in Visual Studio, recompile, refresh the page in IE, and repeat. Takes too long to start the formal debugging process in&nbsp;VS just because I have a typo in a property somewhere.</p>
+<p>If I do need to debug with breakpoints, I usually have a benign starting page that loads quickly. I hit F5 until that page loads and I now have the benefit of having the debugger attached to my IE processes. I can now go back to my real IE instance and refresh the page to hit the breakpoints.</p>
+<p>This isn't possible without doing things the .NET 1.1 way and creating an IIS site for my apps in progress. I believe, but have not verified, that I could get around this by starting the app from VS 2005 once which will create the web server port I need for that session. I also believe this port will go away when I close Visual Studio. Again, a workaround that slows me down.</p>
+<p>Related to this is my final beef. I'm constantly getting &#8220;cannot open user default database&#8221; errors. Not when I start the project from VS 2005 but almost always when I load the site up directly in IE. The error goes away if I disconnect the database in VS 2005 but that is NOT a workaround I'm willing to put up with. As far as I can tell, the same thing happens whether you work with the database in VS or in SQL Management Studio. For now, I'm able to things going by using a SQL login in my connection string. Again, not the ideal situation but at least I can go back to work.</p>
+<p>If anyone has details on any of these issues, don't be shy.</p>

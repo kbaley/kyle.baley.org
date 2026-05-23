@@ -1,0 +1,42 @@
+---
+layout: post
+title: 'dasBlog: One Week After'
+date: 2006-07-30 18:44:36.000000000 -04:00
+categories:
+- dasBlog
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '843'
+  dsq_thread_id: '747117898'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Some comments on dasBlog after playing with it for a week.</p>
+<ul>
+<li>No comment spam! Worth the purchase price alone
+</li>
+<li>Lots of data in the Activity section. I like the clickthroughs because it's helping me find dead links leftover from the .Text conversion.
+</li>
+<li>Navigating to previous days in the Activity section is kind of a drag. Particularly because it defaults to today's date when you switch from one category to another. And separate dropdowns for Month/Day/Year has never been a favorite navigational construct of mine.
+</li>
+<li>One thing I miss from .Text: the ability to see all comments in one place. <strike>I don't have e-mail set up properly on my server so I'm not notified when comments come in</strike>. Luckily, my readership is relatively mute. (update: forgot I changed my password recently. Still would be a nice feature, though.)
+</li>
+<li>Project is much easier to hack than .Text.
+</li>
+<li>Just noticed now: Something wrong with the DateTime picker in the Add Entry screen. I think I need to include a reference to the aspnet_client library in my IIS settings for the site.</li>
+</ul>
+<p>And finally, converting to .NET 2.0 was not easy but not because of dasBlog. The <a href="http://dasblog.info/CategoryView,category,Development,VS2005.aspx">instructions</a> on this are crystal clear and work fine...provided you have the correct version of Scott Guthrie's <a href="http://webproject.scottgu.com/">Web Application Project</a>. I guess I didn't originally because after several conversion attempts, the web project absolutely refused to convert over as a web application project.</p>
+<p>What I did get was a regular .NET 2.0 website with all the string resources moved to the App_GlobalResources folder. Opening the site gave this error:</p>
+<p style="FONT-SIZE: 8pt; FONT-STYLE: italic">"Could not find any resources appropriate for the specified culture or the neutral culture. Make sure "newtelligence.DasBlog.Web.StringTables.StringTables.resources" was correctly embedded or linked into assembly "App_Code.el7nt025" at compile time, or that all the satellite assemblies required are loadable and fully signed."</p>
+<p>I'm positive this is because, as a .NET 2.0 website, the project no longer has a default namespace so all the string resources were being referenced incorrectly. I'm sure I could have changed the reference in ApplicationResourceTable.cs to remove newtelligence.DasBlog.Web from the namespace but the instructions were pretty adamant that they were correct.</p>
+<p>Anyway, removing the Web Application Project and re-installing the most current version worked. There's also a chance that VSTO2005 mucked something up because when I installed the Visual Studio 2005 update to allow the Web Application Project to run, the VSTO2005 installation procedure launched a little sum'n-sum'n first. Regardless, if you get this error, do what I did and all should be fine.</p>
+<p>As to why I needed it converted to .NET 2.0, well, that's still ongoing so you'll have to wait.</p>

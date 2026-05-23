@@ -1,0 +1,27 @@
+---
+layout: post
+title: jQuery and the ConventionController
+date: 2008-04-13 02:59:13.000000000 -04:00
+categories: []
+tags:
+- ASP.NET MVC
+- Javascript
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '388536798'
+  pvc_views: '1241'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Well here's a fine how-do-ya-do. I'm using the <a href="http://www.codeplex.com/MVCContrib/Wiki/View.aspx?title=ConventionController&amp;referringTitle=Documentation" target="_blank">ConventionController</a> from <a href="http://mvccontrib.org" target="_blank">MVCContrib</a> which means I have controls with IDs like dto.JobName and dto.OrderedDate.</p>
+<p>Problem is, I can't get at these things by ID in jQuery anymore. &quot;#dto.JobName&quot; in jQuery means (if my memory of CSS serves) select all elements with an ID of dto and a CSS class of JobName. Even if that's wrong, it doesn't matter much. The end result is <font face="Courier New">$( &quot;#dto.JobName&quot; )</font> returns a useless object.</p>
+<p>Current workaround is to select by name. Like so: <font face="Courier New">$( &quot;input[name='dto.JobName']&quot; )</font> or <font face="Courier New">$( &quot;select[name='dto.JobTypes'] )</font>.</p>
+<p>Kyle the Selector</p>

@@ -1,0 +1,86 @@
+---
+layout: post
+title: .NET Providers, or "How to Be Secure On Your Own Terms"
+date: 2007-05-24 00:14:23.000000000 -04:00
+categories: []
+tags:
+- ".NET"
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1064'
+  dsq_thread_id: '549399375'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Some years ago, I built a commercial&nbsp;ASP.NET 1.1 application and part of it is about to be sold off. I've been the sole developer on it since its inception but haven't spent much time on it because it hasn't been a major focus for the person for whom I built it.</p>
+<p>Now, after being tasked with preparing a stripped down version of it that someone else will be looking at, I'm starting to realize just how far my development skills have come in the last few years.</p>
+<p>But that's not what I came to talk about.</p>
+<p>The application is small enough that I'm taking the opportunity to refactor a little as well as upgrade to .NET 2.0. Not using the upgrade wizard, mind you. Last thing I want in a .NET 2.0 app is a bunch of designer code intermingled with the page logic. And let's just say I wasn't exactly a proponent of MVC back then, let alone MVP. Heck, at the time I was just proud to be using the DAAB (the original version, with the static SqlHelper).</p>
+<p>One of the things I wanted to tackle was cleaning up the authentication code to take advantage of the ASP.NET security controls. In the original version, I used what I think was fairly standard practice at the time. Namely, in the AuthenticateRequest event in Global.asax, I created a GenericPrincipal using the username and roles from the application's database. (Oh yeah, I'm using Forms Authentication.) This was pretty useful in creating a guest-only version of the app as well as an admin section.</p>
+<p>With .NET 2.0, I had read and played with the Membership and Role Providers but hadn't done any real work with it other than to run through the ASP.NET configuration wizard and stare blankly at the sheer number of tables created to support it.</p>
+<p>In this version, I had two goals: a) use those providers, and b) do NOT, under any circumstances, create that aspnet_regsql security schema in my database. After all, I already had a user/role schema set up that worked.</p>
+<p>So starting from Scott Guthrie's comprehensive list of <a href="http://weblogs.asp.net/scottgu/archive/2006/02/24/ASP.NET-2.0-Membership_2C00_-Roles_2C00_-Forms-Authentication_2C00_-and-Security-Resources-.aspx" target="_blank">ASP.NET security resources</a>, I began wading through tutorials each of which wants you to either use that same schema, or use some entirely different backend. All I really wanted was to use the SQL providers with my own schema.</p>
+<p>It was <a href="http://www.devx.com/asp/Article/29256" target="_blank">this article</a> that got me on the right track. From there I was able to determine what I had to do. To wit, I created a custom membership provider and a custom role provider to do only what I need them to do.</p>
+<p>The membership provider derives from SqlMembershipProvider and contains only the following code:</p>
+<pre class="code"><span style="background: rgb(255,255,255)">    <span style="color: rgb(0,0,128)">public</span> <span style="color: rgb(0,0,128)">override</span> <span style="color: rgb(0,0,128)">bool</span> <span style="color: rgb(128,0,0)">ValidateUser</span>( <span style="color: rgb(0,0,128)">string</span> <span style="color: rgb(128,0,0)">username</span>, <span style="color: rgb(0,0,128)">string</span> <span style="color: rgb(128,0,0)">password</span> )
+    {
+        <span style="color: rgb(0,0,128)">string</span> <span style="color: rgb(128,0,0)">role</span> = <span style="color: rgb(128,128,0)">MyDal</span>.<span style="color: rgb(128,0,0)">ValidateUser</span>( <span style="color: rgb(128,0,0)">username</span>, <span style="color: rgb(128,0,0)">password</span> );
+        <span style="color: rgb(0,0,128)">if</span> ( <span style="color: rgb(128,0,0)">role</span> == <span style="color: rgb(0,0,128)">null</span> )
+        {
+            <span style="color: rgb(0,0,128)">return</span> <span style="color: rgb(0,0,128)">false</span>;
+        }
+        <span style="color: rgb(0,0,128)">return</span> <span style="color: rgb(0,0,128)">true</span>;
+    }
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Similarly, the role provider derives from SqlRoleProvider and contains the following:</p>
+<pre class="code"><span style="background: rgb(255,255,255)">    <span style="color: rgb(0,0,128)">public</span> <span style="color: rgb(0,0,128)">override</span> <span style="color: rgb(0,0,128)">string</span>[] <span style="color: rgb(128,0,0)">GetRolesForUser</span>( <span style="color: rgb(0,0,128)">string</span> <span style="color: rgb(128,0,0)">username</span> )
+    {
+        <span style="color: rgb(128,128,0)">ArrayList</span> <span style="color: rgb(128,0,0)">roleList</span> = <span style="color: rgb(0,0,128)">new</span> <span style="color: rgb(128,128,0)">ArrayList</span>( );
+
+        <span style="color: rgb(128,128,0)">DataTable</span> <span style="color: rgb(128,0,0)">roleTable</span> = <span style="color: rgb(128,128,0)">MyDal.</span><span style="color: rgb(128,0,0)">GetRolesForUser</span>( <span style="color: rgb(128,0,0)">username</span> );
+        <span style="color: rgb(0,0,128)">foreach</span> ( <span style="color: rgb(128,128,0)">DataRow</span> <span style="color: rgb(128,0,0)">row</span> <span style="color: rgb(0,0,128)">in</span> <span style="color: rgb(128,0,0)">roleTable</span>.<span style="color: rgb(128,0,0)">Rows</span> )
+        {
+            <span style="color: rgb(128,0,0)">roleList</span>.<span style="color: rgb(128,0,0)">Add</span>( <span style="color: rgb(128,0,0)">row</span>[</span><span style="background: rgb(192,192,192)">"UserGroup"</span><span style="background: rgb(255,255,255)">].<span style="color: rgb(128,0,0)">ToString</span>( ) );
+        }
+
+        <span style="color: rgb(0,0,128)">return</span> (<span style="color: rgb(0,0,128)">string</span>[])<span style="color: rgb(128,0,0)">roleList</span>.<span style="color: rgb(128,0,0)">ToArray</span>( <span style="color: rgb(0,0,128)">typeof</span>( <span style="color: rgb(0,0,128)">string</span> ));
+    }
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>(NOTE: If I may use my&nbsp;Hillbilly mind powers for a moment: You WILL ignore the data access code.)</p>
+<p>These methods do exactly what they say they do but they are doing it the way *I* want them to do it. I.E. They're retrieving the data from my database using stored procedures of my own design.</p>
+<p>After that, it was a simple matter of registering the providers in the web.config:</p>
+<pre class="code"><span style="color: rgb(0,0,255)"><span style="background: rgb(255,255,255)">    &lt;</span><span style="color: rgb(128,0,0)">membership</span><span style="color: rgb(0,0,255)"> 
+          </span><span style="color: rgb(255,0,0)">defaultProvider</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">MySqlMembershipProvider</span>"<span style="color: rgb(0,0,255)"> &gt;
+        &lt;</span><span style="color: rgb(128,0,0)">providers</span><span style="color: rgb(0,0,255)">&gt;
+            &lt;</span><span style="color: rgb(128,0,0)">add</span><span style="color: rgb(0,0,255)"> </span><span style="color: rgb(255,0,0)">name</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)"><span style="color: rgb(0,0,255)">MySqlMembershipProvider</span></span>"<span style="color: rgb(0,0,255)"> 
+                 </span><span style="color: rgb(255,0,0)">type</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)"><span style="color: rgb(0,0,255)">MySqlMembershipProvider</span></span>"
+<span style="color: rgb(0,0,255)">                 </span><span style="color: rgb(255,0,0)">requiresQuestionAndAnswer</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">false</span>"
+<span style="color: rgb(0,0,255)">                 </span><span style="color: rgb(255,0,0)">connectionStringName</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">MyConnection</span>"<span style="color: rgb(0,0,255)"> /&gt;
+        &lt;/</span><span style="color: rgb(128,0,0)">providers</span><span style="color: rgb(0,0,255)">&gt;
+    &lt;/</span><span style="color: rgb(128,0,0)">membership</span><span style="color: rgb(0,0,255)">&gt;
+    &lt;</span><span style="color: rgb(128,0,0)">roleManager</span><span style="color: rgb(0,0,255)"> </span><span style="color: rgb(255,0,0)">enabled</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">true</span>"
+<span style="color: rgb(0,0,255)">                 </span><span style="color: rgb(255,0,0)">defaultProvider</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">MySqlRoleProvider</span>"<span style="color: rgb(0,0,255)">&gt;
+        &lt;</span><span style="color: rgb(128,0,0)">providers</span><span style="color: rgb(0,0,255)">&gt;
+            &lt;</span><span style="color: rgb(128,0,0)">add</span><span style="color: rgb(0,0,255)"> </span><span style="color: rgb(255,0,0)">name</span><span style="color: rgb(0,0,255)">=</span>"My<span style="color: rgb(0,0,255)">SqlRoleProvider</span>"
+<span style="color: rgb(0,0,255)">                 </span><span style="color: rgb(255,0,0)">type</span><span style="color: rgb(0,0,255)">=</span>"My<span style="color: rgb(0,0,255)">SqlRoleProvider</span>"
+<span style="color: rgb(0,0,255)">                 </span><span style="color: rgb(255,0,0)">connectionStringName</span><span style="color: rgb(0,0,255)">=</span>"MyConnection"<span style="color: rgb(0,0,255)"> /&gt;
+        &lt;/</span><span style="color: rgb(128,0,0)">providers</span><span style="color: rgb(0,0,255)">&gt;
+    &lt;/</span><span style="color: rgb(128,0,0)">roleManager</span><span style="color: rgb(0,0,255)">&gt;    
+</span></span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Where "MyConnection" refers to an entry in the &lt;connectionStrings&gt; section.</p>
+<p>Now I'm able to use the ASP.NET login control and the various menu and navigation controls using security trimming as well as protect my application without having to fiddle around with the forms authentication cookie.</p>
+<p>Note that this works splendidly <em>for my scenario</em>. In my application, users log in and the system determines what role (that's right, I'm supporting only a single role, you wanna make something out of it?) they're in. That's it. There is no "I haven't registered yet so I'll just sign up online" or "I forgot my password can you send it to me?" or "What users are in this role?" scenarios. That's why I can get away with overriding only the two methods listed above.</p>
+<p>Like JP says, <a href="http://www.jpboodhoo.com/blog/BecomingExtremeFromTheInsideOut.aspx" target="_blank">small victories</a>...</p>
+<p>Kyle the Victorious</p>
+<p>P.S. I still hate security-related coding</p>

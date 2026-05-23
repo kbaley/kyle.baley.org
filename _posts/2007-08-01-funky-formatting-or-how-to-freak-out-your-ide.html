@@ -1,0 +1,38 @@
+---
+layout: post
+title: Funky Formatting, or "How to freak out your IDE"
+date: 2007-08-01 19:43:43.000000000 -04:00
+categories: []
+tags:
+- ReSharper
+- Visual Studio
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1260'
+  dsq_thread_id: '429902189'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Test time, kiddies!</p>
+<p>Assume that in the image below, we are looking at a class in Visual Studio with the default font and color scheme (except using Consolas as the default font). Also assume that ReSharper 3.0 is installed.</p>
+<p>Locate at least three things wrong with the formatting on this screen.</p>
+<p><img src="/assets/FunkyFormatting1.png" border="0" /></p>
+<p>First correct answer wins the opportunity to&nbsp;tell me&nbsp;how the &amp;*%$ to fix it. Hint 1: Re-installing ReSharper has no effect. Hint 2: Changing the font/color setting for Tracepoint - Mapped (Enabled) will, for whatever reason,&nbsp;affect the same change in the variable "mockery" in the image above.</p>
+<p>Kyle the Bemused</p>
+<p><font color="#ff0000"><strong>**&nbsp;Update **</strong></font></p>
+<p>Stop with all the responses already. It's embarrassing. You'll inflate my already-ballooning ego.</p>
+<p>The three bits of freaked out formatting are:</p>
+<ul>
+<li>The mockery variable is formatted&nbsp;as if&nbsp;it is a breakpoint. However, after testing various settings, it is, in fact, formatted as a Tracepoint. Yeah, I didn't know what a tracepoint was either.</li>
+<li>Line 14 is not highlighted as a breakpoint.</li>
+<li>Line 15 is missing the closing semi-colon and the IDE has not picked this up as an error</li>
+</ul>
+<p>There are two possible solutions. The first is to uninstall Visual Studio Team Edition for Database Professionals (p.k.a. DataDude). The more correct one is to install the latest service pack for Visual Studio, of which I had none.</p>

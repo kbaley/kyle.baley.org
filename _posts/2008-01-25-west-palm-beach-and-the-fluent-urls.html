@@ -1,0 +1,81 @@
+---
+layout: post
+title: West Palm Beach and the Fluent URLs
+date: 2008-01-25 17:43:44.000000000 -05:00
+categories: []
+tags:
+- ASP.NET MVC
+- Presenting
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '482285884'
+  pvc_views: '898'
+  _edit_last: '1'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Ah, it's good to be back on the circuit. The Hillbilly made his first speaking engagement since May '06 earlier this week, thanks to the brave and trusting souls behind the <a href="http://www.fladotnet.com" target="_blank">South Florida .NET user groups</a>. They have themselves a nice group out West Palm Beach way and I hope I can come back either there or one of the other places they're in charge of. I can only hope this last meeting was as fateful as my last presentation.</p>
+<p>The official topic was ASP.NET MVC but we ventured into TDD, DDD, productivity tools, and AJAX if memory serves. Definitely played out differently than I expected but that's why speaking is so fun. Lots left uncovered but that just makes my presentation at South Florida Code Camp next week that much more interesting.</p>
+<p>The code can be found <a href="http://kyle.baley.org/content/Suvius.Flamingo.zip" target="_blank">here</a> (3.8 Mb). It's a music catalog type application that lets you search for music in your library and play it, although only a song at a time. Check the ReadMe.txt for instructions on building. The short version, in theory, is: modify local-properties.xml and run clicktobuild.bat and you're good to go, assuming you have some version of SQL Server installed. It will create an IIS virtual directory pointing to your music folder to allow you to play the songs you select.</p>
+<p>Before I start rambling on one of the more interesting aspects of the presentation, some acknowledgements. These are the main links I used in preparing both the code and the presentation:</p>
+<ul>
+<li><a href="http://weblogs.asp.net/scottgu/archive/2007/12/09/asp-net-mvc-framework-part-4-handling-form-edit-and-post-scenarios.aspx" target="_blank">Scott Guthrie's Intro Series</a> (Link is to part 4, which contains links to the other three parts)</li>
+<li><a href="http://haacked.com/archive/2007/12/09/writing-unit-tests-for-controller-actions.aspx" target="_blank">Phil Haack on testing controller actions</a></li>
+<li><a href="http://blog.wekeroad.com/2007/12/05/aspnet-mvc-preview-using-the-mvc-ui-helpers/" target="_blank">Rob Conery talks on the MVCToolkit</a></li>
+</ul>
+<p>Special thanks to <a href="http://codebetter.com/blogs/jeffrey.palermo/archive/2008/01/05/codecampserver-oss-project-call-for-participation.aspx" target="_blank">Jeff Palermo's CodeCampServer</a> from which I borrowed very heavily. I didn't go as deeply as he did in the architecture (unit tests? Pffft) and I switched out StructureMap for Windsor because it's what I know. Having said that, I've seen enough sample code for StructureMap that it's near the top of my list of things to check out in the near future.</p>
+<p>The rest of this post discusses something I showed, albeit briefly, during the talk. It's the idea of &quot;Fluent URLs&quot;.</p>
+<p>It started when I created a search controller based on <a href="http://weblogs.asp.net/scottgu/archive/2007/12/03/asp-net-mvc-framework-part-2-url-routing.aspx" target="_blank">Scott Guthrie's sample search router</a>. In this version, I'm searching a database of songs. Here is the route:</p>
+<pre class="code"><span style="color: rgb(43,145,175)">RouteTable</span>.Routes.Add(<span style="color: rgb(0,0,255)">new</span> <span style="color: rgb(43,145,175)">Route
+</span>{
+    Url = <span style="color: rgb(163,21,21)">&quot;Search/[query]&quot;</span>,
+    Defaults = <span style="color: rgb(0,0,255)">new</span> { controller=<span style="color: rgb(163,21,21)">&quot;Search&quot;</span>, action = <span style="color: rgb(163,21,21)">&quot;Results&quot;</span> },
+    RouteHandler = <span style="color: rgb(0,0,255)">typeof</span>(<span style="color: rgb(43,145,175)">MvcRouteHandler</span>)
+});</pre>
+<p>Here are some sample URLs that use this route:</p>
+<p>localhost/Suvius.Flamingo/Search/Brubeck<br />
+  <br />localhost/Suvius.Flamingo/Search/Folk </p>
+<p>localhost/Suvius.Flamingo/Search/Muppet Movie Soundtrack</p>
+<p>And so on and so forth. The idea is that you pass in a [query] and it will find any song containing that text in the title, artist, album, whatever.</p>
+<p>After that, I got to thinkin'. What if we wanted a more specific query that search based on, say, artist only. So I added the route:</p>
+<pre class="code"><span style="color: rgb(43,145,175)">RouteTable</span>.Routes.Add(<span style="color: rgb(0,0,255)">new</span> <span style="color: rgb(43,145,175)">Route
+</span>{
+    Url = <span style="color: rgb(163,21,21)">&quot;Search/FindSongsSungBy/[artist]&quot;</span>,
+    Defaults = <span style="color: rgb(0,0,255)">new</span> { controller=<span style="color: rgb(163,21,21)">&quot;Search&quot;</span>, action = <span style="color: rgb(163,21,21)">&quot;FindSongsSungBy&quot;</span> },
+    RouteHandler = <span style="color: rgb(0,0,255)">typeof</span>(<span style="color: rgb(43,145,175)">MvcRouteHandler</span>)
+});</pre>
+<p>And some sample URLs:</p>
+<p>localhost/Suvius.Flamingo/Search/FindSongsSungBy/Dean Martin<br />
+  <br />localhost/Suvius.Flamingo/Search/FindSongsSungBy/Sarah Mclachlan </p>
+<p>localhost/Suvius.Flamingo/Search/FindSongsSungBy/Mary Poppins</p>
+<p>That route didn't last long due to the obvious duplication in the action. It's practically begging you to refactor into something more generic like:</p>
+<pre class="code"><span style="color: rgb(43,145,175)">RouteTable</span>.Routes.Add(<span style="color: rgb(0,0,255)">new</span> <span style="color: rgb(43,145,175)">Route
+</span>{
+    Url = <span style="color: rgb(163,21,21)">&quot;Search/[searchCriteria]/[queryText]&quot;</span>,
+    Defaults = <span style="color: rgb(0,0,255)">new</span> { controller=<span style="color: rgb(163,21,21)">&quot;Search&quot;</span> },
+    RouteHandler = <span style="color: rgb(0,0,255)">typeof</span>(<span style="color: rgb(43,145,175)">MvcRouteHandler</span>)
+});</pre>
+<p>In this case, <font face="Courier New">searchCriteria</font> can be one of: Title, Artist, Album, Genre, or whatever criteria you wish to search by.</p>
+<p>I didn't even implement this one because that's where the idea of a fluent URL came in. The new route:</p>
+<pre class="code"><span style="color: rgb(43,145,175)">RouteTable</span>.Routes.Add(<span style="color: rgb(0,0,255)">new</span> <span style="color: rgb(43,145,175)">Route
+</span>{
+    Url = <span style="color: rgb(163,21,21)">&quot;FindSongsWhere/[searchCriteria]/Is/[artist]&quot;</span>,
+    Defaults = <span style="color: rgb(0,0,255)">new</span> { controller=<span style="color: rgb(163,21,21)">&quot;Search&quot;</span> },
+    RouteHandler = <span style="color: rgb(0,0,255)">typeof</span>(<span style="color: rgb(43,145,175)">MvcRouteHandler</span>)
+});</pre>
+<p>And some sample URLs:</p>
+<p>localhost/Suvius.Flamingo/FindSongsWhere/Artist/Is/Neil Young&#160; <br />localhost/Suvius.Flamingo/FindSongsWhere/Title/Is/Come Away With Me </p>
+<p>localhost/Suvius.Flamingo/FindSongsWhere/Genre/Is/Disco Funk </p>
+<p>localhost/Suvius.Flamingo/FindSongsWhere/Album/Is/William Shatner Sings The Hits</p>
+<p>I didn't take it any further than that (by, say, parameterizing the /Is/ into options such as /Contains/ or /IsSimilarTo/).</p>
+<p>I will leave it to someone more practical than I to determine the usefulness of something like this but coming up with it did make me feel ever so giddy that such a thing was even possible. Not that I'd advocate this being the sole interface to your search engine but at the very least, it does lend itself to quick launch tools like Launchy and SlickRun where you can set up parameterized URLs in a more intuitive way. On the downside, it's nigh impossible to use things like Url.Action when you insert random, hard-coded words (like &quot;Is&quot;) into the Url for the route.</p>
+<p>A final important note on the code. It uses Castle Windsor to create the controllers and inject services into them and it uses NHibernate for the data access layer. I remember my first exposure to both of these fairly vividly and if you are not familiar with them, they can be ever so slightly unintuitive. As it is, I'm no NHibernate expert which is why this code took three days to prepare for release. If there is anything about these aspects (or any others) that you need clarification on, please contact me and I'll do my best to edify and elucidate.</p>
+<p>Kyle the Routed</p>

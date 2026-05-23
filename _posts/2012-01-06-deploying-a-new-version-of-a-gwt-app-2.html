@@ -1,0 +1,54 @@
+---
+layout: post
+title: Deploying a new version of a GWT app
+date: 2012-01-06 22:51:08.000000000 -05:00
+categories: []
+tags:
+- BookedIN
+- Google App Engine
+- GWT
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '4437'
+  dsq_thread_id: '529905391'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>For the record, I’ve never even been offered a Microsoft MVP. How’s THAT for street cred! That said, if the MVP lead in my area is reading: even though I don’t speak at user groups these days and hardly blog (and even then, rarely about Microsoft products anymore), I still feel my lack of contribution to OSS projects should count for something…</p>
+<p>Now back to our regularly scheduled hoe down.</p>
+<p>One of the issues with GWT apps that’s only really discussed in hushed whispers in the back alleys of Google Groups is how to handle new versions. The nature of pure JavaScript applications is a bit of a hindrance in this case. </p>
+<p>When converting a Java application to the necessary Javascript, GWT generates (depending on your set up):</p>
+<ul>
+<li>a .nocache.js file  </li>
+<li>several .cache.js and .cache.html files  </li>
+<li>several .gwt.rpc files</li>
+</ul>
+<p>The .nocache.js file has the same name every time you compile. But if you’ve changed any code, the cache files and rpc files will not. Here’s what my folder looks like today for BookedIN:</p>
+<p><a href="http://kyle.baley.org/wp-content/uploads/2012/01/FolderStructure.jpg"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="FolderStructure" border="0" alt="FolderStructure" src="/assets/FolderStructure_thumb.jpg" width="869" height="604" /></a></p>
+<p>&nbsp;</p>
+<p>The next time I GWT-compile (provided I’ve changed some code), the folders and files in red will be deleted and replaced with new ones with different names. Among other things, the scheduler.nocache.js file is used to locate these files on demand while the app is running.</p>
+<p>We use the <a href="http://code.google.com/eclipse/">Google Plugin for Eclipse</a> to deploy our application to AppEngine. We almost always deploy to a new version in AppEngine as well so that we can play around with it ourselves before unleashing it on an unsuspecting public. The upshot of this process is that the new version will have new .cache and .gwt.rpc files but not the old ones.</p>
+<p>So let’s run through a potential scenario:</p>
+<ul>
+<li>Our faithful user logs into <a href="http://getbookedin.com/?cid=17">BookedIN</a> and uses the default version, which I will call “Dandelion”.  </li>
+<li>We deploy a new version, called “Thistle” and make it the new default version  </li>
+<li>The user makes a request for a page that is, say, behind a code-split. One of GWT’s nice optimization features that lets you split JavaScript among several files and loads them dynamically as needed.</li>
+</ul>
+<p>At this point, the user has the main page and the .nocache.js file loaded in memory. When it tries to satisfy the request, it will look for a .cache.js file from version “Dandelion”. Only by refreshing the entire browser page will it then load the new .nocache.js file, which knows about version “Thistle”. But this being a GWT-type, AJAX-ified application, there is rarely much call for them to refresh the entire page.</p>
+<p>Predictably, we get a 404 error:</p>
+<p><a href="http://kyle.baley.org/wp-content/uploads/2012/01/404.jpg"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="404" border="0" alt="404" src="/assets/404_thumb.jpg" width="1001" height="732" /></a></p>
+<p>This leads to some pretty nifty dancing when it comes to deployment time. For example, how do you take down the application for maintenance cleanly? If the user has the page loaded in memory and is just making AJAX calls, you can’t just throw up an appoffline.htm file and redirect all your traffic to it (says the guy who thought differently a few short months ago).</p>
+<p>Even if you can take the app down for maintenance, I don’t want to. We’re trying to shorten our deployment cycles which doesn’t lend itself to a page that says “hey, paying user, we’re adding some cool new features so pardon us interrupting you using the old ones” every week even if it just shows for a few minutes. In short, what I’d really like is a hot deployment.</p>
+<p>Based on my <a href="https://groups.google.com/forum/#!topic/google-web-toolkit/Z34hfHWtD2s">research and questions</a>, this isn’t 100% possible but we can get close. As was suggested in the previous link, we can trap the appropriate exception in RPC calls and display a message to the user asking them to refresh their browser. Similarly, for code-split .cache.js files, we can trap the 404 error in the onFailure of the RunAsyncCallback (or better yet, use <a href="http://code.google.com/p/gwt-platform/">GWTP</a> and have some main presenter implement AsyncCallFailHandler to make this easier) and do the same thing: notify the user that the page needs to be refreshed.</p>
+<p>Initially, this kind of left a bad taste in my mouth. But from a marketing perspective, it’s not bad. We have a little popup that we display to users when we’ve implemented something new so this is a nice way to ensure they see it.</p>
+<p>Another suggestion that was made (by one of the creators of GWTP, no less) was to use the <a href="http://code.google.com/appengine/docs/java/channel/">Channel API</a> to detect when a new version has been released. This has an advantage in that you don’t need to wait until the user does something before informing him of the change.</p>
+<p>So far, much of this is theoretical for us because it was easier to write about it than to actually implement it. In any case, few people seem to be discussing it. Besides which, I had to write *something* after that little Microsoft MVP commentary.</p>
+<p>Kyle the Filler</p>

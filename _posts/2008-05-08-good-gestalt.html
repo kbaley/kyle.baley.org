@@ -1,0 +1,105 @@
+---
+layout: post
+title: Good Gestalt!
+date: 2008-05-08 12:00:39.000000000 -04:00
+categories: []
+tags:
+- Coding Style
+- Conscientious Coding
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '385943966'
+  hl_twitter_has_auto_tweeted: 'New post: Good Gestalt!, Full text: http://blog.baley.org/?p=144'
+  pvc_views: '1203'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The hillbilly recently upgraded his trailer to Windows Server 2008 but it wasn't interesting enough to talk about, mostly because it went so seamlessly. So much so that I'm hauling out a post from my old blog rather instead of relating my experience. But I will say that so far, I'm very happy with it, thanks in part to <a href="http://blogs.msdn.com/vijaysk/archive/2008/02/11/using-windows-server-2008-as-a-super-desktop-os.aspx">these instructions</a>.</p>
+<p>The reason I'm regurgitating is because I've been looking at other people's code recently, including some of my own from way back (trust me, that's an &quot;other&quot; person too). And as I scan through it, I was reminded of something: I'm a big fan of white space.</p>
+<p>In coding standards, there is usually much said about things like putting curly braces on a single line and wrapping single line if statements in braces to enhance readability. But for some years now, I've adopted a personal standard that goes a little further. It was after discussions with Simon Watfa way back when I was looking over some code of his and it stood out more than usual. </p>
+<p>I'll start with two examples. The first is a more &quot;traditional&quot; white space scheme:</p>
+<pre class="c-sharp" name="code">private void returnSomeValue(int parm1, string parm2)
+{
+    // if, for and foreach
+    if(i == 1)
+    {
+        // Do something
+    }
+
+    for(int j = 0; j&lt;100; j++)
+    {
+        // Loop
+    }
+
+    if(i == 100) return;
+
+    foreach(var item in items)
+    {
+        // Process item
+    }
+
+    // Function calls
+    string theValue = i.ToString();
+    theValue = String.Format(&quot;The value is {0}&quot;, i);
+
+    // Casting
+    TextBox textbox = (TextBox)Page.FindControl(&quot;textBox1&quot;);
+    string text = ((TextBox)Page.FindControl(&quot;textBox1&quot;)).Text;
+
+    // Square braces
+    string[] myArray = theValue.Split(',');
+    myArray[0] = &quot;moo&quot;;
+
+    // Lambdas
+    User user = userList.Find(u=&gt;u.Username==&quot;moo&quot;);
+}</pre>
+<p>And here's the same code with my preferences:</p>
+<pre class="c-sharp" name="code">private void returnSomeValue( int parm1, string parm2 )
+{
+    // if, for and foreach
+    if ( i == 1 )
+    {
+        // Do something
+    }
+
+    for ( int j = 0; j &lt; 100; j++ )
+    {
+        // Loop
+    }
+
+    if ( i == 100 ) return;
+
+    foreach ( var item in items )
+    {
+        // Process item
+    }
+
+    // Function calls
+    string theValue = i.ToString( );
+    theValue = String.Format( &quot;The value is {0}&quot;, i );
+
+    // Casting
+    TextBox textbox = (TextBox)Page.FindControl( &quot;textBox1&quot; );
+    string text = ( (TextBox)Page.FindControl( &quot;textBox1&quot; ) ).Text;
+
+    // Square braces
+    string[] myArray = theValue.Split( ',' );
+    myArray[0] = &quot;moo&quot;;
+
+    // Lambdas
+    User user = userList.Find( u =&gt; u.Username == &quot;moo&quot; );
+}</pre>
+<p>That is, there are spaces almost everywhere. The only places I don't use them are within array indexes and when casting.</p>
+<p>Fairly minor differences, to be sure but they really help me follow code, especially when it gets particularly dense (in both senses of the word). Coupled with a decent IDE colour scheme (and the hillbilly still *strongly* favours dark text on light backgrounds), I can more easily pick out the meaty parts of the code while filtering out the noise. The nice thing is that this can all be enforced with ReSharper's formatting options and, I think, even with Visual Studio itself, sans add-ins.</p>
+<p>Couple o' downsides, though. I often work on code on my laptop where I don't set the standards. This requires setting up project specific styles in ReSharper depending on how much work I'm going to be doing in it. Bonus points if the project already includes a ReSharper style. But in general, the lesson is: if you adopt a similar coding style to this, *never* contribute to an OSS project.</p>
+<p>ReSharper sometimes actually gets in the way here, too. With these styles in place, I would type the opening parenthesis of a method call and ReSharper would helpfully add the extra space, then the closing parenthesis for me. When there is no space, you can type the closing parenthesis yourself and ReSharper is smart enough to recognize you've just typed what it's already added. That is, it won't re-add the closing parenthesis. But with the space, you end up with two closing parentheses. It's not as much an issue if you get used to using live templates and auto-complete more often but still an annoyance at first.</p>
+<p>As I mentioned in the original post, I can make up semi-lucid reasons why others should use spaces in this way but the reality is: I just like how it looks. It says to me that the author cares about how the code is presented. Or that the author has eyesight problems.</p>
+<p>Kyle the Aging</p>

@@ -1,0 +1,45 @@
+---
+layout: post
+title: Issue with adding a TextboxWatermark client-side
+date: 2006-10-05 13:52:36.000000000 -04:00
+categories:
+- Flamingo
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2277'
+  dsq_thread_id: '350703228'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Here's something you may not know about the <a href="http://atlas.asp.net/atlastoolkit/TextBoxWatermark/TextBoxWatermark.aspx">TextboxWatermark</a> Atlas Control. If you use the normal server-side control as depicted in the samples, the control will clear the watermark text from the textbox before submitting the form if the user hasn't added a value. Which is good. But if you add the TextboxWatermark client-side, it will submit the watermark text as the textbox's value. Which is bad. The rest of this post outlines why this happens so skip it if you don't care.</p>
+<p>The TextboxWatermarkExtender class will loop through the Extender and register a little bit of javascript for each watermark control in the extender. One of those pieces is to register an OnSubmit statement which means that the script it's registering will get executed just before the form containing the textbox gets submitted.</p>
+<p>The script is just a call to the watermark's onsubmit function in the main javascript file for it. That onsubmit function is pretty basic:</p>
+<blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+<p><span style="FONT-SIZE: 11px; COLOR: black; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent"><span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">this</span>._onSubmit <span style="FONT-SIZE: 11px; COLOR: red; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">=</span> function() {<br /><span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">&nbsp;&nbsp;&nbsp;var</span> e <span style="FONT-SIZE: 11px; COLOR: red; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">=</span> <span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">this</span>.control.element;<br /><span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">&nbsp;&nbsp;&nbsp;if</span>(_watermarked) {<br /><span style="FONT-SIZE: 11px; COLOR: green; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Clear watermark text before page is submitted</span><br /><span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this</span>.clearText(<span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">false</span>);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_clearedForSubmit <span style="FONT-SIZE: 11px; COLOR: red; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">=</span> <span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">true</span>;<br />&nbsp;&nbsp;&nbsp;}<br />}<br /></span></p>
+</blockquote>
+<p>That is, if the textbox is watermarked, clear the text from it before submitting the page. This is so that you don't submit the watermark text as the textbox's value.</p>
+<p>As I mentioned, the code that registers this OnSubmit statement is in the TextboxWatermarkExtender class. This means it is included whenever you use the &lt;atlasToolkit:TextboxWatermarkExtender&gt; control in your aspx page.</p>
+<p>It also means that if you are registering your textbox watermark control client-side, you do not get the benefit of this functionality. Because you aren't using the &lt;atlasToolkit:TextboxWatermarkExtender&gt;. you are, I'm guessing, bypassing the Extender class and going straight to the underlying javascript.</p>
+<p>You can see this behaviour in action by <a href="http://kyle.baley.org/QuickQuestioncopyWhyAmIHere.aspx">simply</a> clicking the Search button at the top without putting in a search string. Because I'm adding my watermark client-side, you'll get the search results for the term "Enter a search string". If I were to use the server-side TextboxWatermarkExtender control, I'd get whatever behaviour happens when you search for an empty string in dasBlog.</p>
+<p>But of course, I <a href="http://kyle.baley.org/AddingAtlasToolkitExtendersToDasBlogThemes.aspx">shan't be using the server-side control</a>. My workaround for my blog will be to do nothing. The fix affects only those users who want to search for an empty string for Jayzus' sake. Like I've always said: you can't save everybody.</p>
+<p>This came up while working on <a href="http://www.suvius.com/musicplayer">Flamingo</a> and there, I don't have the luxury of assuming an empty string search will be meaningless. My fix is going to be to use the server-side control because the only reason I had the client-side control in there is to see if I could do it.</p>
+<p>If you truly want a solution that you can use client-side, here's a rough draft of something that might work. Create a javascript function that calls the _onsubmit for each watermark object on the form. Doubt you'll be able to do that by iterating through a collection if you have more than one. You'll probably have to call the _onsubmit function for each one manually. Here's how you do it (copied straight from the control's source):</p>
+<p><span style="FONT-SIZE: 11px; COLOR: black; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent"><span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">&nbsp;&nbsp;&nbsp;var</span> o <span style="FONT-SIZE: 11px; COLOR: red; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">=</span> Sys.Application.findObject('&lt;id of watermark object&gt;'); <span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">if</span>(o) { o._onSubmit(); };</p>
+<p></span></p>
+<p>At the end of this function, add: return true;</p>
+<p>Next, you'll need to wire this function into the form's onsubmit event:</p>
+<p><font color="#0000ff" size="2"></p>
+<p>&nbsp;&nbsp;&nbsp;&lt;</p>
+<p></font><font color="#800000" size="2">form</font><font color="#000000" size="2"> </font><font color="#ff0000" size="2">id</font><font color="#0000ff" size="2">="form1"</font><font color="#000000" size="2"> </font><font color="#ff0000" size="2">runat</font><font color="#0000ff" size="2">="server"</font><font color="#000000" size="2"> </font><font color="#ff0000" size="2">onsubmit</font><font color="#0000ff" size="2">="javascript:return mySubmitFunction( );"&gt;</p>
+<p /></font>This whole thing is essentially what the extender class does for you. You have other alternatives to registering the submit function. A javascript call to document.forms[0].attachEvent anywhere on the page will probably work, at least in IE. I think the mechanism for attaching events is different in Firefox and Safari. You can also make your own call to Page.ClientScript.RegisterOnSubmitStatement but if you're doing that, you may as well use the server-side control anyway and avoid this mess.</p>
+<p>Finally, this doesn't affect all the controls in the Atlas Toolkit. Most of them don't register client scripts in their Extender classes. I had a quick look through a few of them and didn't see any others, in fact. Which makes sense. It'll be necessary anywhere you need to alter the value of a form before submitting it and few of the controls do this.</p>

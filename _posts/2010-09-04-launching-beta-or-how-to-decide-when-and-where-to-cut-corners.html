@@ -1,0 +1,41 @@
+---
+layout: post
+title: Launching beta, or “How to decide when and where to cut corners”
+date: 2010-09-04 14:38:02.000000000 -04:00
+categories: []
+tags:
+- Conscientious Coding
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '417169014'
+  pvc_views: '1005'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><strong>Executive Summary:</strong> Introspection on how to cut corners for the initial launch of a public application with reference to <a href="http://kohari.org/2010/08/24/looking-back/">Nate Kohari’s recent post</a> on the subject.</p>
+<p>As we amble forward on our little private venture, there are a number of applications and companies we watch closely. It’s hard to say whether we want to emulate them or if our philosophies naturally align and we’re attracted to like-minded people. Maybe a bit of both.</p>
+<p>One of those applications/companies is <a href="http://agilezen.com">AgileZen</a>. From the measured approach to features to the deliberate way the user experience falls into the background, we not only <a href="http://codebetter.com/blogs/kyle.baley/archive/2010/08/18/tools-for-disparate-teams-agilezen-edition.aspx">use the product</a>, we often look to it for inspiration. Sort of a “What would Nate and Niki do?” approach.</p>
+<p>I read <a href="http://kohari.org/2010/08/24/looking-back/">Nate’s account</a> of the time before and after launch which a lot of nods in recognition. The almost universal message we’ve been given by people both successful and unsuccessful in building a public application is (and I’m quoting verbatim from one of them): “Just launch the &amp;*%$ thing”.</p>
+<p>This is what I thought about while I read the part in Nate’s tale about cutting corners. Initially, there was a lot of kludge and after launch, he rewrote almost every line of JavaScript.</p>
+<p>He makes no apologies for this nor should he. It is, I think, a valid decision for a product like his (and ours). Provided you’re smart about it. Recognize where the crap is and isolate it and make a concerted effort to go back to it after you have money coming in. The point he makes is:</p>
+<blockquote><p>Before we could afford to spend a lot of time to make the software maintainable, we first had to prove that we would actually have to maintain it – we had to make sure that we actually had a market.</p>
+</blockquote>
+<p>It’s something I’ve wrestled with a little, especially as we had a learning curve of using an unfamiliar technology. How far do we cut corners? Forego UI tests? Unit tests? Proper separation of concerns?</p>
+<p><img src="/assets/QA_DILBERT1.gif" width="500" height="165" /></p>
+<p>My partner is a little more battle-scarred in this area and he was pretty adamant that we keep this reasonably maintainable from the start, even if it takes longer to write code, which it inevitable would. Which means we would have to sacrifice something on the <a href="http://www.ambysoft.com/essays/brokenTriangle.html">iron triangle</a> (or the lesser known <a href="http://codebetter.com/blogs/kyle.baley/archive/2009/02/24/the-pewter-scale-or-how-to-maintain-your-balance.aspx">Pewter Scale</a>). But that was an easy choice. We wanted relatively high quality and to deliver on time and we were constrained by budget. That left scope as our only real variable. And I love me some restricted scope. Features are, to my mind, the only aspect of the triangle worth arguing over.</p>
+<p>But back to the quality aspect. I’m speculating but I suspect we didn’t cut as many corners as Nate did. Or maybe we just didn’t cut the same corners. Though I won’t claim anywhere near 100% code coverage, we have a great many unit tests. And as part of our process, no story can be marked complete unless it’s been code reviewed by at least one person. What’s missing so far is a formal QA person, which is a matter of not having the resources (or put another way, not placing a high enough priority on it based on the resources available to us), and a UI testing process, which is near the end of prototyping thanks to <a href="http://orthocoders.com/">Winnipeg’s best kept secret</a>.</p>
+<p>So the question is, did we hurt ourselves but placing an undue focus on <strike>quality</strike> aspects of the process we didn’t need to?</p>
+<p>I have no idea. And while it makes a nice, lengthy blog post, in the end, I haven’t been stressing about it much (at least not until I read the blog post; thanks for nothin’, Kohari). But here’s the position we’re in: We’ll be releasing beta next week and our first order of business is to start looking at new features, which we will release at regular intervals (at least bi-weekly, if not more often). We have no refactoring to do because our codebase is exactly where we want it to be architecturally.</p>
+<p>The difference is we’ve lost a month-ish worth of income. And at the moment, that income is still a big unknown. AgileZen could have launched to a whole lot of nothing in which case, Nate would have chalked it up to experience and thanked his lucky stars he didn’t invest any more time than he did in it. We may do the same and realize that we should have launched sooner so we hadn’t sunk any more effort into it.</p>
+<p>There’s an element of faith involved though. Maybe it won’t catch on but I really believe it will. And if I plan to be looking at this code for the next five to ten years or more, I like the fact that we put a little extra effort into it early on.</p>
+<p>Another nice side effect of this is that it’s helped defined the culture of our development team to a large degree. It helped us to build the team we have and by setting the ground rules early, it’s helped us maintain a high standard so that it’s almost become second nature by now.</p>
+<p>Man, this blog is saving me a ton of money in psychologist fees.</p>
+<p>Kyle the Clear-headed</p>

@@ -1,0 +1,60 @@
+---
+layout: post
+title: Security in GWT, or “How to lay the foundation”
+date: 2010-02-16 16:08:45.000000000 -05:00
+categories: []
+tags:
+- GWT
+- Security
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '395020596'
+  pvc_views: '1172'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Almost <a href="http://kyle.baley.org/CantChatNowImInTheFuture.aspx">three years ago</a> to the day, I concluded a post with this:</p>
+<blockquote><p>I hate security and all software and hardware related to it, including but not limited to: anti-virus, spam, phishing, SSL, permissions, LDAP, NTLM, forms authentication, SecurID tokens, VPNs, swipe cards, PIN numbers, security deposits, car alarms, bike locks, and cell phones for seven-year-olds.I don't like that the major upgrade to Windows XP was a firewall that broke a bunch of apps. And that among IE7's features is not to let me into websites because I'm not smart enough to figure out if they're dangerous. And that Vista's main differentiation from XP is that it's harder to play my music. I will concede, however, that retinal scanners are pretty cool.</p>
+</blockquote>
+<p>Now, three years later and my position has changed slightly in that now I also don’t like OAuth, RSA, salts, Kerberos, MD5, SHA, IPSec, OpenID, HTTP sessions, cookies, cross-site request forgery, fingerprint scanners, parental controls, deadbolts, my mother’s maiden name, my favorite pet, the name of my elementary school, and “forgot my password” links that all but announce my password on Twitter. Again, though, retinal scanners rock.</p>
+<p>With that background, today’s topic is authentication with Google Web Toolkit.</p>
+<p>In the .NET world, I had my head somewhat wrapped around authentication. Or rather, I knew which code to cut and paste from previous apps to make it work in new ones. But having thrown myself headlong into GWT, I’ve had to actually research the concepts. A little.</p>
+<p>With an AJAX application like one built with GWT, there are actually two scenarios that require authentication:</p>
+<ul>
+<li>Navigating to a page </li>
+<li>Performing an action on a page </li>
+</ul>
+<p>Navigation has traditionally been fairly easy for me to work out. You fiddle with the web.config, add a login page, toss around a FormsAuthenticationTicket or two and call it a day. With GWT, this needs to be done via <a href="http://code.google.com/p/gwt-presenter/">gwt-presenter</a>. But I’ll leave it at that for now because I haven’t actually got around to doing that part of the authentication yet.</p>
+<p>Instead, I’ll focus on the second item: performing an action on a page. In GWT, I’m using <a href="http://code.google.com/p/gwt-dispatch/">gwt-dispatch</a>, a command pattern implementation. It’s nice in that it provides a centralized interface for making RPC calls ‘twixt client and server. Nicer still is the latest version on the trunk which includes support for securing these calls.</p>
+<p>As David Peterson points out in <a href="http://groups.google.com/group/gwt-dispatch/browse_thread/thread/f3a9d2041f77e26a">this thread</a>, there isn’t much you need to do in order to add security to your command calls. That said, it isn’t altogether obvious to a Java greenhorn how to implement it. So forthwith are my current thoughts in as plain English as I can realistically make it.</p>
+<p>The main issue I had when researching all this is that it seemed fairly academic. There is talk of sessions and session IDs and I couldn’t make the leap from that discussion to what I really wanted: to log in to the application. As I lamented on the <a href="http://groups.google.com/group/openrasta/browse_thread/thread/faf3fb63eb459b6f">OpenRasta forum</a>, I can get a username and password from the screen, validate it against a database, and create a random session ID. What happens after that is still a little foggy.</p>
+<p>So here is the workflow as I see it now:</p>
+<ul>
+<li>User enters username and password and clicks submit </li>
+<li>Login command is created and sent/dispatched to its appropriate handler on the server </li>
+<li>LoginHandler validates the user, creates a user object, and dumps it into the HTTP Session </li>
+<li>Server also creates a random session ID and dumps it into an appropriately-named cookie. </li>
+<li>Server returns login success </li>
+</ul>
+<p>Next, the user performs some action that requires authentication:</p>
+<ul>
+<li>Client creates an appropriate command and sends it to the server </li>
+<li>The session ID is attached to the command and sent to the server </li>
+<li>The server checks to see if the action being performed requires authentication. </li>
+<li>If not, it executes the action </li>
+<li>If so, it checks to see if a user has been added to the session. It also verifies that the session ID it received matches the one it generated earlier (by also checking the cookies) </li>
+<li>If the checks fail, throw an InvalidSessionException. Otherwise, execute the action. </li>
+<li>Back on the client, we use a custom <a href="http://svn.apache.org/viewvc/james/hupa/trunk/client/src/main/java/org/apache/hupa/client/HupaCallback.java?view=log">AsyncCallback class</a> that specifically checks for InvalidSessionException. If it catches one, we raise a Logout event which is configured elsewhere to redirect to the login page. </li>
+</ul>
+<p>The session ID check seems kind of superfluous on the surface. But from what I gather, it’s necessary to prevent <a href="http://groups.google.com/group/Google-Web-Toolkit/web/security-for-gwt-applications">cross-site request forgery attacks</a>. As far as I can tell, it’s not used for any other purpose.</p>
+<p>The vast majority of this is taken from various sources and I hope I remember them all. First is the <a href="http://james.apache.org/hupa/index.html">Hupa</a>, a web mail app written in GWT. Much assistance has come from the guy behind <a href="http://borglin.net/gwt-project">this site</a>, which is shaping up to be one of the best tutorials I’ve seen in either Java or .NET. A good chunk of the explanation is from <a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">this post</a> and I should note that most of the code in it has been incorporated into gwt-dispatch already.</p>
+<p>I had planned to incorporate some code in here but didn’t for a couple of reasons. One, this is kind of wordy and I’d rather do a follow-up that is more code-centric. Two, I haven’t finished the code. For now, the act of typing all this out has served it’s purpose in that it’s helped clarify things in my head. The nice thing is that much of this is already incorporated into gwt-dispatch already. I’m still a little fuzzy on where to implement the parts I need to implement (e.g. where do I check to see if an action can be performed anonymously?) but I have something that works. Which will serve as the basis for future posts.</p>
+<p>Kyle the Dispatched</p>

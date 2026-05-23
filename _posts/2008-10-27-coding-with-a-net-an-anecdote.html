@@ -1,0 +1,48 @@
+---
+layout: post
+title: 'Coding with a net: An anecdote'
+date: 2008-10-27 21:02:30.000000000 -04:00
+categories: []
+tags:
+- Brownfield
+- NHibernate
+- Refactoring
+- ReSharper
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '349694594'
+  pvc_views: '1462'
+  hl_twitter_has_auto_tweeted: 'New post: Coding with a net: An anecdote, Full text:
+    http://blog.baley.org/?p=103'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I'm in the early stages of a new project with the dashing and debonair <a href="http://www.persistall.com/Default.aspx" target="_blank">Brian Donahue</a>. On the plus side, despite his misgivings, the codebase is in pretty phenomenal shape all things considered. SVN repository, automated build and tests, ActiveRecord, views reasonably separated into MVP. Even a half-finished CI process which is impressive for a one-man team. Like any codebase, it has its share of issues but all in all, I won't be using this as a sample app for a brownfield application.</p>
+<p>On the minus side, he reads my blog so I'll have to be more subtle in the digs I make toward my workplace.</p>
+<p>Anyway, one of the first things I like to do when I start looking through a steaming pile of excrement that someone calls &quot;codebase&quot; is check out the warnings that are lingering. The code had its share with the vast majority related to an upgrade to the latest version of Rhino Mocks but without changing CreateMock. This was an easy fix as a global search and replace from CreateMock to StrictMock got rid of over 80% of the errors.</p>
+<p>The rest were a flurry of ReSharper refactorings until I got to the final four. Four assemblies reported the error: found conflicts between different versions of the same dependent assembly.</p>
+<p>Double-clicking this error gives a helpful message offering to add a binding section to the assemblies app.config file. I say helpful seriously there because, while I had no intention of keeping that section in the app.config, at least it was able to tell me what the error message couldn't. Namely, which assembly was causing conflicts.</p>
+<p>Or so I thought. The new app.config section seemed to indicate that there were NHibernate conflicts among various projects when I knew for a fact that we had exactly one copy of the NHibernate dll in the entire project.</p></p>
+<p>Here's where <a href="http://www.red-gate.com/products/reflector/" target="_blank">Reflector</a> comes in. More specifically, here's where it's extensibility comes in. Through the use of the <a href="http://www.codeplex.com/reflectoraddins" target="_blank">Assembly Graph add-in</a>, I was able to generate a picture of the dependencies. (Click on the image to the right for a bigger version.) As you can see, all referenes to NHibernate are going to the same assembly.</p>
+<p>But as you can also see, there are three semi-related assemblies that aren't being referenced at all. Which means they can safely be removed from the various projects, yesno?</p>
+<p>You probably think that's foreshadowing's cooler cousin, foreboding, but it's not. The answer is yes, I was able to remove them with no ill effects.</p>
+<p>The reason I know there are no ill effects? Unit tests, baby! None o' this &quot;let's take a stroll through the application and see if it still works&quot; nonsense for me*. Remove the reference, run through the build process and watch the magic happen.</p>
+<p>The reason this is important: I'm pretty sure this add-in doesn't account for dynamically loaded assemblies. And while I'm also pretty sure we would have no reason to dynamically load some peripheral NHibernate assemblies, it's nice to have a suite of unit tests backing up that assertion.</p>
+<p>So to re-cap:</p>
+<ul>
+<li>Unit tests good </li>
+<li>Automated builds good </li>
+<li>Reflector good </li>
+<li>Assembly Graph add-in good </li>
+<li>Subversion good (I haven't provided explicit evidence of this here but it's worth mentioning.) </li>
+</ul>
+<p>Kyle the Reflectively Assembled</p>
+<p><font size="1">*Brian, if you're reading, I'm lying. I did actually go through each section and make sure it's working. But back me up if anyone asks.</font></p>

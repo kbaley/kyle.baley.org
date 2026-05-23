@@ -1,0 +1,37 @@
+---
+layout: post
+title: Client-side scripting, eight years on
+date: 2008-03-06 16:42:27.000000000 -05:00
+categories: []
+tags:
+- Javascript
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1518'
+  dsq_thread_id: '393677367'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>There's a point to this and a request for suggestions at the end so don't be alarmed by the meandering I'm doing at the beginning.</p>
+<p>The Hillbilly is a bit of a black sheep in his family. I have three brothers, all of whom are land surveyors working in the family business in western Manitoba. My mother, a retired nurse, is also on the payroll as the Office Dictator (according to her business card anyway). It's an odd kind of environment out in their world, what I've often called &quot;Deliverance Country&quot;. They have theme days like many other companies but you're more apt to hear them celebrate &quot;Potty Mouth Friday&quot;, where they swear like sailors all day, rather than &quot;Casual Friday&quot;. (We won't go into the details of Racial Slur Wednesday followed by Repentance Thursday.) And their day-to-day activity is that kind of controlled chaos inherent to small businesses that do actual work while the rest of us blither on about whether our corporate portal is using a colour scheme that won't offend the accounting department's hatred of pastel.</p>
+<p>They use an application I wrote nigh on eight years ago in classic ASP that makes heavy use of XMLHTTP and DHTML before it had a name that sounded less Klingon when pronounced phonetically. In it, there is a screen that creates a Job object (ok, it doesn't actually use objects because I was young and it was ASP but let's make an ass out of u and me for a minute).</p>
+<p>On that same screen, they can attach one or more locations to the Job as well as remove any existing ones. This is done using DHTML to add and remove table rows dynamically to a running list. Behind the scenes, it maintains an XML document containing all the job information, including the list of locations. On form submission, all the form elements are ignored and the XML document is the piece that gets processed.</p>
+<p>As I said, this was eight years ago. I'm in the process of updating this same application and my first order of business is to duplicate the functionality of the existing app (which is much more than what I've already described, except for a search feature). And I'm implementing the Edit Job screen and discovering that after eight years, there doesn't seem to be a better way of building this screen.</p>
+<p>Yes, there have been advances in scripting languages and techniques. I'm starting to use jQuery which is kilometers/miles faster than using the DOM natively but is not going to win over the hearts of any web developers looking into Javascript for the first time. It's a great framework for those of us familiar with how hard it is to do this stuff without it though.</p>
+<p>But I'm talking about the underlying method in which I would build this screen. However cleaned up it may be, there is still direct manipulation of HTML elements. There is still the storage and manipulation of data in the browser. And XML is still a very viable alternative for that storage. I have a feeling JSON might be more suitable but neither option is very palatable.</p>
+<p>For example, in C# 1.0, how would you find a particular element in a collection? Loop through the list until you find it. In C# 2.0: probably use the Find method on the list with a delegate. In C# 3.0: lambda expressions maybe.</p>
+<p>In Javascript today, as you did eight years ago, you loop through the list. Or you use selectSingleNode on an XML document, just as you did eight years ago.</p>
+<p>Now, jQuery does alleviate this quite a bit with some pretty advanced use of selectors. But in the end, you're still searching through an XML document. Or a JSON object which, despite the simpler syntax, still is kind of funky to traverse and add/remove items from.</p>
+<p>I'm not sure how my ideal way to build this screen would be exactly. I just have this feeling that, after eight years, it should be easier than it is.</p>
+<p>And maybe it is. Which brings me to the real reason for this post. How would *you* build such a screen? Remember, you're adding/removing items to a collection on the page client-side and submitting the data all at once. The items are not selected from a list, they are entered mostly free-form by the user (I'm paraphrasing seriously but don't want to go into the details of the section/township/range syntax). Think of it as creating a shopping list with some extra metadata at the top (e.g. name of the shopper, date the list was made, etc).</p>
+<p>Would you do DOM manipulation with jQuery or prototype or whatever? If so, how would you maintain the state of the object in the browser? Or would you have a postback everytime an item was added to the list and maintain it in a state on the server? Or is this something that Script# or something akin was born to deal with? Or...?</p>
+<p>I welcome any and all suggestions and would love to post a follow up to summarize them at a later date.</p>
+<p>Kyle the Client-Side</p>

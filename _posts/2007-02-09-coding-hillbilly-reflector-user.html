@@ -1,0 +1,32 @@
+---
+layout: post
+title: 'Coding Hillbilly: Reflector User'
+date: 2007-02-09 16:38:19.000000000 -05:00
+categories: []
+tags:
+- ".NET"
+- Livelink
+status: publish
+type: post
+published: true
+meta:
+  hl_twitter_has_auto_tweeted: 'New post: Coding Hillbilly: Reflector User, Full text:
+    http://blog.baley.org/?p=350'
+  pvc_views: '1296'
+  dsq_thread_id: '349731797'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Finally! I'm part of the elite! Part of the clique who can now recommend Lutz Roeder's Reflector with full knowledge of its greatness.</p>
+<p>Until today, I was just a poser. I knew of Reflector and was keenly aware of what it did. I played with it for a bit but had never in my consulting career come across an instance where I needed to dive that deeply into someone else's code. But I left it installed on my machine because I wanted to pretend to be one of the big boys. And I started to crave the appreciative nods I'd get from better developers when they'd see it prominently displayed on my desktop.</p>
+<p>Then lo! An e-mail comes screaming through my Inbox: where is this error message generated for the Franken-app you built that syncs PalmPilot data with Livelink?</p>
+<p>(Side note: If I can brag a little, I'm actually kind of proud of that app. Built in .NET, it works better than the application I was trying to mimic on the old software Livelink was replacing.)</p>
+<p>The app uses Livelink's API to wedge stuff into the system so after a quick look through Livelink's code base itself to see if the error was there, I dusted off Reflector and pointed it at the API assembly. String search and lo, again! There it is!</p>
+<p>So now I can accurately answer&nbsp;that e-mail: It is generated in the receiveOpenResponse method of the LLConnectRouter object in LAPI_NETp.dll.</p>
+<p>That should get them off my back, yesno?</p>

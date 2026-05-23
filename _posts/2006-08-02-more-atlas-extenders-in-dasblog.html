@@ -1,0 +1,37 @@
+---
+layout: post
+title: More Atlas Extenders in dasBlog
+date: 2006-08-02 03:32:49.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '724'
+  dsq_thread_id: '362993756'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Guess what, kiddies! More Atlas goodness incorporated into dasBlog. This time in the form of the rounded corners you see in the nav bar on the right, courtesy of the <a href="http://atlas.asp.net/atlastoolkit/RoundedCorners/RoundedCorners.aspx">RoundedCornersExtender</a>. And just because I can, try clicking and dragging the title of any of the sections in the nav bar (but don't click too high into the rounded corner section). That, my friends, is the <a href="http://atlas.asp.net/atlastoolkit/PanelExtenders/DragPanel.aspx">DragPanel</a>&nbsp;in action.</p>
+<p>OK, maybe dragging nav sections isn't the most practical thing in the world but you gotta admit it's cool.</p>
+<p>Turns out it's not too hard to create Atlas Control Toolkit extenders programmatically. You treat it like any other web control. You create it and add it to another objects Controls collection.</p>
+<p>But you can't do it in the Render method. If you do, nothing really happens. Nothing is output in the &lt;pageManager&gt;. But add it in the CreateChildControls method and it works fine.</p>
+<p>And extenders require a target control. An ASP.NET target control, not an HTML control. So for the SideBarList, SideBarOpmlList and CategoryList, I had to create a Panel and add the main section control to it rather than the base control's Controls collection.</p>
+<p>To summarize what I did for each of these controls:</p>
+<ul>
+<li>Override CreateChildControls</li>
+<li>Move all code from the Render method to CreateChildControls except the last line: section.RenderControl( output );</li>
+<li>Delete the Render method</li>
+<li>Add a Panel at the beginning of CreateChildControls and&nbsp;change this.Controls.Add( section ) to panel.Controls.Add( section )</li>
+<li>Add a RoundedCornersExtender and a DragPanelExtender and set the Panel as the target control</li>
+</ul>
+<p>That's the high-level view. I had to do some tweaking to the height of the nav bar because it seems the DragPanelExtender makes the target control absolutely positioned, probably by necessity. I also had to add a container class for the WeblogCalendar so that I could add the extenders around it.</p>
+<p>The bad news: Configuration for the extenders is severely hard-coded. No changing parameters on the fly here. And at the moment, that suits me fine. If there is enough interest from people to do this themselves, maybe I'll work on it some more.</p>

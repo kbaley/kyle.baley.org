@@ -1,0 +1,56 @@
+---
+layout: post
+title: AppEngine thoughts
+date: 2012-01-16 15:01:52.000000000 -05:00
+categories: []
+tags:
+- BookedIN
+- Google App Engine
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '7783'
+  dsq_thread_id: '541729974'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>AppEngine has <a href="http://www.google.com/enterprise/cloud/appengine/pricing.html">new pricing</a> as of November 7 which has generated much discussion, most of it as exciting as deciding which wine to serve with raccoon (answer: dandelion). So with the segue established, I shall pontificate on what I believe is the single biggest thing keeping it from being a truly great product and a worthy competitor in the cloud hosting space.</p>
+<p>First I’ll get out of my system a laundry list of lesser issues:</p>
+<h2>1. Confusing pricing/configuration</h2>
+<p>This could be a product of my Microsoft indoctrination but I still have trouble figuring out how we get charged for stuff. It’s based on usage which is a great model on paper. But the usage is broken down into, among other things:</p>
+<ul>
+<li>Front-end instance hours  </li>
+<li>Back-end instance hours  </li>
+<li>Datastore Write Operations  </li>
+<li>Datastore Read Operations  </li>
+<li>Datastore Small Operations  </li>
+<li>Stanzas Sent  </li>
+<li>Channels Created</li>
+</ul>
+<p>Furthermore, you can tweak things like the minimum and maximum idle instances and the minimum and maximum pending latency.</p>
+<p>All this requires a lot of research and testing. And the only way to test various settings is: a) in production, or b) using load testing with a separate paid environment. Both of which will end up costing you dollars. But it must be said, those dollars probably won’t add up to the cost of setting up your own test environment. So far, we spend about the cost of a smoothie every day for all versions of our app (depending on where you find the ingredients).</p>
+<h2>2. No built-in backup and restore</h2>
+<p>Backing up the datastore is your responsibility. Now, it’s easy to set up a batch process running nightly. But you’re almost guaranteed to hit your Datastore Read Operations quota on a nightly basis once you reach a certain size. Also, the new-fangled High Replication datastore makes things more interesting by <a href="http://code.google.com/appengine/docs/python/tools/uploadingdata.html">not actually being supported</a> for this scenario.</p>
+<h2>3. No built-in reporting mechanism</h2>
+<p>The only way to interact directly with your data is through code you’ve written yourself or with GQL, a SQL-like language for the datastore. But you quickly hit limitations. First is that you can return only 20 results at a time (which you can up to 200 by adding a limit parameter to the URL…manually). Second is that you <em>have</em> to create indexes for fields you want to filter or order by. Doesn’t lend itself to ad hoc querying. </p>
+<h2>4. Admin console bugs</h2>
+<p>This one irks me almost as much as the fact that I have to restart my computer whenever I update the glorified Notepad that is Adobe Reader*. Too often for my tastes, when clicking around the console, I’ll get a general “An error has occurred” page. And the error page is not a pretty one:</p>
+<p><a href="http://kyle.baley.org/wp-content/uploads/2012/01/AppEngine-Error.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="AppEngine Error" border="0" alt="AppEngine Error" src="/assets/AppEngine-Error_thumb.png" width="670" height="485" /></a></p>
+<p>Even when it does work, until recently, I had to use Firefox or Internet Explorer to access one of the pages (Datastore Admin) because it didn’t load in Chrome.</p>
+<p>Which leads me to the point of this post. The one killer issue in AppEngine that keeps its status below world class hosting environment:</p>
+<h2>Support as a second-class citizen</h2>
+<p>If you didn’t notice at first glance, take another look at the error page above. In particular, at the URL at the bottom, which is where the “report” link goes. It’s a Google Group page for AppEngine. To their credit, they’ve addressed <a href="http://kyle.baley.org/2011/04/google-ui-faux-pas-or-how-to-show-love-hillbilly-style/">many of the issues</a> I’ve had with Google Groups recently. Even so, for a world-class hosting environment and especially for apps we’re paying for, I’d much rather see something <a href="https://aws.amazon.com/support/">like this</a>.</p>
+<p>Also, my experience with the group site has been pretty dismal. Much of the time, my questions get <a href="https://groups.google.com/forum/embed/?place=forum/google-appengine-java&amp;showsearch=true&amp;showpopout=true&amp;parenturl=http%3A%2F%2Fcode.google.com%2Fappengine%2Fforum%2Fjava-forum.html%3Fplace%3Dforum%2Fgoogle-appengine-java#!searchin/google-appengine-java/kyle/google-appengine-java/-uyBIianKxw/L_ygxSBGBPIJ">not</a> <a href="https://groups.google.com/forum/embed/?place=forum/google-appengine-java&amp;showsearch=true&amp;showpopout=true&amp;parenturl=http%3A%2F%2Fcode.google.com%2Fappengine%2Fforum%2Fjava-forum.html%3Fplace%3Dforum%2Fgoogle-appengine-java#!searchin/google-appengine-java/kyle/google-appengine-java/mKc4brfHcHQ/SGCKcRmX15QJ">a</a> <a href="https://groups.google.com/forum/embed/?place=forum/google-appengine-java&amp;showsearch=true&amp;showpopout=true&amp;parenturl=http%3A%2F%2Fcode.google.com%2Fappengine%2Fforum%2Fjava-forum.html%3Fplace%3Dforum%2Fgoogle-appengine-java#!searchin/google-appengine-java/kyle/google-appengine-java/1QDamqyanQc/rG8OhsHiYfAJ">single</a> <a href="https://groups.google.com/forum/embed/?place=forum/google-appengine-java&amp;showsearch=true&amp;showpopout=true&amp;parenturl=http%3A%2F%2Fcode.google.com%2Fappengine%2Fforum%2Fjava-forum.html%3Fplace%3Dforum%2Fgoogle-appengine-java#!searchin/google-appengine-java/kyle/google-appengine-java/8lPp0zxK0P4/Vl836qJxe2oJ">response</a> <a href="https://groups.google.com/forum/embed/?place=forum/google-appengine-java&amp;showsearch=true&amp;showpopout=true&amp;parenturl=http%3A%2F%2Fcode.google.com%2Fappengine%2Fforum%2Fjava-forum.html%3Fplace%3Dforum%2Fgoogle-appengine-java#!searchin/google-appengine-java/kyle/google-appengine-java/zqpxK602bTk/DdZn6Oo9vbkJ">except</a> <a href="https://groups.google.com/forum/embed/?place=forum/google-appengine-java&amp;showsearch=true&amp;showpopout=true&amp;parenturl=http%3A%2F%2Fcode.google.com%2Fappengine%2Fforum%2Fjava-forum.html%3Fplace%3Dforum%2Fgoogle-appengine-java#!searchin/google-appengine-java/kyle/google-appengine-java/SzdnBLvTdog/FgoTZq7aINsJ">mine</a>. Even reporting issues on the Google Code site leads to <a href="http://code.google.com/p/googleappengine/issues/detail?id=5774">sporadic responses</a>. I get slightly better averages on <a href="http://stackoverflow.com/questions/tagged/google-app-engine">StackOverflow</a>.</p>
+<p>This came to a head for us recently when we converted from Master/Slave to High Replication late one Saturday night. Several of the problems I outline here occurred that night, including the 1990s error screen above. And I couldn’t find a single email address or phone number anywhere that I could contact for help and be assured of a response with even an unreasonable time. I made a post to the forum about an issue we saw the next day. The link is included above in the list of posts that have received no response.</p>
+<p>Another support-related area that could use work is <a href="http://code.google.com/appengine/docs/roadmap.html">the roadmap</a>. Something I’ve noticed in all dealings with the AppEngine team is an almost fanatical abhorrence of delivery dates. Even at Google IO, the best we could get from the team was “we’re working on it” with a lot of nervous laughter when someone asked about SSL access on custom domains, which is one feature we’ve had to make decisions around. I gather it’s a hard problem but even if they said “probably 2012”, that would at least indicate to us “okay, it’s not anytime soon, time to decide which is more important in the short term.”</p>
+<p>Had I written this post a couple of months ago, after our High Replication migration, it would have been a lot more acidic in tone. For a few weeks after that, I was actively checking out Amazon Web Services. A Microsoft rep reached out to us serendipitously that same week wanting to talk to us about Azure. If he had not dropped the ball and postponed our meeting at least three times, this here blog thingy might be back in .NET land by this time. (Likely not, but this wouldn’t be a blog if I didn’t make grandiose unsupportable claims that back up my argument.)</p>
+<p>These days, I’m not so much frustrated as I am disappointed. For all its faults, there is a lot of good being offered by AppEngine. Like many startups, we have discussions about Google and AppEngine and the general consensus is that we’re happy to see Google focusing on what they’re good at. (Do I lose points if I point out my subtle digs?) But when it comes to support for AppEngine, it feels like it’s run by engineers for engineers. Yes, support is boring and customers can be confrontational and much of the time, the answer is a variation of “you’re doing it wrong”, etc, etc. But it’s not just another IoC container; it’s a <a href="http://m.infoworld.com/d/cloud-computing/demand-cloud-jobs-now-stratospheric-183664">cloud hosting platform</a>. I believe it needs a higher level of professionalism than what I’ve seen so far.</p>
+<p>Kyle the Untenable</p>
+<p><font size="1">*But not nearly as much as the fact that said update invariably adds an icon to my desktop. C’mon Adobe, who actually opens Reader and <em>then</em> opens a PDF file?</font></p>

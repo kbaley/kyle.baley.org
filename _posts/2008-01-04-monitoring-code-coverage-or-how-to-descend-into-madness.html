@@ -1,0 +1,43 @@
+---
+layout: post
+title: Monitoring code coverage, or "How to descend into madness"
+date: 2008-01-04 11:45:48.000000000 -05:00
+categories:
+- Code coverage
+- Featured
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '5330'
+  dsq_thread_id: '356499849'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I don't know how it happened. Throughout my career, I've been careful not to be &quot;one of those guys&quot;. I scoffed inwardly at the discussions on the ALT.NET user group claiming that it could happen to anyone. &quot;Surely I am above such nonsense,&quot; says I. But let this serve as a cautionary tale to you young'uns out there...</p>
+<p>I've become a code coverage Nazi.</p>
+<p>It started innocently enough. We added code coverage statistics a while back but only lately have we broken the build when it dropped below a certain level. We started at 60% and last week, our coverage sat at 67%. So I upped the threshold to 65% and after some good-natured goading among the team, I raised it to 66%. Y'know, just as a joke. No harm, no foul, eh?</p>
+<p>A couple of days later and the coverage is starting to hover near 70%. &quot;Very exciting,&quot; says I, &quot;soon we'll be able to increase the threshold to 70%&quot;. And the excitement I felt at that notion should have been a tipoff to seek some form of counselling.</p>
+<p>Then a funny thing happens. One morning, I get latest and our coverage is now around 68% (I forget the exact number because I'm not compulsive like that but if memory serves, it was 68.30115%). I check the build log and note several new classes staring me in the face, mocking me in their untestedness.</p>
+<p>So of course, I shrug it off and say to myself, (out loud because I work from home and have forgotten how an internal monologue works), &quot;No big deal. It'll go up again. We're still above our threshold.&quot;</p>
+<p>Or rather, that's what one would expect me to say if they thought I was a well-adjusted coder of the earth. Instead, I e-mailed the person who checked in the code saying (and I think I covered my obsession rather nicely):</p>
+<p><em>&quot;Hey, man. How's it going? Weather's not so good up there, I hear. Oh well, at least we still have the app to keep us warm at night, eh? LOL! So...while I've got your attention...and it's not a big deal or anything...cause y'know, it's all cool...and....WTF IS WITH THE UNTESTED CODE TAINTING OUR SOURCE CONTROL, YOU CAVALIER SOB?!?! So...uh...yeah, let me know what you think, k? Later buddy. Code strong!&quot;</em></p>
+<p>He doesn't immediately respond which I take to mean he is diligently adding tests to atone for his blatant and carnal sins. I mean, you see my point, don't you? But sadly, it doesn't end there...</p>
+<p>While I let this heathen repair the gaping hole in our app, I surreptitiously raise the threshold to 68%. Y'know, to send a message. And the message is: &quot;Check in untested code and THE HAMMER WILL FALL!!!&quot;</p>
+<p>Cut to a couple of days later. I'm merrily working away on some new feature that I could care less about but will increase our stats and I notice in the log: Code coverage 67.7658546%. Build passes satisfactory threshold of 67%.</p>
+<p>I sat there stunned for a good ten to fifteen billable minutes staring at this message. &quot;How is this possible?&quot; I ask myself out loud while I pull up the build file's change history. &quot;It's not like anyone would *knowingly* taunt me by lowering the thre----LORD TUNDERIN' JAYZUS AND MOSES ON A BOAT, IT CAN'T BE!&quot; And by this time, the neighbours are noticing my lack of internal monologue but I pay no heed.</p>
+<p>I scream through the offending files noting that they are essentially UI wrappers over Windows Forms controls and thus, largely untestable. So I do some minor refactoring, add the untestable code to the list of exclusions from code coverage, and bring the threshold back up to its natural state. Then I compose a diplomatic and carefully worded e-mail to the team:</p>
+<p><em>&quot;I'm coming for you. ALL of you. Sleep tight.&quot;</em></p>
+<p>Later the next day, one of the team members throws down behind a facade of &quot;being productive&quot;:</p>
+<p><em>&quot;Beggin' your pardon, sir. I don't mean to interrupt your recent bout of insanity but I humbly beg you reconsider your position on our code coverage. You see, I am removing code that is no longer necessary and the thing is, it was fully covered by tests so our numbers are dropping. Please, Coding Hillbilly. I beseech you. Release your iron grip on our code coverage. I can live with 'about 2/3 covered'. I just want to go home to my family. Find it in your heart to let me check in my code.&quot;</em></p>
+<p>It was this plea that made me realize what I had become. A code covering monster. A slave to the numbers, neither alive nor dead. Existing only to see our numbers go up.</p>
+<p>I'm on the road to recovery now, on a strict diet of DataSets and FileDialogs. Our code holds steady at 69.5% and I'm no longer losing sleep waiting for 70%. As I type this, I'm scanning the stats and feeling quite serene.</p>
+<p>Although I wonder if our cyclomatic complexity could be improved...</p>
+<p>Kyle the Uncovered</p>

@@ -1,0 +1,201 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const services = [
+  {
+    title: "Legacy .NET Modernization",
+    body: "Modernize older systems in ways that reduce risk, respect delivery commitments, and leave the day-to-day team with code they can actually maintain."
+  },
+  {
+    title: "Practical Architecture & Technical Leadership",
+    body: "Clarify boundaries, guide tradeoffs, and shape solutions around the people who will build, support, and use them every day."
+  },
+  {
+    title: "Azure, Docker, CI/CD, DevOps",
+    body: "Improve repeatability across cloud and on-premise environments with deployment workflows that make releases calmer and more predictable."
+  },
+  {
+    title: "Blazor, ASP.NET Core, React, JavaScript",
+    body: "Build focused web applications with steady attention to usability, testability, long-term maintenance, and the business workflows behind the screens."
+  },
+  {
+    title: "Cross-Industry Business Systems",
+    body: "Work through domain-heavy systems across fintech, telecommunications, health care, transportation, lending, insurance, and other operational environments."
+  },
+  {
+    title: "AI-Assisted Engineering Workflows",
+    body: "Use AI tools pragmatically to accelerate implementation, review, documentation, and refactoring without outsourcing judgment."
+  },
+  {
+    title: "Enterprise Applications",
+    body: "Support on-premise and cloud-hosted business systems with a bias toward reliability, observability, and clear ownership."
+  },
+  {
+    title: "Technical Translation",
+    body: "Move easily between engineers, customers, and stakeholders so the team solves the right problem in terms everyone can understand."
+  }
+];
+
+const cases = [
+  {
+    title: "Modernizing a Complex Lending Platform",
+    problem: "A lending system had years of business logic spread across fragile areas of the application.",
+    approach: "Create clearer module boundaries, improve test coverage around critical flows, and modernize incrementally.",
+    result: "Reduced change risk and gave the team a safer path for ongoing product work."
+  },
+  {
+    title: "Feature-Level Release Workflows",
+    problem: "Deployments were too broad, making small changes feel risky and coordination-heavy.",
+    approach: "Design release workflows that isolate feature changes and make promotion steps more visible.",
+    result: "Improved confidence in releases and shortened the path from ready work to production."
+  },
+  {
+    title: "Docker-Based On-Premise Deployments",
+    problem: "Customer-hosted installs needed more predictable setup, updates, and troubleshooting.",
+    approach: "Package application services with Docker and document operational patterns for support teams.",
+    result: "Made environments easier to reproduce and reduced install drift across customers."
+  },
+  {
+    title: "Azure Operational Improvements",
+    problem: "App Service, SQL, and storage resources needed clearer operational defaults and maintenance practices.",
+    approach: "Review configuration, deployment paths, and runtime behavior with a focus on reliability and cost awareness.",
+    result: "Improved day-to-day operations and made the platform easier to reason about."
+  },
+  {
+    title: "Blazor/.NET Application Architecture",
+    problem: "A growing UI needed structure that would not become difficult to change as business workflows expanded.",
+    approach: "Define component boundaries, application services, and patterns for data access and state management.",
+    result: "Created a steadier foundation for feature development and future maintenance."
+  }
+];
+
+const stacks = [
+  ["Languages", ["C#", "JavaScript", "TypeScript", "SQL"]],
+  ["Backend", ["ASP.NET Core", "Web API", "Entity Framework", "Hangfire"]],
+  ["Frontend", ["Blazor", "React", "Kendo UI", "Telerik", "MudBlazor"]],
+  ["Cloud & DevOps", ["Azure", "Docker", "Docker Swarm", "GitHub Actions", "Bitbucket Pipelines", "Azure DevOps"]],
+  ["Databases", ["SQL Server", "Azure SQL"]],
+  ["Architecture", ["Distributed systems", "Legacy modernization", "CI/CD", "Release management", "Domain modeling"]]
+];
+---
+
+<BaseLayout
+  title="Modernizing Legacy .NET Systems Without Disrupting Delivery"
+  description="Kyle Baley helps teams modernize legacy .NET systems, build practical maintainable applications, improve architecture, and ship reliable software without losing delivery momentum."
+>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">Remote contract engineering · Fractional technical leadership</p>
+        <h1>Modernizing Legacy .NET Systems Without Disrupting Delivery</h1>
+        <p class="lead">
+          I help teams stabilize and modernize business-critical software with practical architecture,
+          maintainable .NET applications, and enough communication to keep technical teams,
+          customers, and delivery goals aligned.
+        </p>
+        <div class="actions">
+          <a class="button" href="mailto:kyle@baley.org">Start a Conversation</a>
+          <a class="text-link" href="https://www.linkedin.com/in/kylebaley/">LinkedIn</a>
+          <a class="text-link" href="https://github.com/kbaley">GitHub</a>
+          <a class="text-link" href="/writing/archive/">Blog Archive</a>
+        </div>
+      </div>
+      <div class="hero-media" aria-label="Engineering workspace with architecture notes">
+        <img src="/assets/architecture-workbench.png" alt="Laptop and notebook with software architecture diagrams on a quiet desk" />
+      </div>
+    </div>
+    <div class="container">
+      <figure class="quote-panel">
+        <blockquote>
+          "We're stuck with technology when what we really want is just stuff that works."
+        </blockquote>
+        <figcaption>Douglas Adams</figcaption>
+      </figure>
+    </div>
+    <div class="container proof-row" aria-label="Professional highlights">
+      <div class="proof-item"><strong>25+ years</strong><span>Software engineering and consulting experience.</span></div>
+      <div class="proof-item"><strong>Published author</strong><span>Co-author of Brownfield Application Development in .NET.</span></div>
+      <div class="proof-item"><strong>Conference speaker</strong><span>Experienced speaker at software development conferences and community events.</span></div>
+      <div class="proof-item"><strong>Technical translator</strong><span>Comfortable with developers, customers, and business stakeholders.</span></div>
+    </div>
+  </section>
+
+  <section class="section alt" id="work">
+    <div class="container">
+      <div class="section-heading">
+        <h2>What I Do</h2>
+        <p>
+          I work best where technical debt, business rules, customer needs, delivery pressure,
+          and practical architecture all meet. The goal is stability first, modernization with intent,
+          and systems the people closest to them can understand, operate, and keep improving.
+        </p>
+      </div>
+      <div class="service-grid">
+        {services.map((service) => (
+          <article class="card">
+            <h3>{service.title}</h3>
+            <p>{service.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="case-studies">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Experience / Case Studies</h2>
+        <p>
+          These are editable placeholders for the kinds of engagements this site should surface:
+          modernization, release discipline, deployment reliability, customer-aware delivery,
+          and application architecture that helps teams move without guessing.
+        </p>
+      </div>
+      <div class="case-grid">
+        {cases.map((item) => (
+          <article class="card case-card">
+            <h3>{item.title}</h3>
+            <div class="case-row"><strong>Problem</strong><p>{item.problem}</p></div>
+            <div class="case-row"><strong>Approach</strong><p>{item.approach}</p></div>
+            <div class="case-row"><strong>Result</strong><p>{item.result}</p></div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="stack">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Technical Stack</h2>
+        <p>
+          A practical Microsoft-centered stack with enough frontend, DevOps, and architecture experience
+          to move comfortably across the whole delivery path, from customer workflow to production support.
+        </p>
+      </div>
+      <div class="stack-grid">
+        {stacks.map(([group, items]) => (
+          <article class="card">
+            <h3>{group}</h3>
+            <ul class="stack-list">
+              {(items as string[]).map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container archive-callout">
+      <div>
+        <h2>Writing Archive</h2>
+        <p>
+          Older technical writing from earlier stages of my career. Some posts may be dated,
+          but they remain here for reference.
+        </p>
+      </div>
+      <a class="button" href="/writing/archive/">Browse Archive</a>
+    </div>
+  </section>
+</BaseLayout>

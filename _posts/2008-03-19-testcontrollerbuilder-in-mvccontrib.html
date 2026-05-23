@@ -1,0 +1,38 @@
+---
+layout: post
+title: TestControllerBuilder in MvcContrib
+date: 2008-03-19 14:00:00.000000000 -04:00
+categories: []
+tags:
+- ASP.NET MVC
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '352195632'
+  pvc_views: '1445'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Yesterday, I cracked open the <a href="http://mvccontrib.org" target="_blank">MvcContrib</a> source code to see if it had....ummm...ok, I swear I was looking for something legitimate in there. But as soon as I updated the latest and opened the project, my eyes zeroed in on the TestControllerHelper class. So with a quick mutter of &quot;oooh, shiny&quot; to myself, I proceeded to what I knew would be the dearth of my productivity for the rest of my day.</p>
+<p>Sitting here this morning, I can report to you that I am now one step closer to being able to adequately (but still not quite usefully) test controller actions that include a RedirectToAction method. Here's a sample test:</p>
+<pre>[ Test ]
+public void Test_redirect( )
+{
+  TestControllerBuilder builder = new TestControllerBuilder( );
+  var controller = builder.CreateController&lt;LocationController&gt;( );
+  controller.TestRedirect( );
+  Assert.That( builder.RedirectToActionData.ControllerName, Is.EqualTo( &quot;Job&quot; ) );
+}</pre>
+<p>The <font face="Courier New">CreateController</font> method on my <font face="Courier New">TestControllerBuilder</font> uses Castle's <a href="http://www.castleproject.org/dynamicproxy/index.html" target="_blank">DynamicProxy</a> to create the controller. It also creates a <font face="Courier New">ControllerContext</font> using dynamic mocks from <a href="http://www.ayende.com/projects/rhino-mocks.aspx" target="_blank">Rhino Mocks</a> similar to the way Haackselman have <a href="http://haacked.com/archive/2007/11/05/rhino-mocks-extension-methods-mvc-crazy-delicious.aspx" target="_blank">already</a> <a href="http://www.hanselman.com/blog/ASPNETMVCSessionAtMix08TDDAndMvcMockHelpers.aspx" target="_blank">showed</a> you and wires it up to the controller.</p>
+<p>An interceptor is also attached to the controller to intercept calls to <font face="Courier New">RenderView</font> and <font face="Courier New">RedirectToAction</font>. (Actually, it intercepts all calls but only these two have special handling.) Calls to either method will populate an appropriate object on the builder class. In the example above, I'm using the <font face="Courier New">RedirectToActionData</font> object.</p>
+<p>So far, this is all sweet and dandy like raccoon candy. I have indeed verified that it works as advertised. But at present, it seems to work only for controllers that have a parameterless constructor. Which is going to work for exactly none of my controllers.</p>
+<p>I have a version working that allows you to pass in constructor arguments to <font face="Courier New">CreateController</font> and will submit it as a patch for MvcContrib, assuming it hasn't already been addressed.</p>
+<p>Oh yeah, I remember! I wanted to see if MvcContrib had the Flash feature I saw added to (but not yet used in) CodeCampServer.</p>
+<p>Kyle the Forget-Me-Not</p>

@@ -1,0 +1,30 @@
+---
+layout: post
+title: Pagination in Livelink
+date: 2006-08-02 18:14:15.000000000 -04:00
+categories: []
+tags:
+- Livelink
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1123'
+  dsq_thread_id: '352287921'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I gotta start a personal blog again. It's just way too hard to be witty about technical topics.</p>
+<p>This post is seriously stretching the bounds of my readership's general area of interest but I'm going anyway. As I've alluded to in the past, the Coding Hillbilly has dabbled in <a href="http://www.opentext.com/">Open Text Livelink</a>. Oh, stop laughing. I kinda like it actually. There's something liberating about being able to fix another company's software.</p>
+<p>At any rate, Livelink has a theoretical limit of 200 items per folder. After that, the performance starts to degrade pretty significantly. They have no problem storing more items but when it comes to displaying them, the interface becomes wholly unusable. Not only does it take a long time to render (because a bunch of checking is done on every item as it is being rendered, I think) but just clicking checkboxes next to items is an exercise in frustration.</p>
+<p>So my current employer tasked me with investigating how long it would take to incorporate pagination into the product. Livelink is somewhat unique in ECM in that almost the entire codebase is available to tweak/butcher should you want to...shall we say..."pursue that option" to be politically correct.</p>
+<p>And pursue it I did. I started out with investigation but it was boring so I wrote the module instead.</p>
+<p>So to summarize for the search engines: I have added pagination capabilities to Livelink. Those not in the know probably don't realize the impact of this statement but I'm betting those that have dealt with this are searching the screen for the "E-mail me" link as we speak.</p>
+<p>The implementation is pretty straightforward, actually. Not a lot of code behind it. Most of it has to do with managing the links to go to the next/previous/first/last page.</p>
+<p>My intention is to release it into the wild but that is not my call to make at present unfortunately (which is also why there is a distinct lack of screenshots here). Hopefully I'll be able to in the coming weeks but in the meantime, <a href="mailto:kyle@baley.org">contact me</a> if you're interested.</p>

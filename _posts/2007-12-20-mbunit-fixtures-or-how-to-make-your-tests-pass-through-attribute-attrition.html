@@ -1,0 +1,83 @@
+---
+layout: post
+title: MbUnit fixtures, or "How to make your tests pass through attribute attrition"
+date: 2007-12-20 21:36:37.000000000 -05:00
+categories:
+- MbUnit
+tags:
+- BDD/TDD
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1358'
+  dsq_thread_id: '457170813'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><a href="http://11011.net/software/vspaste"></a>
+<pre class="code"><span style="color: rgb(0,0,255)">using</span> MbUnit.Framework;
+<span style="color: rgb(0,0,255)">using</span> Rhino.Mocks;</pre>
+<pre class="code"><span style="color: rgb(0,0,255)">namespace</span> Suvius.Applications.LoveDoctor.Tests
+{
+    <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">class</span> <span style="color: rgb(43,145,175)">CritterFixationFixture
+</span>    {
+        <span style="color: rgb(0,0,255)">private</span> <span style="color: rgb(43,145,175)">ISpeciesSelectorPresenterView</span> view;
+        <span style="color: rgb(0,0,255)">private</span> <span style="color: rgb(43,145,175)">MockRepository</span> mocks;
+        <span style="color: rgb(0,0,255)">private</span> <span style="color: rgb(43,145,175)">SpeciesSelectorPresenter</span> presenter;
+
+        [ <span style="color: rgb(43,145,175)">SetUp </span>]
+        <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">void</span> SetUp( )
+        {
+            mocks = <span style="color: rgb(0,0,255)">new</span> <span style="color: rgb(43,145,175)">MockRepository</span>( );
+            view = mocks.DynamicMock&lt;<span style="color: rgb(43,145,175)">ISpeciesSelectorPresenterView</span>&gt;( );
+            presenter = <span style="color: rgb(0,0,255)">new</span> <span style="color: rgb(43,145,175)">SpeciesSelectorPresenter</span>( view );
+        }
+
+        [ <span style="color: rgb(43,145,175)">Test </span>]
+        <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">void</span> Should_initialize_view_with_list_of_projects( )
+        {
+            <span style="color: rgb(0,0,255)">using</span> ( mocks.Record( ) )
+            {
+                view.LoadCritters( );
+            }
+            <span style="color: rgb(0,0,255)">using</span> ( mocks.Playback( ) )
+            {
+                presenter.InitializeView( );
+            }
+        }
+    }
+
+    <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">class</span> <span style="color: rgb(43,145,175)">SpeciesSelectorPresenter
+</span>    {
+        <span style="color: rgb(0,0,255)">private</span> <span style="color: rgb(0,0,255)">readonly</span> <span style="color: rgb(43,145,175)">ISpeciesSelectorPresenterView</span> _view;
+
+        <span style="color: rgb(0,0,255)">public</span> SpeciesSelectorPresenter( <span style="color: rgb(43,145,175)">ISpeciesSelectorPresenterView</span> view )
+        {
+            _view = view;
+        }
+
+        <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">void</span> InitializeView()
+        {
+        }
+    }
+
+    <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">interface</span> <span style="color: rgb(43,145,175)">ISpeciesSelectorPresenterView
+</span>    {
+        <span style="color: rgb(0,0,255)">void</span> LoadCritters( );
+    }
+}</pre>
+<hr />
+<p>How's THAT for throwing you into the fray? I can see all of you now going, &quot;whoa, there, Coding Hillbilly! I ain't e'en got me a cuppa joe yet, buddy.&quot; Sorry, folks, that's how I roll. I think slow and act fast. You gotta keep up.</p>
+<p>The test above sets up an expectation that <font face="Courier New">LoadCritters</font> will be called on the View when we called <font face="Courier New">Presenter.InitializeView</font>. In actual fact, this isn't being done. So here's the poser: why does this test pass?</p>
+<p>All right, I'll tell ya because I like your look. And I don't want to risk any of you actually cutting and pasting that into an IDE and coming up with some cut 'n paste error I made. Plus I gave you a hint in the post title.</p>
+<p>The test isn't actually passing. When it hits <font face="Courier New">view.LoadCritters</font>, it fails silently and kicks out of the test completely. The reason bein' <font face="Courier New">SetUp</font> isn't being called. The reason for *that* bein' I forgot the <font face="Courier New">[ TestFixture ]</font> attribute on the class itself.</p>
+<p>Now as to the question on why the test doesn't fail with a null reference exception: That's an easy answer. I have no idea. If you add the <font face="Courier New">[ TestFixture ]</font> attribute and comment out the code that creates the view, it does fail with the expected exception.</p>
+<p>So I'll leave that to my loyal and, I pray, generous readers.</p>
+<p>Kyle the Deferred</p>

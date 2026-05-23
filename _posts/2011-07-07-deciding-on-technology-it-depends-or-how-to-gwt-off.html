@@ -1,0 +1,43 @@
+---
+layout: post
+title: Deciding on technology? It depends, or “How to GWT off”
+date: 2011-07-07 19:58:51.000000000 -04:00
+categories: []
+tags:
+- BookedIN
+- GWT
+- Javascript
+status: publish
+type: post
+published: true
+meta:
+  hl_twitter_has_auto_tweeted: 'New post: Deciding on technology? It depends, or &ldquo;How
+    to GWT off&rdquo;, Full text: http://kyle.baley.org/?p=734'
+  pvc_views: '2393'
+  dsq_thread_id: ''
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<div style="border-bottom: #666666 1px solid; border-left: #666666 1px solid; padding-bottom: 0.25em; background-color: #cccccc; margin: 0.25em; padding-left: 0.25em; width: 250px; padding-right: 0.25em; float: right; font-size: 9pt; border-top: #666666 1px solid; border-right: #666666 1px solid; padding-top: 0.25em">Humble apologies to those who were on Twitter the evening of Independence Day. I celebrated the birth of the US by converting my personal blog to WordPress and the Twitter plugin wanted to get acquainted with its new home by announcing every single post I'd written, including <a href="http://blog.baley.org/?p=292">ones you won't find on CodeBetter</a>. </div>
+<p>Executive summary: We’re building a public directory/search portal for <a href="http://getbookedin.com/?cid=17">BookedIN</a> and need to decide whether to continue with GWT for it. </p>
+<p>I love summer. Not because of the weather mind you because down my way, the mercury wavers tauntingly between “Mabel, where’s my mesh shirt?” and “Whoa now, didn’t realize projectile sweating was so well…documented”. The reason I like summer is that, much like “weekend” and “daylight”, it’s a one-word excuse for any lack of productivity. Haven’t kept up with blogging? What can I say, my kid’s off. Need to repair the roof? Sorry, hon, summer’s wasting. Are you thinking of showering in the near future? Pffft….sum….MER!!!</p>
+<p>Alas, for whatever reason, I’ve taken on a position of responsibility over at <a href="http://getbookedin.com/?cid=17">BookedIN</a>. So far, we’ve built a kick-ass appointment manager. Next step: the public search engine. Wherein we must now return to the question: <a href="http://blog.baley.org/2010/07/why-java-or-how-to-describe-a-decision-process/">What do we build it in?</a></p>
+<p>All languages are on the table. .NET, of course, because I wouldn’t be the hillbilly you read before you today without it. Ruby because I want to see if my natural self-effacing nature can withstand the onslaught of being encased in such a hipster. Python, Go, whatever language the kids speak on Facebook (it looks more like a programming language than English). All are contenders to varying degrees.</p>
+<p>GWT with an AppEngine back end is our obvious first choice given that the existing app is built on that (concerns about the <a href="http://www.hanselman.com/blog/JavaScriptIsAssemblyLanguageForTheWebSematicMarkupIsDeadCleanVsMachinecodedHTML.aspx">readability of the resulting code</a>, notwithstanding). It’s been good to us the last year and a half. There were some initial issues when dealing with UI tests but after overcoming those in the beginning, our development process with it is sharper’n a thumbtack slurpee.</p>
+<p>There have been recent discussions on web sites vs. web applications that I’ve been reading more than any one hillbilly ought to. Specifically about SEO and Ajax sites. One of our big selling points will be searchability for our clients. The idea is: you search for “farm animal massage in Atlanta”, you should get “Perry's Pig Patdowns” with a list of available appointments for good ol’ Wilbur and Napoleon.</p>
+<p>So I’ve been researching on searching. How does GWT handle SEO? On the one hand, our favorite GWT framework, <a href="http://code.google.com/p/gwt-platform/">gwtp</a>, supports <a href="http://code.google.com/p/gwt-platform/wiki/CrawlerSupport">crawlability</a>. But alas, the answer is still not so clear-cut. Forthwith is the state of the world as I believe it to be vis-à-vis searching Ajax sites.</p>
+<p>Summary: It’s hard.</p>
+<p>Google has <a href="http://code.google.com/web/ajaxcrawling/">a spec</a> that it’s using to crawl Ajax-heavy sites. This is the quietly famous #! (and to make this post more searchable, we include the actual name of the symbol: NumberSignExclamationPoint) tag that has made its way to Twitter, Facebook, Gawker, and Lifehacker. When Google comes a-crawlin’, they see this symbol, convert it to something else and request that page. As far as I can tell, your server should be able to convert that back into a #! page and serve up the corresponding HTML for it.</p>
+<p>There have been quite a few complaints about whether this breaks the web and is a big hack and whatnot. (<a href="http://isolani.co.uk/blog/javascript/BreakingTheWebWithHashBangs">Start here</a> and follow the links.) This makes for interesting reading but for the most part, doesn’t help me decide whether or not GWT is a good fit for an appointment search portal. Except for <a href="http://www.adequatelygood.com/2011/2/Thoughts-on-the-Hashbang">one post</a> (and more importantly, the comments) from the inside of Twitter.</p>
+<p>I’ve distilled much of my research down to what appears obvious in hindsight: If you’re building a web application, like GMail or Twitter or, indeed, or BookedIN scheduling application, GWT is a good fit. It helps you build a compelling user experience on the web. And if you want crawlability, that’s possible, though convoluted.</p>
+<p>But if you’re building a web <em>site</em>, like Gawker or our upcoming public booking portal, it’s better suited to more traditional technology like JSP or ASP.NET with a sprinkling of Ajax to enhance certain features. People aren’t looking for fancy page transitions on a news site or search portal, I don’t think. They want to find the information they need, then leave.</p>
+<p>Side note: Virtually ignored in all of this discussion is: what about other search engines? Do they support #!? I still haven’t been able to figure that out yet. As far as I can tell, this is a Google specification and only they support it.</p>
+<p>The net result is that we won’t be using GWT for the public site. SEO is too important to our prospective clients for us to have to jump through a lot of technical hoops to implement it. Plus there isn’t as compelling a reason to make the site a heavily AJAX’d one. That is: we don’t feel the user experience will be enhanced by heavy use of AJAX.</p>
+<p>Thus ends today’s mental roadmap.</p>
+<p>Kyle the public</p>

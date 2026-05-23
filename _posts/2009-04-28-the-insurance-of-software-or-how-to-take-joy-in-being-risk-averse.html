@@ -1,0 +1,47 @@
+---
+layout: post
+title: The insurance of software, or “How to take joy in being risk-averse”
+date: 2009-04-28 16:35:35.000000000 -04:00
+categories: []
+tags:
+- Conscientious Coding
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '383156440'
+  pvc_views: '1132'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Have been following <a href="http://codebetter.com/blogs/gregyoung/archive/2009/04/24/more-on-repository.aspx">Greg’s</a> and <a href="http://ayende.com/Blog/archive/2009/04/23/night-of-the-living-repositories.aspx">Ayende’s</a> online debate and one of Greg’s comments is an awesome tie-in to a half-written post that I can now complete.</p>
+<blockquote><p>Its not just about YAGNI its about risk management. We make the decision early (Port/Adapter) that will allow us to delay other decisions. It also costs us next to nothing up front to allow for our change later. YAGNI should never be used without thought of risk management, we should always be able to quantify our initial cost, the probability of change, and the cost of the change in the future.</p>
+</blockquote>
+<p>Context in mind, let’s dance.</p>
+<hr />
+<p>My brother hates insurance. Despises the very concept of it. “You give all this money to ‘em and whaddaya get for it?” is his claim. He spends, say, $2000 each year for dental insurance for his family but his appointments cost only maybe $800. He’d rather put money away every month and use it for the various issues that are typically done through insurance.</p>
+<p>The problem with this philosophy is that he’s evaluating only the tangible benefits of insurance. From a total cash outlay perspective, he’s losing money.</p>
+<p>But, of course, insurance isn’t about making money. It’s about risk management. That is, there are risks involved with health and property and life. There is a possibility that something may happen to your health that requires you to pay a lot of money to fix it. And insurance is all about monetizing that risk. You pay someone else a certain amount of money so that they can assume the risk of paying a lot of money. So you can continue living your life as an extreme full-contact Cribbage player without worrying about having to cover the bills when someone slams down a head-rattling 24 hand when you’re about to peg out.<a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/Insurancemetaphor_14055/image_2.png"><img title="image" style="border-top-width: 0px; display: inline; border-left-width: 0px; border-bottom-width: 0px; margin-left: 0px; margin-right: 0px; border-right-width: 0px" height="244" alt="image" src="/assets/image_thumb.png" width="240" align="right" border="0" /></a> </p>
+<p>For my own part, I love the idea. The implementation leaves much to be desired in most cases but I have insurance for pretty much anything that could go wrong: health, property, auto, life, distillery, heck, you can even find insurance against birth defects stemming from “open-minded” mating rituals if you look hard enough. And pay enough.</p>
+<p>In software development, risks are everywhere. External systems are a risk. Unmaintainable code is a risk. Having a high number of defects is a risk. Even the choice of technology is a risk.</p>
+<p>Where this becomes more touchy-feely comes in one’s aversion to risk. You can ignore risk in your project just like you can ignore it in life and not be insured. If the stars align, your project will succeed anyway. Your defects don’t get in the way of gaining market share, the external systems you have gel nicely with your project.</p>
+<p>But there is always the chance that risks become a reality. You may be tasked with developing a feature that will be nigh-impossible to wedge into your current architecture because you thought it would be easier to outsource to Drag ‘N Drop Data Access Inc. You may be facing a mob of angry customers because you’ve ignored your defect list too long. </p>
+<p>In order to protect ourselves, we need to constantly look for ways of managing our risks. I’ve mentioned unmaintainable code as one risk. How can we minimize it? Regular code reviews and pair programming are two options that immediately spring to mind. It’s a lot harder for two people to write bad code than one.</p>
+<p>Incorrect code is another big risk. I.e. code that doesn’t do what it’s supposed to. Mitigating that risk can be done with automated tests, regular communication with the client, basically doing anything in our power to recognize that code is wrong and ensure that, when fixed, it doesn’t become wrong again.</p>
+<p>External systems are another good example. Using someone else’s web service or library represents a risk to you. You don’t have control over how the code works. In the case of web services, you don’t even have control over when it could change. Adding an anti-corruption layer over it is one way you can ensure that your exposure to that risk is minimized.</p>
+<p>These are only examples. The underlying theme is to get you thinking about the risks on your project and how you can “buy insurance” to minimize it. Sometimes your insurance will be too “expensive”. That is, the cost to minimize the risk is too high based on your aversion to it. Maybe you trust the company providing the external service and you decide you want to take on the risk of binding directly to it throughout your application.</p>
+<p>Consider when people think: I’m not feeling any pain with that particular problem. There are undertones to that. “I haven’t experienced any losses from my actions” is one. Another: “I’ve evaluated the risks and I’m okay with it.”</p>
+<p><a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/Insurancemetaphor_14055/image_6.png"><img title="image" style="border-top-width: 0px; display: inline; border-left-width: 0px; border-bottom-width: 0px; margin: 5px; border-right-width: 0px" height="244" alt="image" src="/assets/image_thumb_2.png" width="196" align="left" border="0" /></a>Another touchy subject: “Our developers aren’t capable of dealing with these ‘advanced’ topics.” What are the risks involved with that stance? That your code may not be as clean as it could be, maybe? That if you always code to the lowest common denominator, then that’s all you will attract on your team? Or the cost of insurance (i.e. cost of training, possible high turnover) is too high? </p>
+<p>&#160;</p>
+<p>It all depends on what your aversion to risk actually is as well as the cost of insurance against it. IoC containers are a relatively cheap insurance against the risk of highly-coupled code. They have a learning component but that’s typical in the industry. Choosing the “right” one also has inherent risks, of course, so many people avoid them on that basis alone.</p>
+<p>And here’s the thing with insurance: if all goes well, I hope my insurance company makes a pile of money from me. Because if they don’t, that means something has gone very wrong and they’ve had to cover some major catastrophe. If, &lt;deity to be named on my deathbed&gt; forbid, that happens, the last thing I want to worry about is whether or not I have the money to cover it.</p>
+<p>Back to software, we have the same concept. I could possibly write code that is loosely coupled and always correct without the aid of TDD or automated tests in general. That is, I could spend all this time testing and discover it’s wasted.</p>
+<p>This is what makes insurance such a porkypine to “love”. You buy it hoping you never have to use it. You actually *want* to never see any tangible benefit from it.</p>
+<p>But it’s sure nice when you need it.</p>
+<p>Kyle the Allegorical</p>

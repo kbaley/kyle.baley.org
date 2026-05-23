@@ -1,0 +1,30 @@
+---
+layout: post
+title: AutoHotKey, the Saviour! or "How to return from the abyss"
+date: 2007-09-28 16:57:11.000000000 -04:00
+categories: []
+tags:
+- Tools
+- Working Remotely
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2542'
+  dsq_thread_id: '353869647'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Three days after my <a href="http://kyle.baley.org/ChroniclesOfARemoteDeveloperOrHowToFindTheGrayCloudUnderTheSilverLining.aspx">nervous breakdown</a> and lo! i am saved! Both my mind and spirit (still working on my body). If you recall, Launchy, SlickRun, the WinKey, and even Alt+Tab were not working on my remote desktop connection because I had to launch remote desktop within the context of a Citrix application.</p>
+<p><a href="http://www.launchy.net">Launchy</a> has been re-enabled <a href="http://kyle.baley.org/QuickQuestioncopyWhyAmIHere.aspx">simply</a> by disabling it in my laptop. I suppose that means that since Alt+Space isn't handled there, the keystroke is passed into Remote Desktop. Frankly, I don't care. I can find things again!</p>
+<p>WinKey is still insistent about not entering into my remote desktop. But <a href="http://www.bayden.com/SlickRun/">SlickRun</a> is back by nature of <a href="http://www.autohotkey.com">AutoHotKey</a>. Which brings me to...</p>
+<p>AutoHotKey's status has been bumped from "great utility" to "the most awesome computer application ever invented". Thanks to it, I have remapped SlickRun to RightCtrl+R. More importantly are the following two lines I've added to the AutoHotKey script:</p>
+<p><font face="Courier New" size="2">RControl &amp; RShift::AltTab<br />RControl &amp; Enter::ShiftAltTab<br /></font><br />This is taken directly from the AutoHotKey documentation. What it means is that I can Alt-Tab my way through applications by holding down RightCtrl and repeatedly pressing RightShift. Ditto for going the other direction by pressing RightCtrl and Enter. And since I rarely use the right Ctrl, Alt, and Shift keys, there is little chance it will interfere with, say, a ReSharper shortcut I use.</p>
+<p>Hello keyboard, my old friend! I'm free to type on you again!</p>
+<p>Kyle the Re-invigorated</p>

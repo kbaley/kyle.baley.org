@@ -1,0 +1,40 @@
+---
+layout: post
+title: Life outside .NET, or “How to check out your neighbours”
+date: 2010-02-03 02:34:35.000000000 -05:00
+categories: []
+tags:
+- GWT
+- Java
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1795'
+  dsq_thread_id: '349688000'
+  hl_twitter_has_auto_tweeted: 'New post: Life outside .NET, or &ldquo;How to check
+    out your neighbours&rdquo;, Full text: http://blog.baley.org/?p=47'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The hillbilly be all Java’d up these days. For coming on three weeks, I’ve been the lone developer on a project based on <a href="http://code.google.com/webtoolkit/">Google Web Toolkit</a>. It’s a web framework (naturally) that allows developers to build applications in Java and compiles it down to JavaScript, CSS, and HTML. Scoff all you want, if it were any other company behind it, I’d probably be right there with you.</p>
+<p>We considered quite a few technologies before landing on this one. We went through Ruby, <a href="http://www.sharparchitecture.net">Sharp Architecture</a>, <a href="http://openrasta.com">Open Rasta</a>, Moo Tools, and probably several others. I can defend ending up Google Web Toolkit privately if you want but putting the thought process up in a public forum is going to lead to comments that I’m too tired to moderate these days. And yes, I’ve heard of <a href="http://projects.nikhilk.net/ScriptSharp/ReleaseHistory">Script #</a>, too.</p>
+<p>Coming at this from a .NET developer’s standpoint has been interesting. It’s surprising how much we take for granted in our IDE, for example. I’m still meandering my way through the keyboard shortcuts in Eclipse (after a brief fling with IntelliJ IDEA). One thing I’d really like is a keyboard shortcut for the GWT Compile button, which currently is available only via a toolbar button or a context menu, as far as I can tell. Was happy to find a <a href="http://www.viplugin.com/viplugin/">VIM plugin</a> for it too that works as advertised.</p>
+<p>Not sure if this applies to Java in general but within the confines of the Google Web Toolkit, the ecosystem is freakin’ phenomenal. The <a href="http://code.google.com/webtoolkit/overview.html">documentation page</a> alone encourages unit testing and the use of an MVP architecture. Once you start reading about it, you can’t help but stumble on a number of other projects:</p>
+<ul>
+<li><a href="http://code.google.com/p/gwt-presenter/">gwt-presenter</a>: A passive view implementation for GWT </li>
+<li><a href="http://code.google.com/p/gwt-dispatch/">gwt-dispatch</a>: A command pattern implementation for GWT </li>
+<li><a href="http://code.google.com/p/google-guice/">Guice</a>: Google’s dependency injection framework </li>
+<li><a href="http://code.google.com/p/google-gin/">Gin</a>: A dependency injection framework for the client part of GWT </li>
+</ul>
+<p>The shocking thing from a .NET perspective is that these concepts are just sort of <em>assumed.</em> There’s little debate on whether dependency injection is necessary or whether passive view is overkill. Someone watched a presentation from Google IO last year, whipped up a command pattern project based on it, and lo! the people said it was good. Between support for Hibernate and the App Engine data store, I think people would look at you bug-eyed if you even suggested writing your own data access layer.</p>
+<p>The downside to all this as that the tooling seems to be several steps behind what I’m used to in the Microsoft world. It’s still too early to make a fair comparison but even after digging a little deeper into Eclipse, I can’t imagine being quite as productive as I currently am in Visual Studio. Yes, there’s also IntelliJ but our anecdotal evidence suggests that neither Java IDE is seen as a de facto standard. For the moment, I’m sticking with Eclipse simply because all the documentation refers to it and the GWT and App Engine plug-ins for it work out of the box.</p>
+<p>Couple of final shout-outs to two blogs that have been invaluable during the learning curve phase. First is <a href="http://blog.hivedevelopment.co.uk/">Hive Development</a> (currently featuring two posts on how to unit test MVP applications in GWT). Second is <a href="http://turbomanage.wordpress.com/">TurboManage</a>, whose <a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">sample code</a> is more detailed than many apps I’ve written.</p>
+<p>Anyway, it’s been an interesting couple of weeks.</p>
+<p>Kyle the Decaffeinated</p>

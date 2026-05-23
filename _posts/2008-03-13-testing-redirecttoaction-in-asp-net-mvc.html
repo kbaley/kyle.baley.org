@@ -1,0 +1,58 @@
+---
+layout: post
+title: Testing RedirectToAction in ASP.NET MVC
+date: 2008-03-13 03:31:04.000000000 -04:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '349697206'
+  hl_twitter_has_auto_tweeted: 'New post: Testing RedirectToAction in ASP.NET MVC,
+    Full text: http://blog.baley.org/?p=165'
+  pvc_views: '7559'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Crikey, am I having a time testing RedirectToAction on my controller with the new MVC Preview! How much of it is me and how much is the beta-ness of the framework, I will leave to your fair and impartial judgement.</p>
+<p>I upgraded relatively easily from the December CTP. Here's a quick summary of what was involved:</p>
+<ul>
+<li>Change the assembly references from System.Web.Extensions to the three new ones that are installed with the new preview (and I'd *really* like to know why that install takes so long if all it does is drop some files, add some shortcuts, and install a few VS templates. Might be time to upgrade the laptop.) </li>
+<li>Drop the reference to MvcToolkit </li>
+<li>Update the 80s-style square brackets to the new age curly braces. Kind of like the evolution of the Volvo. </li>
+<li>Update the method used to add routes. Thanks to newly-required constructor arguments and the funky new <font face="Courier New">RouteValueDictionary</font>, they now look like this:       <br /> 
+<pre class="c-sharp" name="code">    RouteTable.Routes.Add(
+        new Route( &quot;{controller}.mvc/{action}/{id}&quot;, new MvcRouteHandler( ) )
+            {
+                Defaults =
+                    new RouteValueDictionary( new { action = &quot;Index&quot;, id = (string) null } )
+            }
+        );</pre>
+</li>
+<li>Update my call to RedirectToAction, again to use the <font face="Courier New">RouteValueDictionary</font> (which, judging from Reflector, we can only assume is a class-in-progress). </li>
+<li>Update the web.config as <a href="http://www.asp.net/downloads/3.5-extensions/readme/Preview2.aspx" target="_blank">I was told</a> to. </li>
+<li>Dropping the Html. from the beginning of all my ResolveUrl calls in the views. </li>
+<li>Updated calls to various other methods that used to be part of MvcToolkit. </li>
+</ul>
+<p>I think that was about it. After that, the bad boy compiled and all the tests passed and it was on to my next challenge. Namely, drop the <a href="http://haacked.com/archive/2007/12/09/writing-unit-tests-for-controller-actions.aspx" target="_blank">test-specific subclasses</a> in favour of the extension methods mentioned by Haackselman in <a href="http://haacked.com/archive/2007/11/05/rhino-mocks-extension-methods-mvc-crazy-delicious.aspx" target="_blank">post</a> and <a href="http://www.asp.net/learn/3.5-extensions-videos/default.aspx#mvc" target="_blank">video</a> form.</p>
+<p>It went pretty smoothly at first. I added the <font face="Courier New">MvcMockHelpers</font> class, incorporated a <font face="Courier New">FakeViewEngine</font>, and went about my merry way converting asserts that used <font face="Courier New">testController.RenderedView</font> to ones using <font face="Courier new">fakeViewEngine.ViewContext.ViewName</font>. Ditto for <font face="Courier New">RenderedViewData</font> to <font face="Courier New">ViewData</font>.</p>
+<p>Then came the last test. The one that checked to see if the action correctly called RedirectToAction. There is no property in the ViewContext to check to see which view was the eventual target. And after checking out the <a href="http://forums.asp.net/p/1230948/2227422.aspx" target="_blank">only post I could find on the subject</a> (which has a lot more information on it today than it did two days ago when I went through this problem), I got an error in the test that turned out to be misleading:</p>
+<hr />
+<p>System.NullReferenceException: Object reference not set to an instance of an object.</p>
+<p>at Trilogy.Gunton.Web.MyRoute.GetRouteData(HttpContextBase httpContext) in MyRoute.cs: line 117<br />
+  <br />at System.Web.Routing.RouteCollection.GetRouteData(HttpContextBase context) </p>
+<p>at Trilogy.Gunton.Tests.Unit.Controllers.JobControllerFixture.Save_action_should_send_job_to_service() in JobControllerFixture.cs: line 150</p>
+<hr />
+<p>The <font face="Courier New">MyRoute</font> class is courtesy of Reflector and I used it to determine the problem. It was two days ago and I don't have the memory I used to but I'm pretty sure it was something deep within the bowels of the Route class. It's calling GetRouteData on the class to determine which URL to redirect to and that method has a call:</p>
+<pre class="c-sharp" name="code">IList<string> source = SplitUrl(httpContext.Request.AppRelativeCurrentExecutionFilePath.Substring(2) + httpContext.Request.PathInfo);</string></pre>
+<p>And the <font face="Courier New">AppRelativeCurrentHolyCowThisIsALongName</font> and <font face="Courier New">PathInfo</font> properties have not been mocked. I think it has something to do with the fact that the controller's fake ControllerContext is created with an empty RouteData. Not sure how the RouteTable created in <font face="Courier New">Global.asax.cs</font> eventually translates into the RouteData (assuming it does) because by that time, I had enough fodder for this post (which is the only reason I took it as far as I did).</p>
+<p>Again, this is speculation but the net result is, RedirectToAction remains untestable by me. I've heard tell that there is a way but as it stands now, I've put some comments into my tests to remind me to revisit them once a better way exists.</p>
+<p>But if you're the type that's more anal about code coverage than best practices, using Response.Redirect instead of RedirectToAction works like a charm.</p>
+<p>Kyle the Undirected</p>

@@ -1,0 +1,30 @@
+---
+layout: post
+title: 'ReSharper: No Comment'
+date: 2006-11-24 14:48:06.000000000 -05:00
+categories: []
+tags:
+- Conscientious Coding
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '848'
+  dsq_thread_id: '365835477'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I'm starting to get hip to ReSharper's jive with one minor issue. The sucker makes it too easy to generate&nbsp;classes and methods&nbsp;with no comments.</p>
+<p>I love me&nbsp;some XML comments to open each and every method as well as the class. But I'm not a stickler for making the thing readable for comment parsers like NDoc or Sandcastle. Truth be told, most of the time, you don't want to follow all the rules like using &lt;p&gt; tags for each paragraph and referring other classes with &lt;see&gt; or &lt;seealso&gt; unless you know your comments will actually be parsed into a help document, like for a code library.</p>
+<p>And a lot of times, my comments are pretty generic anyway, particularly for standard control events. They'll say something like, "Click event for the Back button" or some other obvious statement.</p>
+<p>I put them in anyway. Because I love them as a visual aide to delimit my methods. The Coding Hillbilly's gettin' old, doncha know and his eyes ain't what they used to be. So seeing three lines of /// (at minimum) before each method helps me scroll through my code faster when I'm looking for a method.</p>
+<p>And here's where ReSharper comes in. You can generate methods and properties in the blink of an eye and it's a chore to go through and generate comments for all of them. I can generate two dozen properties for a DTO in about&nbsp;45 seconds. Doing it the old fashioned way, I had myself conditioned to add comments before I even implemented the get/set for the properties.</p>
+<p>Mind you, Alt+Down/Up Arrow in ReSharper have made it easier to navigate anyway without using comments as delimiters for aging hillbillies. And Ctrl+F12 brings up the current file structure where you can start typing and have it navigate to the method you're looking for.</p>
+<p>But I still like 'em. Maybe it's my conditioning but whenever I open up someone else's code, it makes a good first impression to see comments on every method. Especially sample code where the person is expecting, nay encouraging others to view it.</p>
+<p>Plus they make my code look nicer. Rather than all that angry black and sad blue on white, we have some nice happy grey and melancholy green sprinkled in there to calm the soul. Helps the code's gestalt.</p>

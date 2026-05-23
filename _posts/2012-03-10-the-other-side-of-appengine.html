@@ -1,0 +1,43 @@
+---
+layout: post
+title: The other side of AppEngine
+date: 2012-03-10 14:12:54.000000000 -05:00
+categories: []
+tags:
+- BookedIN
+- Google App Engine
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '606062888'
+  pvc_views: '5063'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I really do love Google AppEngine. That didn’t come out so well in <a href="http://kyle.baley.org/2012/01/appengine-thoughts/">a recent post</a>. I’ve had a bad taste in my mouth ever since then and now that I’ve eliminated the dandelion wine as a potential culprit, I’m forced to conclude that I need to balance my hillbilly feng shui. So in no particular order, here is what I like about AppEngine:</p>
+<h2>Granular pricing</h2>
+<p>I complained about the confusing pricing in the last post but since then, a funny thing happened. <a href="http://getbookedin.com/?cid=17">BookedIN</a> got some traffic (thanks in no small part to the <a href="https://chrome.google.com/webstore/category/home">Chrome Web Store</a>.) We were getting feedback and adding features and fixing bugs and hey, howdy, hey, wouldja take a look at what’s happened to our AppEngine budget!</p>
+<p>And for all the bitching I did on the different ways your application is charged, this jump in cost has led to some much-delayed but necessary shifts in how we code.</p>
+<p>As an example, we are now hitting our datastore read quota regularly. Which leads to the question: “Why so many reads?” Which leads to a number of other questions most of which can be boiled down to “Why am I treating the datastore like a SQL database?”</p>
+<p>Similar discussions have led to us taking much greater advantage of AppEngine features we’ve all but ignored, including task queues and the channel API.</p>
+<p>This doesn’t mean we’re on a refactoring binge, mind you. Our costs have jumped to the point where we want to waste thousands of dollars in developer hours to save ourselves a few extra bucks every month. But it has affected our coding practices going forward. When discussing new features, there are new questions: Can we denormalize this object? Do we *really* need to send this email synchronously? Can we send a message back to the user via an open channel? That sort of thing. All of these questions we should have been asking but didn’t because we “didn’t have time”. Now that cash dollars are being spent and now that we’ve seen how little time it takes to tweak our way of thinking, we are now working towards a better performing and more scalable application.</p>
+<h2>Out-of-the-box services</h2>
+<p>I looked briefly at AWS. It’s very different from AppEngine. From what I can tell, it seems you get a server. What you do with it is up to you. With AppEngine, I have an environment for caching, task queues, logging, mapping, channels, etc.</p>
+<p>The price you pay for all these services is that if you ever decide to move away from AppEngine, you’re rewriting. For the most part, this ain’t no generic framework you can swap in your own implementation fer.</p>
+<h2></h2>
+<h2>Multiple simultaneous versions</h2>
+<p>You can deploy up to ten versions of an application to the same account. For us, that makes actual deployments very smooth (in theory). We deploy on Saturday nights because statistically, that’s when the app is least used. But any time the week prior, we can deploy to a new version in production and just not make it active. That allows us to do smoke tests (if possible) and make last minute tweaks (or, more likely, <a href="http://kyle.baley.org/2012/01/qa-a-hillbilly-love-story/">add new features</a>). The night of, it’s mostly a matter of switching the default version from the old one to the new one. I say “mostly” because sometimes, we have mappers to run to transform the data in order to handle some new feature. If you structure your model properly, this is an optional feature, but I like to do it anyway. Even with our massive increase in traffic, this still takes less than 15 minutes.</p>
+<p>There’s also now a <a href="http://googleappengine.blogspot.in/2012/02/app-engine-163-released.html">new experimental feature</a> that lets you redirect a percentage of your traffic to a different version. This is designed for A/B testing but something tells me it won’t be used as such. In any case, I haven’t tried it.</p>
+<h2>Backup and Restore</h2>
+<p>I’m including this one because my original post said it wasn’t there. Since writing it, an experimental backup/restore feature has been added to the Datastore Admin console. I’ve tried it and it works though the lack of blob support means that it’s usefulness for us is almost non-existent. I suspect it’s not far away from being ready though. In the meantime, there are other solutions. One is <a href="http://datastorebackup.com/">DatastoreBackup</a> which looks promising. Another is <a href="https://github.com/aral/gaebar">Google App Engine Backup And Restore</a>, which looks very out of date. I mention it only to serve as an example for a long-standing PSA I have: Acronyms are not always the best name for a software project.</p>
+<p>(NOTE: I *still* have to use Firefox to access the Datastore Admin console because it usually doesn’t appear in Chrome.)</p>
+<hr />
+<p>Final note: I lied about this list being in no particular order. For all my initial confusion, I can’t understate how much I now love the granular pricing of AppEngine. If we want to pay less for our hosting, there are any number of things we can do to restructure things. And the nice thing is: almost every one of them will result in a better performing application. Before this, I’ve always had a fuzzy feeling of “yes, I know we could optimize but how much is that *really* going to save us?” Now, it’s right there in front of me. “We’re using too many channel API calls.” That’s because there’s an error in our logic when we rejoin a channel. “Our front-end instance hours are going up.” Maybe stuff can be refactored into a task queue or a backend. “Our data reads have spiked.” Perhaps we should cache the list of countries instead of querying the datastore every time the user brings up a certain dialog.</p>
+<p>Kyle the Discounted</p>

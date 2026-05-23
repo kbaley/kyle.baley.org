@@ -1,0 +1,55 @@
+---
+layout: post
+title: 'Part 3: Annotated Timok Project, or "How to get rendered"'
+date: 2007-11-28 01:23:42.000000000 -05:00
+categories: []
+tags:
+- Tools
+- Web development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1049'
+  dsq_thread_id: '437973623'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>So I made it to Part 3. Who knew I had it in me?</p>
+<p>For the uninitiated, I'm braindumping on my meanderings through the <a href="http://using.castleproject.org/display/MR/Samples" target="_blank">Timok sample application</a>. I'd advise you to check out <a href="http://kyle.baley.org/Part1AnnotatedTimokProjectOrQuotHowToKnowWhatYoureRenderingquot.aspx">part 1</a> and <a href="http://kyle.baley.org/Part2AnnotatedTimokProjectOrQuotHowToSecureYourHomequot.aspx">part 2</a>, partially because Part 2 includes a disclaimer that says, now that I look at it closely, don't listen to me.</p>
+<p>So far, we've followed a request through a controller and how to apply filters to controllers. This time, we're finally going to look at some rendered code. When we left off, we had determined that unauthenticated requests to the main page, /home/index.rails, we're redirected to the Index action on the Login controller.</p>
+<p>LoginController derives from ControllerBase, rather than SecureController. So it will not run the request through the AuthenticationFilter. Instead, the Index action executes normally. That is, it will use the default layout and the index.vm view.</p>
+<p><strong>So are we finally rendering something on the screen yet?</strong></p>
+<p>Why, yes, we are. As mentioned in part 1, the default layout will be rendered with the index.vm view in Views/Login. The HTML you see in index.vm is what is rendered on the page. Sort of. We'll take a look at it now.</p>
+<p><strong>OK, it kinda looks like HTML but I'm having some acid ASP flashbacks</strong></p>
+<p>Yeah, and it's not as pleasant as you would have hoped, right? The HTML you are looking at is littered with escape sequences that mean something to the view parser. Like classic ASP, these are processed server-side and the view engine will render appropriate HTML based on the command and its arguments.</p>
+<p>Note that we are using NVelocity as the view engine. It is the default one provided by Monorail but is not the only one. Brail is pretty popular as is ASP.NET web forms, which has a syntax similar to what you are used to in ASP.NET. I have zero experience with either of them so in the immortal words of Handy: <a href="http://www.thetick.ws/wavs/ep13/sulking%20in%20a%20tent%20like%20achilles.wav">Read a book</a>.</p>
+<p>In the meantime, just assume that anything with a funky character in front, like # or $, is for NVelocity to figure out. We'll look at a couple of these next.</p>
+<p><strong>#capturefor(head)</strong></p>
+<p>The text 'twixt this and the #end block will be rendered in the page's &lt;head&gt; tag.</p>
+<p><strong>$siteroot</strong></p>
+<p>Generates a base URL corresponding to the base application. For example, if your application resides at http://localhost/Timok.Rbr.Portal, this URL will be substituted in place of $siteroot when the page is rendered. It is like using <a href="http://www.csharper.net/blog/using_the_tilde__~__in_asp_net_everywhere___not_just_controls_.aspx">~ in ASP.NET web forms</a>.</p>
+<p><strong>"$UrlHelper.For("%{action='ForgotYourPassword'}")?username=" + $F('username');</strong></p>
+<p>This is a busy little bit of code. First is the <a href="http://api.castleproject.org/html/T_Castle_MonoRail_Framework_Helpers_UrlHelper.htm">UrlHelper</a> which is an NVelocity construct that will create a URL for you based on the parameters passed in.In this case, it will build a URL corresponding to the ForgotYourPassword action.</p>
+<p>$F isn't actually server-side code. It is rendered as-is in the client. $F is defined in one of MonoRail's js files (AjaxScripts.js). It is a sort of shorthand that says, "append the value of the 'username' form field to this URL when this code is executed. And since we don't know what this will be when the HTML is generated, it has to be a client-side function. It is similar to:</p>
+<blockquote><p>document.getElementById('username').value</p>
+</blockquote>
+<p><strong>$Form elements</strong></p>
+<p>These are for various form-related functions. $Form.FormTag generates the &lt;form&gt; tag in HTML while $Form.EndFormTag generates the &lt;/form&gt; (along with some validation code). $Form.LabelFor and $Form.TextField generate &lt;label&gt; and &lt;input type='text'&gt; elements respectively. I'll leave it to you to figure out what $Form.PasswordField does.</p>
+<p><strong>#if($error)</strong></p>
+<p>This should be somewhat self-explanatory. The HTML in this block is rendered only if the "error" server variable is defined.</p>
+<p><strong>Summary</strong></p>
+<p>We finally got to look at some HTML even if it looked a little funny. I sorta skimmed over the funky NVelocity syntax for a few reasons:</p>
+<ul>
+<li>It's NVelocity-specific. Brail, ASP.NET WebForms, and other view engines will have their own syntax  </li>
+<li>The idea should be familiar to you if you've done classic ASP development, even if the syntax is different  </li>
+<li>You can view the source of the resulting page just as easily as I can to see what each of these things does</li>
+</ul>
+<p>From here, we'll follow through with the form submittal to see what happens when the user actually does log in.</p>
+<p>Kyle the Moot</p>

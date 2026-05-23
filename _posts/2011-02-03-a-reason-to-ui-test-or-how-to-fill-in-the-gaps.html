@@ -1,0 +1,59 @@
+---
+layout: post
+title: A reason to UI test, or “How to fill in the gaps”
+date: 2011-02-03 16:32:18.000000000 -05:00
+categories: []
+tags:
+- BDD/TDD
+- User Interface
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1464'
+  dsq_thread_id: '349697390'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Dja miss me? Of course not. You’re reading this in an RSS reader and if I hadn’t asked the question, you wouldn’t have noticed I was gone. If you’re like me, you’re scanning through until you can find any reason to skip this post and move on to the next one. Here, I’ll help your little mental filter:</p>
+<p><strong>Executive summary</strong>: An example of when UI/integration tests succeed where unit tests don’t.</p>
+<p>But I’m warning ya, you’ll miss out on the amusing delivery if you go by this alone.</p>
+<h2>Pre-amble</h2>
+<p>We are tantalizingly close to coming out of trial mode with <a href="http://corp.bookedin.net" target="_blank">BookedIN</a>. My business partner had a nice little debate for our development process after its out. His stance: we need to write UI tests before we write code to avoid a lot of the issues that were arising. My stance: We unit test the ever-living raccoons out of the app now (thanks in no small part to <a href="http://code.google.com/p/jukito/" target="_blank">Jukito</a>). And we <em>do</em> have a UI testing process that was used for major features. While I agreed that we should have more, I was leery that it would make us any more productive. And I doubted it would help us discover any more issues than we already were…</p>
+<p><em>(Ed. note: Did you notice the ellipsis at the end of that last paragraph? That’s what we in the legitimate journalism field call foreshadowing. Or, as is more often the case in my writing, foreboding. Note that you won’t see classy tropes like this from those hacks at <a href="http://www.lostechies.com" target="_blank">Los Techies</a>.)*</em></p>
+<h2>The bug</h2>
+<p>When someone logs into the application, there are a number of notifications that could pop up in various scenarios:</p>
+<ul>
+<li>Owner logging in for the first time: Enter company details, following by a welcome message </li>
+<li>New staff member: welcome message </li>
+<li>Owner after the first time: You haven’t verified your email address yet (assuming it hasn’t, in fact, been verified) </li>
+<li>Anyone after the trial period has expired: Message that says “Just kidding, you don’t have to pay! Tee hee to those that did.” </li>
+<li>Existing users after a major release: What’s new! </li>
+</ul>
+<p>There might be more, you can’t expect me to keep all this &amp;*^% in my head.<a href="http://kyle.baley.org/content/binary/Windows-Live-Writer/Importance-of-UI-tests_98EA/BookedIN_2.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; float: right; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="BookedIN" border="0" alt="BookedIN" align="right" src="/assets/BookedIN_thumb.png" width="244" height="134" /></a></p>
+<p>We covered all of this with a NotificationController. It would determine what conditions were met and start piling messages into a queue and display them in order. All of it <em>very </em>thoroughly tested with unit tests to make sure repositories were called and messages sent and users updated and so on and so forth.</p>
+<p>The bug as listed was: When they log out and re-log in, users are seeing the what’s new message again.</p>
+<p>As with most bugs, this was an oversimplication. As I tested, I discovered that this would happen intermittently. Sometimes it would happen as stated. Sometimes a new owner would enter her company details, log out, log in again, then see the company details window once more. Sometimes it would just work.</p>
+<h2>The analysis</h2>
+<p>“How can this be?” says I. The tests clearly outline what is supposed to happen and the code clearly passes all the tests.</p>
+<p>As mentioned, we have a UI testing framework in place and used it on occasion. The reason it is not used more frequently is a topic that is already half-written but the short answer is: Google Web Toolkit adds some hurdles we haven’t had time to overcome yet. But given our recent debate, I fired up Notepad and banged out a capybara scenario. Nine times out of ten, it would fail. Except when I ran through the debugger in which case ten times out of ten, it would succeed.</p>
+<h2>The culprit</h2>
+<p>A good, old-fashioned race condition. In our client piece, the code for the first notification scenario above reads like this (it’s in pseudo-code because I don’t actually code anymore…):</p>
+<p>if (logging_in_for_the_first_time) {    <br />&#160;&#160;&#160; showWelcomeMessage( );     <br />&#160;&#160;&#160; markWhatsNewMessageAsSeen( );     <br />}</p>
+<p>Judicious use of logging revealed the following exchange on the server:</p>
+<p>[MarkingWelcomeMessageSeen] Starting execution    <br />[MarkingWelcomeMessageSeen] Retrieving user details     <br />[MarkingWelcomeMessageSeen] Marking welcome message seen     <br />[MarkingWhatsNewMessageSeen] Starting execution     <br />[MarkingWhatsNewMessageSeen] Retrieving user details     <br />[MarkingWhatsNewMessageSeen] Marking what’s new message seen     <br />[MarkingWelcomeMessageSeen] Saving user     <br />[MarkingWhatsNewMessageSeen] Saving user</p>
+<p>After making a mental note to perhaps differentiate my method names a little better, it was painfully obvious what the problem was.</p>
+<h2>The solution</h2>
+<p>That’s not the topic of this post. Focus, Hillbilly!</p>
+<h2>The moral</h2>
+<p>As I said, all unit tests passed. Our tests on the client proved that we were marking the messages seen in the appropriate conditions. Tests for the server component show that we are calling repositories and setting properties (or the Java equivalent: setting properties, but with more code) properly.</p>
+<p>But the problem didn’t manifest itself until we did the UI test (or integration test, if you prefer).</p>
+<p>So folks, heed my warning. A lack of decent integration/UI tests can lead to a smug and self-righteous business partner.</p>
+<p>Kyle the Humbled</p>
+<p><font size="1">* shiny nickel for those of you who recognize this little bit being ripped off from Bloom County</font></p>

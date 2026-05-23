@@ -1,0 +1,33 @@
+---
+layout: post
+title: Controls in UpdatePanels may not cause a postback
+date: 2006-06-07 23:05:00.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1342'
+  dsq_thread_id: '362996043'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>An interesting lesson learned during my Atlas presentation at the Calgary Code Camp that had to do with postbacks within an UpdatePanel. My application contains, at startup, a textbox, three buttons and two empty GridViews. As you search for music, both GridViews get populated. Click the image at the right for a sample.</p>
+<p><a href="http://kyle.baley.org/images/45/o_MusicPlayerSample.jpg" target="_blank"><img style="FLOAT: right; WIDTH: 250px" src="/assets/o_MusicPlayerSample.jpg" /></a> </p>
+<p>The bottom GridView contains a LinkButton column in the far left that allows you to remove that row from the GridView. Since it's a LinkButton, this causes a postback. To be more specific, this causes the javascript function __doPostBack to be called. The __doPostBack function is output into the page at runtime by .NET although what actually performs this function is something I've never looked into. As far as I know, its job is to submit the form to itself so that the code-behind can be called. It is called by any control that causes a postback.</p>
+<p>What I discovered is that if there are no controls that cause a postback, the __doPostBack function is not generated. So in the normal ASP.NET version of my application, the function is not generated at startup because the only controls are a textbox and three buttons. (The buttons are rendered as Submit buttons so do not need a mechanism to cause a postback.) But when the user adds a song to the selected music list, this causes a LinkButton to be generated in the second GridView and .NET will then generate the __doPostBack function. So far, so good. No problem in the normal ASP.NET world.</p>
+<p>Switching to Atlas: We wrap the GridViews in UpdatePanel controls so that when the user clicks Search or Add to Selected, we don't actually refresh the entire page, just the GridViews. Herein lies the problem. When the page first loads, there are no controls that require the __doPostBack function so it isn't generated. When the user clicks Add to Selected, Atlas takes over and retrieves the HTML required for the UpdatePanel but nothing else. Well, that's not entirely true. It does retrieve a little more info but the important part is that it retrieves the HTML for the second GridView which now includes LinkButtons. These LinkButtons have references to a __doPostBack function that hasn't been generated because (I guess) that only happens when the entire page is reloaded. Essentially, Atlas is assuming that the __doPostBack function has been generated already at the page level.</p>
+<p>The workaround I used is to include the following code in the Page_Load event:</p>
+<blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+<p><font face="Courier New" size="2">Page.ClientScript.GetPostBackEventReference( <font color="#0000ff">new</font> System.Web.UI.<font color="#008080">PostBackOptions</font>( <font color="#0000ff">this</font>.ButtonPlay ) );</font></p>
+</blockquote>
+<p dir="ltr">This generates a PostBack reference for the play button. The button doesn't technically need one but I had to pick some control to pass in. The side effect I was looking for is that the __doPostBack javascript function is going to be generated every time the page loads now, including the first time. And in the Atlas version, that's the only time the page is loaded.</p>
+<p dir="ltr">So if you are clicking on controls and getting an &#8220;object not set to a value&#8221; javascript error in UpdatePanel controls, see if the __doPostBack function actually exists in your page source. If not, you'll need to add it.</p>

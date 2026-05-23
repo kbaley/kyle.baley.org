@@ -1,0 +1,35 @@
+---
+layout: post
+title: '"Look out! He''s gone portal!"'
+date: 2006-02-17 15:43:00.000000000 -05:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '926'
+  dsq_thread_id: '362998286'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>In a <a href="http://kyle.baley.org/archive/2006/02/13/350.aspx">previous post</a>, I suggested setting up several portals on a server for developers to monkey around with while building their web parts. One of the challenges I came across recently is how to copy one portal to another. I was going to add "easily" to that sentence but when I'm done pontificating here, you'll consider yourself lucky that it's possible at all, let alone "easily".</p>
+<p>First, the scenario. This is a full-blown SharePoint Portal Server portal, not a WSS site. It contains a few subwebs, some WSS sites, and more than a few collaboration sites. There isn't a whole lot other than that. No personalization. Very little customization. More than our share of web parts on the portal itself but the WSS sites and collaboration sites were pretty much out of the box.</p>
+<p>Before I start, I won't be describing how I eventually did copy the portal yet. I think it's important to understand what I did try so that you people looking for shortcuts don't mess things up the way I did. But I promise, I'll get to it.</p>
+<p>Our initial idea was to copy the portal as it exists in production to one of the developer sites, then copy that one to the other four we had set up on the same server. Our first stop: the SharePoint Backup and Restore utility. The drawback: The utility doesn't work if the portal to which you are restoring resides anywhere other than port 80. It just doesn't appear as an option when you are restoring.</p>
+<p>So why not create the portal on port 80, restore it, then change the port? Good call. A downside to that is that when you display your list of portals in the Admin tool, it will ALWAYS display as the initial URL you used to create it, even if you change the URL (e.g. by changing the port to something other than 80) later. So in our scenario, we would create one portal on port 80, restore it, then change the port. Then create another portal on 80, restore it, then change the port. The net result is that when we displayed our list of portals, it would show five identical portals, even though when you clicked on them, they would go to different places.</p>
+<p>Cosmetics, you say? OK, try this one. You can't restore the same backup to more than one portal on the same server. The utility shows some message like "this portal has already been restored on this server" or some such nonsense.</p>
+<p>Never tried the spsbackup command-line utility (or spbackup, can't remember what it's called and now that I think about it, I'm pretty sure both exist although they do different things). If that overcomes these problems, spill your guts.</p>
+<p>So at this point, we had a functioning, albeit improperly named portal. Seemed to work at first glance so I set about figuring out a way to copy it to the other portals on the server (since the restore utility wasn't going to help us).</p>
+<p>My next test: backup and restore the three databases associated with the working portal and try to do a restore on those databases for the second. No such luck. I think the error was "Error Code 0xEE00FC0: You weren't expecting it to be THAT easy, were you?"</p>
+<p>So I looked into SMIGRATE and STSADM as possible solutions. It seemed, though, that they'd only work on WSS sites, not on portals. Still, that "backup" option on STSADM was too tempting to pass up...</p>
+<p>I ran STSADM -o backup on one of the WSS sites first and did the subsequent STSADM -o restore on the second portal. Worked like a charm. Tried a second site. Again, no errors! Time to get cocky: STSADM -o backup -url http://myrootportal -filename inyourface.stp -overwrite. Glorious! The file was created and it looked like it might have some data on it. How much harm could I do trying to restore it on to the second portal....</p>
+<p>I don't recall the error and I'm risking tremendous psychological damage even relating this part to you. Not only did it not work, it left the portal in some kind of mutant stage where sometimes it would appear as a WSS site, sometimes as a portal, but usually as a hideous mutation not unlike the one seen in either version of The Fly. Seriously, the portal was completely trashed. Couldn't edit its properties, couldn't view it, couldn't even delete it. It was like a tick in the middle of your back. You can tell its there and that it's sucking the life force from you, but nothing short of a bath in molten lava is going to get rid of it.</p>
+<p>Casualties were surprisingly low. We were lucky in that the server had just been freshly minted and could be wiped clean and re-built without too much hassle. The network admin promptly went into a coma when he was finished but I'm sure he'll come out of it soon.</p>
+<p>Final note: I used words like "will" and "doesn't" a lot in this post. What I really mean, though, is "appears to" and "it would seem that you can't". What I mean is: Don't take any of this as gospel. It's my experience in a technology that <a href="http://weblogs.asp.net/bsimser/archive/2005/12/14/433191.aspx">Bil Simser</a> accurately describes as "a hydra with heads growing out of places you wouldn't believe". But by the same token, I couldn't find answers for what I was doing on my local haunts so if I can help someone else out, well, it still won't have been worth it....</p>

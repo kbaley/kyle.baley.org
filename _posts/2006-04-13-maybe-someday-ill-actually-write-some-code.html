@@ -1,0 +1,28 @@
+---
+layout: post
+title: Maybe someday I'll actually write some code
+date: 2006-04-13 03:37:00.000000000 -04:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '904'
+  dsq_thread_id: '362997823'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I believe I have some goodness happening finally but first, I want to clarify something from my last point. And zeroth, I want to plug <a href="http://www.calgarycodecamp.com">www.calgarycodecamp.com</a>, mostly because I'm presenting at it.</p>
+<p>My second complaint was a little vague and upon reflection, not a fair annoyance. What I can do in ASP.NET 1.1 is launch my web app in IE while the project is open in Visual Studio 2003. Which, of course, you can do in version 2005. But when I press F5 in Visual Studio 2003, it will launch whatever the start page is for the app but the debugging process also attaches to my existing instance of IE. This means that I can refresh my existing IE page and if there is a breakpoint on it in VS, it will be hit. I like this because 80% - 90% of the time I don't need breakpoints so I work normally in IE. But when I DO need them, I don't need to change my start page. I can just set a breakpoint, press F5, then refresh my existing IE instance.</p>
+<p>In Visual Studio 2005, web projects, by default, launch in their own little web server that I think gets created the first time you launch. The web server uses some random (and I assume open) port on your machine and I remember reading somewhere that you could specify the port used for the web server but I haven't got around to looking into that. So my whiny little complaint was that I can't have the app open in IE on localhost and have the debugger attach to it because Visual Studio will launch the app on a different port on its own web server.</p>
+<p>If you haven't figured out why this is a stupid, petty thing to bitch out, here's why: If I have the app open in IE, then obviously I've created a virtual directory for it in IIS. So why not just have Visual Studio open the URL in the default web server instead of its custom server? It's moments like these that make me wish my pappy didn't marry Aunt Bobbi-Sue.</p>
+<p>As for my SQL problems, they've gone away, too. How? By scrapping SQL Server Express and installing the Developer Edition of SQL Server. I spent last night having one more kick at the Express cat and I just couldn't connect to the database in more than one app at a time. When I loaded it in IE, I had to disconnect in Visual Studio. When I loaded it in Visual Studio, I had to disconnect from it in Management Studio.</p>
+<p>So as I regale you with this story, my machine is currently and concurrently connected to my database in three different ways. Not only that, my Profiler is back! Maybe later I'll tell you how much fun it was to debug a grid that returned absolutely nothing without using SQL Profiler.</p>
+<p>So hopefully, I'll finally be able to get more technical in this virtual hootenany in the coming days. 'Cause I gots lots to say about this Atlas thingamabob.</p>

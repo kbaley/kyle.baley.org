@@ -1,0 +1,32 @@
+---
+layout: post
+title: Nullable types, or "How to make your tests pass by switching testing frameworks"
+date: 2007-09-12 14:05:36.000000000 -04:00
+categories: []
+tags:
+- BDD/TDD
+- Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1276'
+  dsq_thread_id: '422293183'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The hillbilly is feeling brief so I'll cut to the chase. The following test succeeds in NUnit but fails in MbUnit:</p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; decimal? nullableDecimal = 100m * 3.281m;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Assert.AreEqual( 328.1m, nullableDecimal );</font></p>
+<p>The error in MbUnit: Equal assertion failed: [[328.1]]!=[[328.100]]</p>
+<p>The way to get this to pass in MbUnit (and still in NUnit) is:</p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; decimal? nullableDecimal = 100m * 3.281m;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Assert.AreEqual( 328.1m, nullableDecimal.Value );</font></p>
+<p>If you write out the value of nullableDecimal to the console you will indeed see that it is 328.100 so I suppose technically, MbUnit is correct in claiming that the values aren't equal, although it sure looks like it's comparing string representations rather than actual values.</p>
+<p>So in this case, my opinion is that NUnit handles things better because it allows you to use the variable in a more natural way. I.E. It doesn't shove in your face the fact that the variable is nullable.</p>
+<p>Caveat: Don't take this as an endorsement for NUnit. The hillbilly still prefers MbUnit because he likes to pretend it stands for "Mountain boy unit".</p>
+<p>Kyle the Nullable</p>

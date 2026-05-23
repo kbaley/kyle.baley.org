@@ -1,0 +1,33 @@
+---
+layout: post
+title: BDD-style specification reporting in CC.Net
+date: 2008-01-09 21:20:29.000000000 -05:00
+categories: []
+tags:
+- BDD/TDD
+- Continuous Integration
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '433810342'
+  pvc_views: '1139'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+</p>
+<p>Shortly before I was given the free time I so dearly craved in such a Twilight Zone-esque manner, we had implemented <a href="http://weblogs.asp.net/rlaneve/" target="_blank">Ryan LaNeve</a>'s fancy XSL <a href="http://weblogs.asp.net/rlaneve/archive/2008/01/02/bdd-style-specification-reporting-via-cc-net.aspx" target="_blank">technique</a> for reporting BDD-style specifications from CC.NET. It gives some neat little feedback for your tests and even works reasonably well for more traditionally-named tests. And the XSL itself is very neatly laid out and easy to follow.</p>
+<p>A couple of notes on it that may not be obvious from the post:</p>
+<ul>
+<li>The XSL stylesheet adds a &quot;success&quot; or &quot;failure&quot; class to the test names. So if you load it up and don't immediately see green test names, add CSS rules for those two class names. And try to be more creative than: <font face="Courier New">color:red; font-weight: bold</font>. As a general rule, you can never use too much cyan.</li>
+<li>By default, the XSL will strip out spaces from the test as well as any leading .BaseSetUp. and trailing .TearDown text from the test names. This works if your setup and teardown methods are so named. If not, you'll need to make appropriate changes.</li>
+</ul>
+<p>A note about the second point: XSL is case-sensitive. So if you tell the stylesheet to strip TearDown, that's all it will strip. Any teardown methods named Teardown or teardown will still appear. And while XSL 2.0 does offer the ability to do <a href="http://www.zvon.org/xxl/XSL-Ref/Tutorials/Regular-Expressions/re3.html" target="_blank">case-insensitive search and replace</a>, to the best of my knowledge, neither Firefox nor IE support it. So you are stuck either with <a href="http://www.dpawson.co.uk/xsl/sect2/replace.html" target="_blank">funky templates</a> using <font face="Courier New">translate</font>, or, and this probably more practical, adding checks for all variations of TearDown and SetUp used in your codebase.</p>
+<p>Or you could just be consistent with your naming standards.</p>
+<p>Kyle the Optional</p>

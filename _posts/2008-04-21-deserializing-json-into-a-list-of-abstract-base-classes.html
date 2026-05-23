@@ -1,0 +1,95 @@
+---
+layout: post
+title: Deserializing JSON into a list of abstract base classes
+date: 2008-04-21 15:55:38.000000000 -04:00
+categories: []
+tags:
+- Javascript
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '354789618'
+  pvc_views: '1614'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>More adventures in JSON serialization. I'm tellin' ya, it's like a Saturday morning cartoon, it's so exciting. And I'm afraid that's about as far off topic as I'm going to get with this one because there'll be a lot of code which tends to push posts into the &quot;Sweet Jayzus, ya think I got that kind of attention span?&quot; territory in my RSS reader. I promise I won't try to learn ya too much agin in the near future.</p>
+<p><strong>The scenario</strong></p>
+<p>I'm serializing to the browser a List&lt;Location&gt;. Location is an abstract class with two implementations: RuralLocation and UrbanLocation. The method I'm using to serialize this collection to JSON is based on <a href="http://weblogs.asp.net/scottgu/archive/2007/10/01/tip-trick-building-a-tojson-extension-method-using-net-3-5.aspx" target="_blank">Scott Guthrie's post</a> (though updated to use the <a href="http://msdn2.microsoft.com/en-us/library/system.runtime.serialization.json.datacontractjsonserializer.aspx" target="_blank">DataContractJsonSerializer</a> class:</p>
+<pre class="c-sharp" name="code">public static string ToJson( this object obj )
+{
+    var serializer = new DataContractJsonSerializer( obj.GetType( ) );
+    var memoryStream = new MemoryStream( );
+    serializer.WriteObject( memoryStream, obj );
+    string jsonString = Encoding.Default.GetString( memoryStream.ToArray( ) );
+    memoryStream.Close( );
+    return jsonString;
+}</pre>
+<p>Here's the code to deserialize:</p>
+<pre class="c-shartp" name="code">public static T ToObject<t>( this string jsonString )
+{
+    var serializer = new DataContractJsonSerializer( typeof ( T ) );
+    var memoryStream = new MemoryStream( Encoding.Unicode.GetBytes( jsonString ) );
+    var newObject = (T)serializer.ReadObject( memoryStream );
+    memoryStream.Close( );
+    return newObject;
+}</t></pre>
+<p>The problem (until this morning) was, I couldn't use the code to deserialize. On my page, I was creating JSON objects representing RuralLocation objects and UrbanLocation objects with an AJAX call using this same ToJson method. Here's the MVC action to create an UrbanLocation JSON string:</p>
+<pre class="c-sharp" name="code">public void GetUrbanLocationAsJson( string Lot, string Block,
+        string Plan, string Address )
+{
+    var location = new UrbanLocation
+    {
+        Lot = Lot,
+        Block = Block,
+        Plan = Plan,
+        Address = Address
+    };
+    Response.ContentType = &quot;application/x-javascript&quot;;
+    Response.Write( location.ToJson( ) );
+}</pre>
+<p>This returns the following JSON string: <font face="Courier New">{&quot;Lot&quot;:&quot;1&quot;, &quot;Block&quot;:&quot;2&quot;, &quot;Plan&quot;:&quot;3&quot;, &quot;Address&quot;:&quot;111 Hoe Down Way&quot;}</font>. And the corresponding method for RuralLocations created something similar.</p>
+<p>The issue was that on the client, I had a collection of heterogenous JSON objects with no indication of what type they were. Yes, each one inherited from the same base class but there was no sign of the type when it was serialized. So when I got the JSON string back on the server, I couldn't make a call like <font face="Courier New">Location[] locations = jsonString.ToObject&lt;Location[]&gt;( )</font> because it would try to create actual Location objects, not the inherited UrbanLocation and RuralLocation objects.</p>
+<p>At the time, my solution was to get any solution working so I deserialized old school: by parsing the string and building the objects by hand. But this morning, I noticed the output of a call to <font face="Courier New">myLocations.ToJson( )</font>. It had the objects the way I expected but there was something else tagging along for the ride:</p>
+<pre>[
+  {&quot;__type&quot;:&quot;UrbanLocation:#Trilogy.Gunton.Model&quot;,
+    &quot;Address&quot;:&quot;&quot;,
+    &quot;Block&quot;:&quot;115&quot;,
+    &quot;Lot&quot;:&quot;2&quot;,
+    &quot;Plan&quot;:&quot;2&quot;
+  },
+  {&quot;__type&quot;:&quot;RuralLocation:#Trilogy.Gunton.Model&quot;,
+    &quot;Lsd&quot;:&quot;NW&quot;,
+    &quot;PrimeMeridian&quot;:&quot;1W&quot;,
+    &quot;Range&quot;:&quot;19&quot;,
+    &quot;Section&quot;:&quot;23&quot;,
+    &quot;Township&quot;:&quot;10&quot;
+}]</pre>
+<p>So it seems the JSON serializer *was* including type information, but only when it serialized a list of Location objects, not when it serialized a single RuralLocation or UrbanLocation. So that's easy, once I get the JSON from the server for a location, I can manually add a __type to it in the Javascript and populate it with the typename before I send it back to the server.</p>
+<p>I'll admit, I actually did consider such nastiness. But then my well-honed Hack Alert started going off as I hope it did for each of you.</p>
+<p>What I really wanted was to have the ToJson method specify the type in the resulting string. And to accomplish that, I modified the ToJson method accordingly (changes in bold):</p>
+<pre class="c-sharp" name="code"><strong>public static string ToJson( this object obj )
+{
+    return ToJson( obj, obj.GetType( ) );
+}
+
+</strong>public static string ToJson( this object obj<strong>, Type baseClass</strong> )
+{
+    var serializer = new DataContractJsonSerializer( <strong>baseClass</strong> );
+    var memoryStream = new MemoryStream( );
+    serializer.WriteObject( memoryStream, obj );
+    string jsonString = Encoding.Default.GetString( memoryStream.ToArray( ) );
+    memoryStream.Close( );
+    return jsonString;
+}</pre>
+<p>And I modified the final line in <font face="Courier New">GetUrbanLocationAsJson</font> to: <font face="Courier New">Response.Write( location.ToJson( typeof( Location ) ) )</font>.</p>
+<p>Now, when I retrieve Location objects as JSON, they have the __type included and I can call <font face="Courier New">myLocations.ToObject&lt;Location[]&gt;( )</font> freely without having to parse a JSON string manually. Hooray!</p>
+<p>Boy, this is so much easier than learning Ruby.</p>
+<p>Kyle the Unparsed</p>

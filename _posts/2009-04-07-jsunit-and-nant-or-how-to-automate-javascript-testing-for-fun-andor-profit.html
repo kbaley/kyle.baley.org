@@ -1,0 +1,32 @@
+---
+layout: post
+title: JsUnit and NAnt, or “How to automate JavaScript testing for fun and/or profit”
+date: 2009-04-07 20:08:12.000000000 -04:00
+categories: []
+tags:
+- Javascript
+- NAnt
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '386167532'
+  pvc_views: '1378'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I’m going to go out on a limb and posit that a few of you have attempted, and possibly succeeded, at integrating <a href="http://jsunit.net">JsUnit</a> into an automated build process. Assuming that is true, you people are off my Christmas card list for not blogging about it in such a way that it is discoverable by Google. (And that includes you, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/28/what-do-you-use-to-incorporate-jsunit-tests-into-a-nant-build.aspx">Miller</a>).</p>
+<p>The sole exception to this is honorary hillbilly <a href="http://twitter.com/holytshirt">Toby Henderson</a> who provided enough insight in the comments to Jeremy Miller’s post mentioned so disparagingly above. From that, I was able to come up with the following NAnt task (and Jayzus only knows how this is going to look in an RSS reader):</p>
+<p><font face="Courier New" size="2">&lt;target name=&quot;jsunittests&quot;&gt;      <br />&#160; &lt;property name=&quot;jsunit.port&quot; value=&quot;9123&quot; /&gt;       <br />&#160; &lt;property name=&quot;jsunit.authority&quot; value=&quot;localhost&quot; /&gt;       <br />&#160; &lt;property name=&quot;jsnuit.vdir&quot; value=&quot;AdventuresInPlaid&quot; /&gt;</font><font face="Courier New" size="2">      <br />&#160; &lt;property name=&quot;jsunit.acceptor.partialurl&quot;       <br />&#160;&#160;&#160; </font><font face="Courier New" size="2">value=&quot;${jsunit.authority}:${jsunit.port}/jsunit/acceptor&quot; /&gt;      <br />&#160; &lt;property name=&quot;jsunit.url&quot;       <br />&#160;&#160;&#160;&#160; value=&quot;&amp;quot;</font><font face="Courier New" size="2">http://${jsunit.authority}/</font><font face="Courier New" size="2">${jsunit.vdir}jsunit/testrunner.html?testPage=${jsunit.authority}/${jsunit.vdir}JsUnitTests.aspx&amp;amp;autoRun=true&amp;amp;submitresults=${jsunit.acceptor.partialurl}&amp;quot;&quot; /&gt;      <br />&#160; &lt;property name=&quot;jsunit.browserFileNames&quot;       <br />&#160;&#160;&#160;&#160; value=&quot;&amp;quot;${programfiles.dir}internet exploreriexplore.exe,${programfiles.dir}Mozilla Firefoxfirefox.exe&amp;quot;&quot; /&gt;       <br />&#160; &lt;property name=&quot;jsunit.log&quot; value=&quot;logs&quot; /&gt;       <br />&#160; &lt;property name=&quot;jsunit.resourceBase&quot; value=&quot;&quot; /&gt;       <br />&#160; &lt;property name=&quot;libs&quot; value=&quot;&quot; /&gt;       <br />&#160; &lt;foreach item=&quot;File&quot; property=&quot;filename&quot;&gt;       <br />&#160;&#160;&#160; &lt;in&gt;       <br />&#160;&#160;&#160;&#160;&#160; &lt;items&gt;       <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; &lt;include name=&quot;appBookedIn.WebJsUnitjavalib*.jar&quot; /&gt;       <br />&#160;&#160;&#160;&#160;&#160; &lt;/items&gt;       <br />&#160;&#160;&#160; &lt;/in&gt;       <br />&#160;&#160;&#160; &lt;do&gt;       <br />&#160;&#160;&#160;&#160;&#160; &lt;property name=&quot;libs&quot; value=&quot;${libs}.lib${path::get-file-name(filename)};&quot; /&gt;       <br />&#160;&#160;&#160; &lt;/do&gt;       <br />&#160; &lt;/foreach&gt;       <br />&#160; &lt;property name=&quot;libs&quot;       <br />&#160;&#160;&#160; value=&quot;${string::substring(libs, 0, string::get-length(libs) - 1)}&quot; /&gt;       <br />&#160; &lt;exec program=&quot;java&quot; workingdir=&quot;appBookedIn.webjsunitjava&quot;       <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; commandline=&quot;-Dport=${jsunit.port} -DbrowserFileNames=${jsunit.browserFileNames} -Durl=${jsunit.url} -DlogsDirectory=${jsunit.log} -classpath &amp;quot;.binjsunit.jar;.config;${libs}&amp;quot; junit.textui.TestRunner net.jsunit.StandaloneTest&quot; /&gt;       <br />&lt;/target&gt;</font></p>
+<p>Assuming that’s copy-and-pastable into your own script, I’ll move on.</p>
+<p>The properties almost certainly should be moved outside of this target, of course. I’ve included them all here for convenience. Some of them are machine specific so putting them at the top means you can override them with a local properties file.</p>
+<p>The &lt;foreach&gt; loop in the middle was borne out of frustration. It will look through all the .jar files in the JsUnit lib folder and create a semi-colon-delimited list of them. This is then passed into the classpath for the &lt;exec&gt; task which launches the whole thing. My guess is that Toby used an older version of JsUnit because it appears there are a lot more libraries involved now. After about the third or fourth time running the task with a manually-entered list of libraries and having a ClassDefNotFound error come up, I sought out <a href="http://weblogs.asp.net/soever/archive/2004/12/16/316195.aspx">some help</a> to just dump them all in with the &lt;foreach&gt;.</p>
+<p>Word of caution: the config folder included in the classpath contains xwork.xml. The part that caused us the greatest trouble was a message “Error loading configuration file xwork.xml”. This was because we were including the path to the xwork.xml file explicitly, rather than the path to just the config folder. It was the Ant file for JsUnit itself that eventually led to our salvation.</p>
+<p>So between this and the recent announcement that my wife is pregnant, all is well in Hillbilly House.</p>
+<p>Kyle the Expectant</p>

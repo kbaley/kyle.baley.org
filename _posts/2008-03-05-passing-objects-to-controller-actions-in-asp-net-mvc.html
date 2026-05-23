@@ -1,0 +1,76 @@
+---
+layout: post
+title: Passing objects to controller actions in ASP.NET MVC
+date: 2008-03-05 05:08:44.000000000 -05:00
+categories: []
+tags:
+- ASP.NET MVC
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1166'
+  dsq_thread_id: '351130698'
+  _edit_last: '1'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Here's the bad thing about ASP.NET MVC. Every little thing about it is bloggable mostly because every little thing is new to it. I'm half considering using Monorail just because everything in it is so well-documented, I wouldn't need to waste my time blogging about it. (Those of you about to regurgitate the holy war about why ASP.NET MVC has caused all this hoopla when Monorail has been around for so long, calm down. It's just software, for Jayzus' sake.)</p>
+<p>After <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/02/25/getting-asp-net-mvc-to-do-the-dirty-work.aspx" target="_blank">lamenting the mechanisms</a> I needed to use to pass information to a ControllerAction, <a href="http://www.flux88.com/" target="_blank">Ben Scheirman</a> turned me on to the ConventionController in <a href="http://www.codeplex.com/MVCContrib" target="_blank">MvcContrib</a>. Apparently, it works well for pages that create new objects but not so much for ones that update existing objects.</p>
+<p>*EDIT*</p>
+<p>I originally had a whole long spiel done that included a history of my stored procedure-writing prowess and a PurportedSibling domain object. It was to explain that because of my genius way of setting up my service, I could use the ConventionController for both creates and updates.</p>
+<p>But the fact is, it had nothing to do with how I set up my service. It just works out of the box. By deriving my controller from ConventionController, I can create a view that includes:</p>
+{% raw %}
+<pre class="html" name="code">    using ( Html.Form( &quot;Save&quot;, &quot;Job&quot;, FormExtensions.FormMethod.post ) )
+    {%&gt;
+    &lt;%=Html.Hidden( &quot;job.Id&quot;, ViewData.Id ) %&gt;
+    Sibling Name: &lt;%=Html.TextBox( &quot;sibling.Name&quot;, ViewData.Name ) %&gt;
+    Is half sibling?: &lt;%=Html.RadioButtonList( &quot;sibling.IsHalfBrother&quot;, TRISTATE_ENUM, ViewData.IsHalfBrother ) %&gt;
+    Rumoured mammy: &lt;%=Html.TextBox( &quot;sibling.RumouredMammy&quot;, ViewData.RumouredMammy ) %&gt;
+    Rumoured pappy: &lt;%=Html.TextBox( &quot;sibling.RumouredPappy&quot;, ViewData.RumouredPappy ) %&gt;
+    &lt;%=Html.SubmitButton( &quot;Submit&quot;, &quot;Save&quot; ) %&gt;
+    &lt;%}%&gt;</pre>
+{% endraw %}
+<p>Here are the actions. The first launches this view for a new sibling. The second for updating an existing one. And the third saves in both cases.</p>
+<pre class="c-sharp" name="code">    public void Create( )
+    {
+        RenderView( Edit&quot;, PurportedSibling.Null( ) );
+    }
+
+    public void Edit( int id )
+    {
+        PurportedSibling sibling = _siblingService.GetById( id );
+        RenderView( &quot;Edit&quot;, sibling );
+    }
+
+    public void Save( [Deserialize(&quot;sibling&quot;)] PurportedSibing sibling )
+    {
+        _siblingService.Save( sibling );
+        RedirectToAction( new { Action = &quot;SiblingUpdated&quot;, id = sibling.Id } );
+    }</pre>
+<p>Crisp and clean be how I like my controller actions. Compare the Save with what it looked like before:</p>
+<pre class="c-sharp" name="code">[ControllerAction]
+public void Save( int siblingId, string siblingName, TRISTATE isHalfSibling, string rumouredMammy, string rumouredPappy )
+{
+	_siblingService.Save( siblingId, siblingName, isHalfSibling, rumouredMammy, rumouredPappy );
+        RedirectToAction( new { Action = &quot;SiblingUpdated&quot;, id = sibling.Id } );
+}</pre>
+<p>This was before I was about to add the part where you specify possible offspring of the siblings on the same screen, something that would have made this Save method more complicated than the domain itself, which is an homage to graph theory in and of itself. </p>
+<p>In any case, I'll leave the implementation of the Save method to your imagination in both cases. (Hint: It is much nicer in the new version, let me tell you!)</p>
+<p>Notice how the new version also doesn't have a <font face="Courier New">[ControllerAction]</font> attribute. That's another feature of the ConventionController which will make it much easier to manage when the next CTP of ASP.NET MVC comes out which removes the need for the attribute.</p>
+<p>Back to the ConventionController. I suspect a good chunk of the magic has to do with NHibernate being able to discern whether the object is new or updated based on the ID that is passed to it. But even if you don't use NHibernate, this same technique could be used. I.E. Check if the ID of the object is 0. If so, it's new. Otherwise, it's old.</p>
+<p>There is a *very* large caveat to this method. If the object you are updating has other properties that are *not* updated on this page, they will be set to whatever default value is appropriate for its datatype. And when it is then sent to the database for &quot;updating&quot;, its corresponding field will be updated to this value right alongside every other field.</p>
+<p>In this case, you can add an intermediate step in the process somewhere. I.E. Somewhere along the line you'll need to do the following:</p>
+<ol>
+<li>Retrieve the object from the database (based on the ID) </li>
+<li>If an object is retrieved, update it with the values that were entered in the view. </li>
+<li>Save the object </li>
+</ol>
+<p>This way, you won't overwrite any properties with default values just because they aren't editted in this particular view of the object. In theory at least. I haven't actually tried it myself.</p>
+<p>Kyle the Purported</p>

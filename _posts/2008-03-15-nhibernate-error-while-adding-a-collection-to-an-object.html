@@ -1,0 +1,37 @@
+---
+layout: post
+title: NHibernate error while adding a collection to an object
+date: 2008-03-15 02:40:25.000000000 -04:00
+categories: []
+tags:
+- NHibernate
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '350582268'
+  pvc_views: '1307'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I'll keep this one fairly Google-able due to the amount of time it took me to figure it out sans a similar reference. Seasoned NHibernate veterans will likely guess the issue before they finish reading this sentence.</p>
+<p>Here's the error message I was getting from NHibernate:</p>
+<hr />
+<p>System.Collections.Generic.KeyNotFoundException: The given key was not present in the dictionary.</p>
+<p>at System.ThrowHelper.ThrowKeyNotFoundException()    <br />at System.Collections.Generic.Dictionary`2.get_Item(TKey key)     <br />at NHibernate.Cfg.XmlHbmBinding.CollectionBinder.BindCollectionSecondPass(XmlNode node, Collection model, IDictionary`2 persistentClasses)     <br />at NHibernate.Cfg.XmlHbmBinding.CollectionBinder.&lt;&gt;c__DisplayClassd.&lt;AddCollectionSecondPass&gt;b__c(IDictionary`2 persistentClasses)     <br />at NHibernate.Cfg.Configuration.SecondPassCompile()     <br />at NHibernate.Cfg.Configuration.BuildSessionFactory()     <br />at Trilogy.Gunton.DataAccess.SessionBuilder.GetSessionFactory(Database selectedDatabase) in SessionBuilder.cs: line 72     <br />at Trilogy.Gunton.DataAccess.SessionBuilder.GetSession(Database selectedDatabase) in SessionBuilder.cs: line 21     <br />at Trilogy.Gunton.DataAccess.UnitOfWorkFactory.Create() in UnitOfWorkFactory.cs: line 19     <br />at Trilogy.Gunton.DataAccess.RepositoryBase`1.GetAll() in RepositoryBase.cs: line 19     <br />at Trilogy.Gunton.Tests.Integration.JobTypeRepositoryFixture.Should_retrieve_job_types() in JobTypeRepositoryFixture.cs: line 16</p></p>
+<hr />This started happening after I added a collection to my object (which <a href="http://codebetter.com/blogs/karlseguin/archive/2008/01/02/foundations-of-programming-part-6-nhibernate.aspx" target="_blank">Karl Seguin's post</a> was instrumental in getting set up). Here's what I added to the &lt;class&gt; element in the .hbm.xml file for the object (fingers crossed on the XML formatting):
+<pre name="code" class="xml">  &lt;bag name=&quot;Locations&quot; generic=&quot;true&quot;&gt;
+&#160;&#160;&#160;&#160;&#160;&#160; &lt;key column=&quot;JobID&quot; /&gt;
+&#160;&#160;&#160;&#160;&#160;&#160; &lt;one-to-many class=&quot;RuralLocation&quot; /&gt;
+  &lt;/bag&gt; </pre>
+<p>Pretty standard stuff to those in the know (of which I am still not). I also created the corresponding <font face="Courier New">RuralLocation</font> class and RuralLocation.hbm files to go along with them.</p>
+<p>So the above error would appear anytime I tried to get a session factory in NHibernate, which is pretty much the first thing that's done anywhere in the app. The ultimate solution: RuralLocation.hbm was not an embedded resource.</p>
+<p>This is something I will forget to do about 75% of the time I create a new .hbm file but usually the error is more &quot;oh yeah&quot;-inducing. Something like &quot;Can't find class Trilogy.Gunton.Domain.RuralLocation&quot; where you can tell pretty quickly it's not loading the file properly. I know this because the way I discovered the problem is by creating an integration test to save a RuralLocation on its own, outside the context of its parent object.</p>
+<p>In this case, because I went straight to using the new class in a collection within another object, the error was hair-tearingly cryptic. Luckily, I don't have much hair anyway so no harm done.</p>
+<p>Kyle the Eggheaded</p>

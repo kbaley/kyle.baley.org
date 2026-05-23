@@ -1,0 +1,55 @@
+---
+layout: post
+title: 'Creating an Atlas Extender: Part One'
+date: 2006-06-10 04:34:00.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '830'
+  dsq_thread_id: '362995982'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I'm working on a production version of the <a href="http://kyle.baley.org/archive/2006/05/28/468.aspx">app</a>&nbsp;I demo'd at code camp and the need arose for me to create my own Atlas extender. Well, I could get away without using it but I want to see what these extenders are all about. So the next few posts will describe my journey through the process.</p>
+<p>The extender I want is a&nbsp;ToggledPanel similar to the existing CollapsiblePanel. In the CollapsiblePanel, you specify the panel you want to collapse, the control to expand it and the control to collapse (the latter two can be the same which will create a toggle but not in the same way I want). In my slightly different ToggledPanel, you'll specify two panels and one control to toggle the two. I.E. You toggle between which panel is expanded at any given time.</p>
+<p>One of the main drivers for this is an issue I came across with the CollapsiblePanel. In my example, I mimicked what I wanted by hooking up two existing CollapsiblePanels to the same LinkButton. This sort of gave me what I want although the animation is a little wonky.</p>
+<p style="BORDER-RIGHT: black 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: black 1px solid; PADDING-LEFT: 0.5em; FLOAT: right; PADDING-BOTTOM: 0.5em; MARGIN: 0.5em; BORDER-LEFT: black 1px solid; WIDTH: 300px; PADDING-TOP: 0.5em; BORDER-BOTTOM: black 1px solid; BACKGROUND-COLOR: #eeeeee">The panel has to have its Visible property set to true in order for it to be rendered in the HTML. After that, the CollapsiblePanel&nbsp;uses client-side script to show or hide the panel depending on the value of the Collapsed property. If Visible is set to false, then the HTML for the panel isn't even rendered so there is nothing for the CollapsiblePanel to expand or collapse.</p>
+<p>What it didn't give me is a way, server-side, to tell which panel is visible. Or rather, it doesn't remember if a given panel is visible or not as a result of it being expanded or collapsed. That is, the panel's Visible property is always set to whatever value it is set to initially. And for it to work with a CollapsiblePanel extender, the Visible property pretty much has to be set to true (see sidebar).</p>
+<p>So I went about creating my own extender and as all good coders do, I started with someone else's code: namely, the existing CollapsiblePanel. I created a separate Atlas Control project to house all my at-present-non-existent extenders and mimicked the AtlasControlToolkit structure by creating a folder called ToggledPanel in it. (Incidentally, it should technically be called a ToggleablePanel but I'm not a fan of making up words.) Then I added an Atlas Control to this folder which created a bunch of files.</p>
+<p>I'd already gone through the <a href="http://atlas.asp.net/atlastoolkit/Walkthrough/CreatingNewExtender.aspx">walkthrough</a> so this didn't throw me too much. After that, I proceeded to copy and paste like it was going out of style. The Properties class, the Extender, the javascript file and the Designer were all blatantly lifted from the CollapsiblePanel class and I paused just long enough to change the namespace and delete the copyright notice. (I'm kidding about the copyright; call off the hounds.)</p>
+<p>Without too much trouble, I was able to get the thing to compile and I added the necessary line to my aspx page:</p>
+<blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+<p><font face="Courier New" size="2">&lt;%<font color="#0000ff">@</font> <font color="#800000">Register</font> <font color="#ff0000">Assembly</font><font color="#0000ff">="AtlasControlToolkit"</font> <font color="#ff0000">Namespace</font><font color="#0000ff">="AtlasControlToolkit"</font> <font color="#ff0000">TagPrefix</font><font color="#0000ff">="atlasToolkit"</font> %&gt;</font></p>
+</blockquote>
+<p>so that I could use my extender in the page. Since it was an exact copy of the CollapsiblePanel, I <a href="http://kyle.baley.org/archive/2006/04/24/385.aspx">just</a> replaced the Atlas tags with my own and left everything else within them the same:</p>
+<blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+<p><font size="2"><font face="Courier New"><font color="#0000ff">&lt;</font><font color="#800000">suvius</font><font color="#0000ff">:</font><font color="#800000">ToggledPanelExtender</font> <font color="#ff0000">ID</font><font color="#0000ff">="test"</font> <font color="#ff0000">runat</font><font color="#0000ff">="server"&gt;<br /></font></font></font><font size="2"><font face="Courier New"><font color="#0000ff">&lt;</font><font color="#800000">suvius</font><font color="#0000ff">:</font><font color="#800000">ToggledPanelProperties</font> <font color="#ff0000">TargetControlID</font><font color="#0000ff">="PanelSimpleSearch"</font> <font color="#ff0000">ExpandControlID</font><font color="#0000ff">="LinkButtonPanelSwitch" </font></font></font><font size="2"><font face="Courier New"><font color="#ff0000">CollapseControlID</font><font color="#0000ff">="LinkButtonPanelSwitch"</font> <font color="#ff0000">Collapsed</font><font color="#0000ff">="False"</font> <font color="#ff0000">TextLabelID</font><font color="#0000ff">="Label1" </font></font></font><font size="2"><font face="Courier New"><font color="#ff0000">CollapsedText</font><font color="#0000ff">="Simple Search..."</font> <font color="#ff0000">ExpandedText</font><font color="#0000ff">="Extended Search..."</font> <font color="#ff0000">SuppressPostBack</font><font color="#0000ff">="true"</font> <font color="#0000ff">/&gt;<br /></font></font></font><font size="2"><font face="Courier New"><font color="#0000ff">&lt;</font><font color="#800000">suvius</font><font color="#0000ff">:</font><font color="#800000">ToggledPanelProperties</font> <font color="#ff0000">TargetControlID</font><font color="#0000ff">="PanelAdvancedSearch"</font> <font color="#ff0000">ExpandControlID</font><font color="#0000ff">="LinkButtonPanelSwitch" </font></font></font><font size="2"><font face="Courier New"><font color="#ff0000">CollapseControlID</font><font color="#0000ff">="LinkButtonPanelSwitch"</font> <font color="#ff0000">Collapsed</font><font color="#0000ff">="True"</font> <font color="#ff0000">TextLabelID</font><font color="#0000ff">="Label1" </font></font></font><font size="2"><font face="Courier New"><font color="#ff0000">CollapsedText</font><font color="#0000ff">="Extended Search..."</font> <font color="#ff0000">ExpandedText</font><font color="#0000ff">="Simple Search..."</font> <font color="#ff0000">SuppressPostBack</font><font color="#0000ff">="true"</font> <font color="#0000ff">/&gt;<br /></font></font></font><font size="2"><font face="Courier New"><font color="#0000ff"></< FONT><font color="#800000">suvius</font><font color="#0000ff">:</font><font color="#800000">ToggledPanelExtender</font><font color="#0000ff">&gt;</font></font></font></font></p>
+</blockquote>
+<p>Refresh the page and voila!</p>
+<p><img src="/assets/o_AtlasExtenderNotRegisteredError.jpg" /> </p>
+<p>As it turns out, my .js file was not set as an EmbeddedResource (and it really should have been done for me). As it also turns out, that didn't help me much as I got the same error. I double-checked the ClientScriptResourceAttribute and the Sys.TypeDescriptor.addType call in the javascript and they looked fine.</p>
+<p>My next step was to look at the source code for the page and find where my javascript file was being loaded. It looks like the <a href="http://atlas.asp.net/docs/Server/Microsoft.Web.UI/ScriptManager/default.aspx">ScriptManager</a> handles this part because I found the following in my source:</p>
+<p><xmp>
+<page xmlns:script="http://schemas.microsoft.com/xml-script/2005" xmlns:atlascontrolextender="AtlasControlExtender" xmlns:suvius.atlascontrolextenders="Suvius.AtlasControlExtenders" xmlns:atlascontroltoolkit="atlasControlToolkit">
+  <references><br />
+    <add src="/MusicPlayerProd/WebResource.axd?d=<long string of alphanumeric characters>" /><br />
+    <add src="http://localhost:2852/MusicPlayerProd/WebResource.axd?d=<long string of alphanumeric characters>" /><br />
+    <add src="http://localhost:2852/MusicPlayerProd/WebResource.axd?d=<long string of alphanumeric characters>" /><br />
+    <add src="http://localhost:2852/MusicPlayerProd/WebResource.axd?d=<long string of alphanumeric characters>" /><br />
+  </references>
+</page></xmp></p>
+<p>When I loaded these up in my browser, they referenced the various javascript files used by other extenders on the page. Except the second one which registered as a 404 error. Which means my script wasn't being brought into the page explaining why the behaviour wasn't registered.</p>
+<p>The eventual solution: in a fit of Canadian-ness, I had renamed my ToggledPanelBehavior.js file to ToggledPanelBehaviour.js. I thought I saw where this file was registered and changed its name there, too but when I changed the name back, the error went away and the page began to work as its parent, the CollapsiblePanel, did.</p>
+<p>And therein lies the issue with client-side technologies. You can make your error messages as helpful as possible but in the end, Atlas really didn't know why the type wasn't registered. There is no help at design time (in the form of Intellisense), no help at compile time and little help at runtime.</p>
+<p>Which is not to imply that you shouldn't use Atlas. I think you should. When it makes sense (like any other tool). Like when you have a web page with so many postbacks, it looks like your site is having a seizure every time you click the page. There's some great stuff to be had with the Atlas framework. The <a href="http://blogs.msdn.com/federaldev/archive/2006/06/08/622279.aspx">browser compatibility layer</a> alone is reason enough to use it. But expect an environment closer to ASP than to ASP.NET, despite the tremendous effort the Atlas team has gone through in order to hide that aspect of client-side development.</p>
+<p>The full extender described here will be available when I'm done building it. And it might have been by now if I wasn't wasting my time talking to you people.</p>

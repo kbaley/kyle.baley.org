@@ -1,0 +1,43 @@
+---
+layout: post
+title: IWizard, or "How to Ask for Class"
+date: 2007-04-14 20:47:02.000000000 -04:00
+categories: []
+tags:
+- ".NET"
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1307'
+  dsq_thread_id: '356355196'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Since none of you responded to the challenge implied at the end of my <a href="ProjectTemplatesOrQuotHowToBecomeClasslessquot.aspx" target="_blank">last post</a>&nbsp;(the fact that it was made a mere four hours ago<br />
+notwithstanding), I have foregone billable work in favour of seeing if I could<br />
+do it myself.</p>
+<p>When installed (instructions below), this will add a Class Library Wizard template to your C# project templates list. When selected, it brings up a small form asking for the name of the first class, then creates said class in a class library project.</p>
+<p><b>Installation</b><br />It's not as smooth as it could be. In order to display a form, I needed to create an assembly that has to be installed in the GAC (or some other location in the Visual Studio folder but I don't remember where). And as far as I can tell, .vsi files won't install things to the GAC.</p>
+<p>Here are the steps:
+<ul>
+<li>Run the .vsi file to install the project template. It won't work until the other file is installed in the GAC. You'll get a warning during the installation that it might not be safe. HEED THAT WARNI--er...I mean, it should be fine.</li>
+<li>Install Suvius.ClassWizard.dll into the GAC: gacutil -I &lt;path to assembly&gt;</li>
+</ul>
+<p><b>Issues</b>
+<ul>
+<li>It should complain if you enter a blank class name but I forgot to test</li>
+<li>Not sure what happens if you enter a name with illegal characters</li>
+<li>It really should have a cancel button</li>
+<li>I haven't tested this on a machine that is not my own</li>
+</ul>
+<p>I wouldn't mind extending it so that it creates two projects: a class library and a test project. The test project would have a reference to NUnit and Rhino.Mocks and both projects would contain a class with the specified name although in the test project, it would have Test appended to the name. It would also be nice to be able to create the class using the ReSharper template just in case someone has modified it, rather than using a hard-coded, and very spartan, one.</p>
+<p>There is much more that could be done and luckily, it ties in with the <a href="http://www.codeplex.com/treesurgeon" target="_blank">Tree Surgeon</a> app that Bil Simser was nice enough to let me join so hopefully this little side project won't fall by the wayside as they are prone to do. (That will require CodePlex to fix their little server crash problem but I'm optimistic.)</p>
+<p>Source code is available on request for the moment. I'll probably post it in the coming days when I rap about what it was like implementing the IWizard interface to build this sucker.</p>
+<p><a href="http://kyle.baley.org/content/binary/Suvius.ClassWizard.dll">Suvius.ClassWizard.dll (20 KB)</a><br /><a href="http://kyle.baley.org/content/binary/ClassLibraryWizard.vsi">ClassLibraryWizard.vsi (2.94 KB)</a></p>

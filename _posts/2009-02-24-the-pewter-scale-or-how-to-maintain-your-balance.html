@@ -1,0 +1,44 @@
+---
+layout: post
+title: The Pewter Scale, or “How to Maintain Your Balance”
+date: 2009-02-24 20:29:42.000000000 -05:00
+categories: []
+tags:
+- Brownfield
+- Conscientious Coding
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '379850227'
+  pvc_views: '1423'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Donald Belcham and I had a conversation today that started “I believe in the iron stool.” I know what you’re thinking, “I’ve had conversations with you. They <em>all</em> start that way.” But the context was different this time.</p>
+<p>We were discussing a section of the upcoming book (Google it yourself if you care about it, I feel weird linking to it so shamelessly) that dealt with the <a href="http://www.ambysoft.com/essays/brokenTriangle.html">iron triangle</a>.<a href="http://www.ambysoft.com/essays/brokenTriangle.html"><img title="image" style="border-top-width: 0px; display: inline; border-left-width: 0px; border-bottom-width: 0px; margin: 5px; border-right-width: 0px" height="155" alt="image" src="/assets/image_7.png" width="244" align="right" border="0" /></a> It’s a familiar enough graphic. Time, resources, and functionality are inextricably connected with quality such that you can’t vary any one of them without affecting the quality of your code. Reducing resources, in absence of any other change, will reduce overall quality of the system.</p>
+<p>A common (though slightly different) summary of the triangle is: “the software can be on time, on budget, with all the features. Pick two.” This completely ignores quality (or functionality, if you swap “all the features” with “high quality”) but is a nice catchy number to bring out in a meeting to show we’re a self-deprecating kinda crew.</p>
+<p>The stool came in from <a href="http://www.codinghorror.com/blog/archives/000708.html">Jeff Atwood’s take</a>. That is, the three components are legs of a stool and quality is the seat. Reduce the time and the quality slides.</p>
+<p>As Don and I explored each of these, it became very easy to come up with scenarios where they both broke down. For example, what if we reduce the scope of the project? With the iron triangle, that kind of implies that the quality will drop. The iron stool metaphor implies that if we increase the number of resources on a project, we necessarily <em>have to</em> up the time and the scope in order to maintain quality.</p>
+<p>In the end, neither of us had a nice fuzzy feeling talking about it, even though the iron triangle is so well-known in the industry.</p>
+<p>But the underlying message is a good one: You can’t look at any of the major factors in isolation. Changing time, scope, resources, or quality all have an effect on the overall project. We talked back and forth about how best to describe the problem. Maybe a square makes more sense? Or a dodecahedron?</p>
+<p>The issue we had was in the treatment of the variables. To me, time and resources are inputs, scope and quality are outputs. The inputs are directly related to the outputs but they don’t interact in the same way. Increasing one side means you must increase the other in order to maintain balance.</p>
+<p>Once the word “balance” was mentioned, a more appropriate metaphor became obvious. (Well, in fact, the words “balanced” and “unbalanced” were mentioned about five times in rapid succession before someone made the connection. It was actually pretty comical re-reading the conversation.) Namely, a scale. On one side, we have two components: resources and remaining time. On the other, quality and remaining scope.</p>
+<p>Here’s the important part. At all times, the scale must remain balanced because each side is precariously perched over a MOLTEN PIT OF LAVA!!! If either side sinks low enough, the entire project goes up in a fiery spectacle that, while entertaining to watch, means at least one person is going down in flames. And we don’t want to see...hmmm...that actually would be pretty funn---no, no, we don’t want that. That would be bad. Failed projects, bad!</p>
+<p>With a scale, it is not possible to make a decision about one component in isolation. If you increase the scope, for example, you have to do one (or more) of the following to maintain the balance:</p>
+<ul>
+<li>Lower the quality </li>
+<li>Increase resources </li>
+<li>Increase time </li>
+</ul>
+<p><a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/Trianglesstoolsandscales_90B6/image_6.png"><img title="image" style="border-top-width: 0px; display: inline; border-left-width: 0px; border-bottom-width: 0px; margin: 5px; border-right-width: 0px" height="244" alt="image" src="/assets/image_thumb_2.png" width="244" align="left" border="0" /></a>Similarly, if you want to increase the quality, you need to add a corresponding number of resources and/or time. Or drop the scope.</p>
+<p>Another important component to this is that you don’t always have direct control over the components. As you near the end of the project, you may determine that you are running out of time. That is, you notice that your remaining time is going down faster than the remaining scope and the scale is starting to list to one side. So you need to make adjustments in order to maintain balance. Ditto if some of your resources start running out the door. At all times, the scale must be monitored to ensure external factors haven’t chipped away at one side of your scale.</p>
+<p>There are still plenty of assumptions to be made. For example, not all resources are of equal weight. Simply adding resources to a project, doesn’t imply that quality will automatically go up, or that the project will be done earlier. I’m sure I read somewhere around this interweb that adding more resources near the end of a project can actually be a hindrance rather than a help. Whether or not that’s actually true, it jives with my experience.</p>
+<p>But just the same, I like the analogy in general. It appeals to my innate sense of “I’ll never understand unless it’s in metaphor form”.</p></p>
+<p>Kyle the Analogous</p>

@@ -1,0 +1,49 @@
+---
+layout: post
+title: CQRS recap, or “How to resuscitate”
+date: 2015-04-26 18:45:21.000000000 -04:00
+categories: []
+tags:
+- BookedIN
+- Clear Measure
+- CQRS
+- Professional Development
+status: publish
+type: post
+published: true
+meta:
+  _wpas_done_all: '1'
+  pvc_views: '286'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I’m fighting a bit with my ego at the moment which is telling me I need to provide at least four paragraphs of update on what I’ve been doing the last three years when I last posted. The fight is with my more practical side which is saying, “Name three people that have noticed.” I’ll compromise with a bulleted list because some of it does have a little bearing on the rest of this post:</p>
+<ul>
+<li>I’m no longer with <a href="http://getbookedin.com">BookedIN</a> although they are still going strong.  </li>
+<li>I’ve started recently with <a href="http://clear-measure.com">Clear Measure</a> who has graciously relaxed their “no hillbilly” hiring policy. Guardedly  </li>
+<li>For those interested in my extra-curriculars, I’m also blogging at <a href="http://kyle.baley.org">http://kyle.baley.org</a> where you’ll find a recent follow-up to an older post on <a href="http://codebetter.com/kylebaley/2008/02/06/life-in-the-bahamas/">Life in the Bahamas</a>, which I keep getting emails about for some reason…</li>
+</ul>
+<p>This past weekend, Clear Measure hosted a meetup/coding-thingy on CQRS with your host, <a href="https://lostechies.com/gabrielschenker/author/gabrielschenker/">Gabriel Schenker</a>. Initial intended as an event by and for Clear Measurians, it was opened to the public as a means to garner feedback for future events. It was a 7-hour affair where Gabriel set out the task to perform then left us to our devices to build as much as we could while he provided guidance and answered questions.</p>
+<p>The event itself ran as well as I expected, which, me being an optimistic sort, was awesome! And Gabriel, if you’re reading, I did manage to get to the beach today so don’t feel bad about taking that time away from me. I won’t go into logistics but wanted to get my thoughts on CQRS on the table for posterity.</p>
+<p>By way of background, my knowledge of CQRS was, up until I started at Clear Measure, pretty vague. Limited mostly to what I knew about the definition of each of the words in the acronym. Gabriel has, in meetings and recently in his blog, increased my awareness of it to some degree to the point where it made sense as an architectural pattern but was still abstract enough that if someone asked me to implement it in a project, I would have first consulted with a local voodoo doctor (i.e. speed dial #4).</p>
+<h3>The good part</h3>
+<p>So the major benefit I got from the event is how much CQRS was demystified. It really *is* just segregation of the responsibilities of the commands and the queries. Commands must logically be separated from queries to the point where they don’t even share the same domain model. Even the term “domain model” is misleading since the model for queries is just DTOs, and not even glorified ones at that.</p>
+<p>Taking one example, we created ourselves a swanky new TaskService for saving a new task. It takes in a ScheduleTaskDto which contains the basics from the UI: a task name, a due date, some instructions, and a list of assignees. The TaskService uses that info to create a fully-formed Task domain object, setting not only the properties passed in but also maybe the CreateDate, the Status, and the ID. Then maybe it validates the thing, saves it to the repository, and notifies the assignees of the new task. All like a good, well-behaved domain object.</p>
+<p>Now we want a list of tasks to show on the dashboard. Here are two things we actively had to *stop* ourselves from doing:</p>
+<ul>
+<li>Returning a list of Task objects  </li>
+<li>Putting the logic to retrieve the tasks in the TaskService</li>
+</ul>
+<p>Instead, we created DashboardTask DTO containing the TaskId, Name, DueDate, and Status. All the items needed to display a list of tasks and nothing else. We also created a view in the database that retrieves exactly that information. The code to retrieve that info was in a separate class that goes directly to the database, not through the TaskService.</p>
+<p>Given more time, I can see how the command/query separation would play out more easily. For the commands, we may have used NHibernate which gives us all the lazy loading and relationship-handling and property mappings and everything else is does well. For the queries, probably stick with views and Dapper which allow us to query exactly the information we want.</p>
+<p>My sense is that we’d have a lot bigger set of classes in the query model than in the command model (which would be a full-fledged domain). Because the query model requires at lease one class almost for each and every screen in the app. Dashboard listing of tasks for supervisors: SupervisorDashboardTask. List of tasks for a dropdown list: TaskListItem. Retrieve a task for printing on a report: OverdueTask. All separate and all very specific.</p>
+<h3>Wrap up</h3>
+<p>My partner-in-crime for the day was Alper Sunar who is hosting our <a href="https://github.com/asunar/CQRS">day’s efforts</a>, such as they are. The big hurdle I had to jump early on was to stop myself from going infrastructure crazy. Early discussions touched on: Bootstrap, RavenDB, IoC, and Angular, all of which would have kept me from my goal: learning CQRS.</p>
+<p>I’ve <a href="https://github.com/kbaley/CQRS">forked</a> the code with the intent of continuing the journey and perhaps looking into something like RavenDB. I have to admit, all the talk around the virtual water cooler about elastic search has me thinking. And not just about finding new sister-wives… </p>
+<p>Kyle the Returned</p>

@@ -1,0 +1,30 @@
+---
+layout: post
+title: An Alternative SharePoint Development Environment
+date: 2006-02-13 16:17:00.000000000 -05:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '727'
+  dsq_thread_id: '350952929'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The Coding Hillbilly has been through some trials and tribulations of late in the SharePoint world and wishes to turn his misfortune into fortune by increasing his page hits for potential profit. (Oh, don't look so shocked. I gots childun to feed.)</p>
+<p>First up is the SharePoint development environment. As in, how should you set one up? That one's easy. Bil Simser's already <a href="http://weblogs.asp.net/bsimser/archive/2006/02/09/437788.aspx">described</a> my ideal way. You set up a virtual machine on your computer with everything you need and have at 'er. But individual virtual machines are not always an option so if you're up for reading about second best in my world, let's chat.</p>
+<p>The basic idea is that there is a central SharePoint server with several portals on it, preferably one per developer so that they aren't stepping on each others' toes. You can use the same host header for each portal but change the port numbers. This has caused some issues for when I needed to run the SharePoint Restore utility on it but it's usually easier than trying to rip a new host header out of the Grand Poobah of the DNS in your organization.</p>
+<p>You create the portals like you would any other but I'll suggest not including developer names in the names of the portals. Developers come and go and you never know if Billy Bob isn't quite stable enough mentally to handle working on a portal called Bobby Jo's Moonshine Portal after Bobby Jo gets arrested for shirking his child support duties. I generally use the same name and add the port number to the end.</p>
+<p>Once you have created your portals, assign a developer to each one and they can go about their business pretty much in the manner described in almost every book or article I've read about developing on SharePoint. I do have one suggested deviation, though.</p>
+<p>Usually, the documentation says you should configure Visual Studio to compile the project to the server where the assemblies reside. I'm not a fan of this because I usually have references to at least half a dozen assemblies that never change and I'm sick of waiting the extra 2.6 seconds for them to copy over when I do a full re-build. So instead, I leave it set to compile to Debugbin and set up post-build events on the projects that actually do change. The events are pretty simple: copy MyWebPart.dll Z:bin (assuming, of course, Z: is mapped to your particular portal's location). One advantage to this is that each developer can map his or her Z: drive to a separate portal and the build event doesn't need to change.</p>
+<p>Another suggestion: you'll probably want a separate portal to act as the main holding cell for the latest version of the entire project. It's essentially a build server.</p>
+<p>There is a potential disadvantage to this if SQL Server is not on the same server: Going back to square one isn't as easy as restoring a virtual machine's snapshot. Theoretically, you could take an image of the server and a backup of the config database and all the portal databases and restore them all if the worst happens. You could also theoretically restore only the three databases associated with a single portal if only one portal has failed. You could also theoretically go backwards in time to the point where you screwed up your portal which, from my own experience with SharePoint, would have a higher probability of success.</p>
+<p>So a lot of jawin' just to say "create one portal for each developer" but it's a setup to a post hopefully in the near future where I talk about how to copy the contents of one portal to another on the same server. Hint: I've seen more automation in cave drawings.</p>

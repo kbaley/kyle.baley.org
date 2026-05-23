@@ -1,0 +1,99 @@
+---
+layout: post
+title: Passivity, or “How to help your views leave the nest”
+date: 2010-03-05 15:15:58.000000000 -05:00
+categories: []
+tags:
+- GWT
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '350613064'
+  pvc_views: '889'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Google Web Toolkit has proven an interesting beast to code with. It’s not every web framework that encourages you to use passive view so strongly. That’s thanks partially to gwt-presenter which makes it pretty easy for views to be stupid. In most cases, the presenter even handles wiring up event handlers for the widgets.</p>
+<p>Here’s a small excerpt of a view:</p>
+<pre class="java" name="code">public class LiquorStoreListView extends Composite implements LiquorStoreListDisplay {
+
+   Anchor addStore = new Anchor( &quot;add store&quot; );
+
+   public LiquorStoreListView( ) {
+      FlowPanel panel = new FlowPanel( );
+      panel.add( addStore );
+
+      initWidget( panel );
+   }
+
+   public HasClickHandlers getAddStore( ) {
+      return addStore;
+   }
+}</pre>
+<p>This is missing a bunch of extraneous stuff as is the presenter below:</p>
+<pre class="java" name="code">public class LiquorStoreListPresenter extends WidgetPresenter<liquorstorelistdisplay> {
+
+   LiquorStoreListDisplay display;
+   EventBus eventBus;
+
+   @Inject
+   public LiquorStoreListPresenter( LiquorStoreListDisplay display, EventBus eventBus ) {
+      this.display = display;
+      this.eventBus = eventBus;
+      bind( );
+   }
+
+   @Override
+   public void onBind( ) {
+      display.getAddStore( ).addClickHandler( new ClickHandler( ) {
+         public void onClick( ClickEvent event ) {
+            Window.alert( &quot;Adding a new store&quot; );
+         }
+      } );
+   }
+}</liquorstorelistdisplay></pre>
+<p>The magic is in the use of interfaces for the widgets. In this case, the Anchor widget implements HasClickHandlers which means the presenter doesn't need to know anything about the widget except that it implements a method, addClickHandler.</p>
+<p>This falls apart a little when you have more dynamic user interfaces though. For example, what if each liquor store in our list contains an edit and delete button? Maybe we can expose them as a couple of ArrayList<hasclickhandlers> objects, I suppose. But that leads to much madness. And by &quot;madness&quot;, I mean the angry kind, which isn't nearly as fun as the crazy kind where you're allowed more latitude at the daily stand-ups.</hasclickhandlers></p>
+<p>The reason exposing the edit and delete buttons as an ArrayList to the presenter is icky is because you need to figure out which row was selected. Which leads to some pretty funky implementations, some of which require you to maintain a separate list of click handlers and/or domain objects on the presenter which need to be kept in sync with the view.</p>
+<p>Instead, I've started delegating a tiny bit more responsibility to the view. That is, it will wire up the click handlers which in turn, fire off custom events that have more useful data in them.</p>
+<p>Here's a sample method in the view:</p>
+<pre class="java" name="code">public void addLiquorStore( LiquorStore store ) {
+   int lastRow = storeTable.getRowCount( );
+   storeTable.setText( lastRow, 0, store.Name );
+   storeTable.setText( lastRow, 1, store.Address );
+   Anchor edit = new Anchor( &quot;edit&quot; );
+   edit.addClickHandler( new EditStoreClickHandler( store ) );
+
+   private class EditStoreClickHandler implements ClickHandler {
+
+      LiquorStore store;
+   
+      public EditStoreClickHandler( LiquorStore store ) {
+         this.store = store;
+      }
+
+      public void onClick( ClickEvent event ) {
+         eventBus.fireEvent( new EditStoreEvent( store ) );
+      }
+   }
+}</pre>
+<p>Then in the presenter:</p>
+<pre class="java" name="code">public void onBind( ) {
+   // ...
+
+   eventBus.addHandler( EditStoreEvent.TYPE, new EditStoreEventHandler( ) {
+      public void onEditStore( EditStoreEvent event ) {
+         LiquorStore store = event.getStore( );
+         // Get the store data and display it
+      }
+   } );
+}</pre>
+<p>May seem like more work but I like the separation a little better. Alternative is to store the store ID in a hidden field and do some DOM manipulation to get it. But I always feel dirty if I have to do that in GWT.</p>
+<p>Kyle the Impassive</p>

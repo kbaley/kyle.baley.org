@@ -1,0 +1,92 @@
+---
+layout: post
+title: Ajax Toolkit Extenders, or "How to Butcher Your HTML For The Sake Of Usability"
+date: 2007-05-11 14:25:51.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1272'
+  dsq_thread_id: '365337506'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I've decided to make use of the <a href="http://ajax.asp.net/ajaxtoolkit" target="_blank">ASP.NET Ajax Toolkit</a> for an app I'm working on after dropping out of the Atlas space for a few months. Sweet Jayzus, those guys have been busy. There are at least a dozen new controls since I last looked.</p>
+<p>I like the idea of the extenders. That is, you extend the capabilities of existing ASP.NET controls simply by dropping them on the page and configuring them.</p>
+<p>I purposely used the word "<a href="http://kyle.baley.org/QuickQuestioncopyWhyAmIHere.aspx">simply</a>" there. Because I found the practice a little different than the promise. Let's take a look at the HTML I'm extending:</p>
+<pre class="code"><span style="background: rgb(255, 255, 255) none repeat scroll 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;"> <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="margin: 0.5em; float: right; width: 150px; <br />             </span></span><span style="background: rgb(255, 255, 255) none repeat scroll 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;"><span style="color: rgb(0, 0, 255);">background-color: steelblue; color: lightsteelblue; <br />             font-weight: bold;"</span> <span style="color: rgb(255, 0, 0);">class</span><span style="color: rgb(0, 0, 255);">="quickLinks"&gt;
+</span>     <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="padding: 0.25em; background-color: white; <br />                 height: 18px; color: steelblue; <br />                 border: 1px solid steelblue;"&gt;
+</span>         <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="float: left;"&gt;
+</span>             Quick Links
+         <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>         <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="float: right; vertical-align: middle;"&gt;
+</span>             <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">asp</span><span style="color: rgb(0, 0, 255);">:</span><span style="color: rgb(128, 0, 0);">Image</span> <span style="color: rgb(255, 0, 0);">ID</span><span style="color: rgb(0, 0, 255);">="Image2"</span> <span style="color: rgb(255, 0, 0);">runat</span><span style="color: rgb(0, 0, 255);">="server"</span> <br />                  <span style="color: rgb(255, 0, 0);">ImageUrl</span><span style="color: rgb(0, 0, 255);">="~/images/collapse.jpg"</span> <span style="color: rgb(0, 0, 255);">/&gt;
+</span>         <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>     <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>     <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="padding: 0.5em; border-bottom: 2px solid white;"&gt;
+</span>         <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">a</span> <span style="color: rgb(255, 0, 0);">href</span><span style="color: rgb(0, 0, 255);">="#"&gt;</span>Add Job<span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">a</span><span style="color: rgb(0, 0, 255);">&gt;&lt;</span><span style="color: rgb(128, 0, 0);">br</span> <span style="color: rgb(0, 0, 255);">/&gt;
+</span>         <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">a</span> <span style="color: rgb(255, 0, 0);">href</span><span style="color: rgb(0, 0, 255);">="#"&gt;</span>Find a Job<span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">a</span><span style="color: rgb(0, 0, 255);">&gt;&lt;</span><span style="color: rgb(128, 0, 0);">br</span> <span style="color: rgb(0, 0, 255);">/&gt;
+</span>     <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>     <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="padding: 0.5em;"&gt;
+</span>         <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">a</span> <span style="color: rgb(255, 0, 0);">href</span><span style="color: rgb(0, 0, 255);">="#"&gt;</span>Edit...<span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">a</span><span style="color: rgb(0, 0, 255);">&gt;&lt;</span><span style="color: rgb(128, 0, 0);">br</span> <span style="color: rgb(0, 0, 255);">/&gt;
+</span>     <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span> <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span></span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>I've purposely kept things out of CSS as much as possible to keep things in the same file for the purpose of this demonstration. The exception is my use of a quickLinks class in the first DIV. I did that so that I could make the links white:</p>
+<pre class="code"><span style="color: rgb(128, 0, 0);"><span style="background: rgb(255, 255, 255) none repeat scroll 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">.quickLinks</span> <span style="color: rgb(128, 0, 0);">A
+</span>{
+    <span style="color: rgb(255, 0, 0);">font-weight</span>: <span style="color: rgb(0, 0, 255);">normal</span>;
+    <span style="color: rgb(255, 0, 0);">color</span>: <span style="color: rgb(0, 0, 255);">white</span>;
+}
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>The above HTML produces the output you see to the right (aligned to the right sid<img src="/assets/BeforeExtenders%5B5%5D.png" align="right" height="112" width="169" />e of the browser thanks to the "float").</p>
+<p>Now,&nbsp;the toolkit effects I chose for this bad boy are: <a href="http://ajax.asp.net/ajaxtoolkit/DropShadow/DropShadow.aspx" target="_blank">Drop Shadow</a>&nbsp;(which comes with its own built-in rounded corners), the <a href="http://ajax.asp.net/ajaxtoolkit/CollapsiblePanel/CollapsiblePanel.aspx" target="_blank">Collapsible Panel</a>,&nbsp; and the <a href="http://ajax.asp.net/ajaxtoolkit/DragPanel/DragPanel.aspx" target="_blank">Drag Panel</a>. So I set out extending my code with these nifty little controls.</p>
+<p>The keen observer will have noticed that the extenders apply to ASP.NET controls which was my first problem. That means using Panels rather than divs. Not such a big deal that. Usually one can just replace the &lt;div&gt; tag with &lt;asp:Panel id="moo" runat="server"&gt; and change the class tag to CssClass and be done with it.</p>
+<p>But some of the extenders also need things to be lain out a little differently in order to attach to the appropriate elements. Take the Drop Shadow for example. In my first attempt, I converted the outer &lt;div&gt; to an ASP.NET Panel and applied the DropShadowExtender to it directly. This led to the grooviness you see below.</p>
+<p><img style="margin: 0px 10px 0px 0px;" src="/assets/InterimToolkit%5B9%5D.png" align="left" height="124" width="163" /> </p>
+<p>Which isn't the most ideal-looking piece of design I've done (look closely at the corners at the bottom). Also, you can't see it but the right-margin was no longer in effect. As in, this was right up against the right side of the screen.</p>
+<p>The solution for this particular case was to wrap the entire HTML in another &lt;div&gt; and move the float:right and margin:0.5em; styles to the new outer &lt;div&gt;.</p>
+<p>I won't go through all the little tweaks I had to make for the other controls. But here is the final HTML I needed to build to get this to work in both Firefox and IE (with *some* styles moved to CSS classes):</p>
+<pre class="code"><span style="background: rgb(255, 255, 255) none repeat scroll 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">  <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="float: right; margin: 0.5em; width: 150px;"&gt;
+</span>      <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">asp</span><span style="color: rgb(0, 0, 255);">:</span><span style="color: rgb(128, 0, 0);">Panel</span> <span style="color: rgb(255, 0, 0);">ID</span><span style="color: rgb(0, 0, 255);">="panelQuickLinks"</span> <span style="color: rgb(255, 0, 0);">runat</span><span style="color: rgb(0, 0, 255);">="server"</span> <span style="color: rgb(255, 0, 0);">CssClass</span><span style="color: rgb(0, 0, 255);">="quickLinks"</span> <span style="color: rgb(255, 0, 0);">Style</span><span style="color: rgb(0, 0, 255);">="z-index: 20;"&gt;
+</span>          <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">asp</span><span style="color: rgb(0, 0, 255);">:</span><span style="color: rgb(128, 0, 0);">Panel</span> <span style="color: rgb(255, 0, 0);">ID</span><span style="color: rgb(0, 0, 255);">="quickLinksExpand"</span> <span style="color: rgb(255, 0, 0);">runat</span><span style="color: rgb(0, 0, 255);">="server"&gt;
+</span>              <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="padding: 0.25em; background-color: white; height: 14px; color: steelblue; <br />                      border: 1px solid steelblue; cursor: pointer;"&gt;
+</span>                  <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="float: left;"&gt;
+</span>                      Quick Links
+                  <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>                  <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="float: right; vertical-align: middle;"&gt;
+</span>                      <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">asp</span><span style="color: rgb(0, 0, 255);">:</span><span style="color: rgb(128, 0, 0);">Image</span> <span style="color: rgb(255, 0, 0);">ID</span><span style="color: rgb(0, 0, 255);">="Image1"</span> <span style="color: rgb(255, 0, 0);">runat</span><span style="color: rgb(0, 0, 255);">="server"</span> <span style="color: rgb(255, 0, 0);">ImageUrl</span><span style="color: rgb(0, 0, 255);">="~/images/collapse.jpg"</span> <span style="color: rgb(0, 0, 255);">/&gt;
+</span>                  <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>              <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>          <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">asp</span><span style="color: rgb(0, 0, 255);">:</span><span style="color: rgb(128, 0, 0);">Panel</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>          <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">asp</span><span style="color: rgb(0, 0, 255);">:</span><span style="color: rgb(128, 0, 0);">Panel</span> <span style="color: rgb(255, 0, 0);">ID</span><span style="color: rgb(0, 0, 255);">="quickLinksContent"</span> <span style="color: rgb(255, 0, 0);">runat</span><span style="color: rgb(0, 0, 255);">="server"&gt;
+</span>              <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="padding: 0.5em; border-bottom: 2px solid white;"&gt;
+</span>                  <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">a</span> <span style="color: rgb(255, 0, 0);">href</span><span style="color: rgb(0, 0, 255);">="#"&gt;</span>Add Job<span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">a</span><span style="color: rgb(0, 0, 255);">&gt;&lt;</span><span style="color: rgb(128, 0, 0);">br</span> <span style="color: rgb(0, 0, 255);">/&gt;
+</span>                  <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">a</span> <span style="color: rgb(255, 0, 0);">href</span><span style="color: rgb(0, 0, 255);">="#"&gt;</span>Find a Job<span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">a</span><span style="color: rgb(0, 0, 255);">&gt;&lt;</span><span style="color: rgb(128, 0, 0);">br</span> <span style="color: rgb(0, 0, 255);">/&gt;
+</span>              <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>              <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">div</span> <span style="color: rgb(255, 0, 0);">style</span><span style="color: rgb(0, 0, 255);">="padding: 0.5em;"&gt;
+</span>                  <span style="color: rgb(0, 0, 255);">&lt;</span><span style="color: rgb(128, 0, 0);">a</span> <span style="color: rgb(255, 0, 0);">href</span><span style="color: rgb(0, 0, 255);">="#"&gt;</span>Edit...<span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">a</span><span style="color: rgb(0, 0, 255);">&gt;&lt;</span><span style="color: rgb(128, 0, 0);">br</span> <span style="color: rgb(0, 0, 255);">/&gt;
+</span>              <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>          <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">asp</span><span style="color: rgb(0, 0, 255);">:</span><span style="color: rgb(128, 0, 0);">Panel</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>      <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">asp</span><span style="color: rgb(0, 0, 255);">:</span><span style="color: rgb(128, 0, 0);">Panel</span><span style="color: rgb(0, 0, 255);">&gt;
+</span>  <span style="color: rgb(0, 0, 255);">&lt;/</span><span style="color: rgb(128, 0, 0);">div</span><span style="color: rgb(0, 0, 255);">&gt;
+</span></span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>So now I'm five levels deep and using a mix of &lt;div&gt;s and Panels each with its own unique little style attached. Not very pretty.</p>
+<p><img src="/assets/FinalToolkit%5B5%5D.png" align="right" height="133" width="173" /> </p>
+<p>To be fair, it didn't take very long to mangle up my HTML to accommodate the extenders. And I'm certainly not proposing that what the toolkit team is doing is anything but sublime. Let's not ignore what I've actually done here: created a draggable, collapsible box with drop shadows that works in both IE and Firefox and I wrote zero javascript code.</p>
+<p>But like many tools that deal with HTML, you still need more than a basic knowledge of HTML and CSS to get the extenders to match what you are picturing in your head.</p>
+<p>Still, the fact that I *can* match what's in my head is testament to how far we've come.</p>
+<p>Or a commentary on my lack of imagination.</p>
+<p>Kyle the Extended</p>

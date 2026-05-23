@@ -1,0 +1,62 @@
+---
+layout: post
+title: The usefulness of interaction tests, or “How to question the method”
+date: 2010-02-26 19:23:43.000000000 -05:00
+categories: []
+tags:
+- BDD/TDD
+- Mocking
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1081'
+  dsq_thread_id: '361267176'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>More and more often these days, I’ve been having a crisis of <strike>faith</strike> conscience when it comes to TDD, or rather, interaction testing in general. It happens more so on projects where I’m the only developer or there is a very small team of strong developers. And with the latest project being in GWT, where you are practically beaten down by all the guidance espousing separation of concerns, it’s even more pronounced.</p>
+<p>Consider a screen that display a list of pet names for your truck. When you click the “add” button, it displays a dialogue box with a blank form. If you’re using an MVP pattern, this is likely what would happen when the page is loaded, from a testing point of view:</p>
+<ul>
+<li>Load a list of data from the datastore </li>
+<li>When it’s retrieved, send the list to the view </li>
+<li>Add a click handler to the “add” button that does something </li>
+</ul>
+<p>In this case, I’m using gwt-dispatch, which is a command pattern implementation for GWT. So the first point is executed by creating a command and dispatching it like so:</p>
+<pre class="java" name="code">dispatcher.execute( new GetPetNamesCommand(), new GetPetNamesCallback( ));</pre>
+<p>The GetPetNamesCallback class looks like so:</p>
+<pre class="java" name="code">public class GetPetNamesCallback extends AsyncCallback&lt;GetPetNamesResult&gt;
+{
+   @Override
+   public void callback( GetPetNamesResult result ) {
+      display.showList( result.getPetNames( ) );
+   }
+} </pre>
+<p>And the code to add the click handler when the page is loaded:</p>
+<pre class="java" name="code">display.getAddNewLink().addClickHandler(new AddNewClickHandler( ));</pre>
+<p>(This is a passive view, I think, so the presenter handles all the event wire-up.)</p>
+<p>Going to the testing side of things, I have a test context class called When_initializing_pet_names_list_presenter and within it, I have these tests:</p>
+<ul>
+<li>should_request_data_from_data_store </li>
+<li>should_wire_up_add_new_button </li>
+</ul>
+<p>In each of these tests, I dutifully go about my business mocking out a view and a dispatcher and creating a presenter. I set up expectations and the real meat of the test is in this line (using <a href="http://mockito.org/">Mockito</a> syntax):</p>
+<pre class="java" name="code">verify( dispatcher ).execute( isA( GetPetNamesCommand.class ), isA( GetPetNamesCallback.class ) );</pre>
+<p>That is, we verify that we executed the dispatcher with appropriate arguments. There’s a similar test for the second method and in another class, When_pet_names_have_been_retrieved, there’s a method that tests the GetPetNamesCallback class to ensure, also dutifully, that display.showList was called.</p>
+<p>When creating this code, I did it the other way around, writing the tests first and fleshing out the details. That makes no never mind here. The end result is the same no matter which way you go about it.</p>
+<p>Where my crisis of conscience comes in is when I review the code I’ve written based on these tests. This screen isn’t very complicated. If I were to bang out the code for it without tests, I can’t imagine doing it any other way.</p>
+<p>But someone else could, of course. And maybe they aren’t as disciplined as I am about keeping concerns separated. Fair enough. At the moment, they aren’t working on my project though. It’s just me and it will be me for the foreseeable future. Besides which, I’ve done <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/04/11/who-s-the-next-guy.aspx">enough thinking</a> on how smart or dumb <a href="http://codebetter.com/blogs/kyle.baley/archive/2009/12/15/revisiting-maintainable-for-whom-or-how-to-justify-your-crap.aspx">the next guy</a> is going to be.</p>
+<p>Furthermore, these tests feel too granular. Like they’re too focused on implementation and that they’d break at the slightest refactoring. Like say, if we switched to an architecture where the view wires up its click handler and raises events. Now I have to go and fix all these tests.</p>
+<p>Maybe that’s short-term thinking and it will lead to a lapse in judgment one day where I write untestable code to get something out the door.</p>
+<p>Maybe that’s true but maybe it’s not. I don’t think I’m advocating against interaction testing in any case. Just wonder what value it holds once you’ve been doing it long enough that you can’t write untestable code if you tried, even if there aren’t any actual tests.</p>
+<p>In any case, this is just interaction testing. There are plenty of cases where unit testing can be useful in verifying complex business rules (like whether it’s okay to have duplicate pet names for both your truck and your sister-wife).</p>
+<p>What I see more value in is a higher level integration tests. Having recently taking Selenium for a spell, it seems more useful. What happens when the user lands on the “Pet Names List” page? Why, it should have this text showing in its HTML somewhere. What about when you click the “add” button? Well, then the page should include a form in it.</p>
+<p>In this case, if anything changes in the bowels of the application, these tests remain untouched and, more importantly, still very relevant. If you have to change these tests, it’s as the result of a user interaction change and I think that warrants a change in your tests more than which flavour of MVP you decide to use.</p>
+<p>This isn’t really a position I’ll defend to the death, or even to the slightly injured. As it is, I’m not altogether happy about how I’ve explained my position. Should probably let it sit for a bit but I don’t have that kind of patience. In any case, more and more when I run my test suite and see everything running green, I feel a little bit Pavlovian.</p>
+<p>Kyle the Trained</p>

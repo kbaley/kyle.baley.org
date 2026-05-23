@@ -1,0 +1,49 @@
+---
+layout: post
+title: ActiveRecord Queries, or "How to Query Deep"
+date: 2007-05-29 18:40:45.000000000 -04:00
+categories: []
+tags:
+- ".NET"
+- BDD/TDD
+- Professional Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2066'
+  dsq_thread_id: '350408014'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>OK, so why hasn't anyone told me of the rockage that is <a href="http://www.castleproject.org/activerecord/index.html" target="_blank">ActiveRecord</a>? I was halfway through writing my first NHibernate XML file when <a href="http://ayende.com/Blog/archive/2007/05/27/StoryVerse-and-very-cool-search-technique.aspx" target="_blank">Oren</a> himself pointed me to <a href="http://code.google.com/p/storyverse/" target="_blank">StoryVerse</a>, whose code is easy enough to follow that I was able to pick up a practical use of ActiveRecord without too much hassle.</p>
+<p>Gives some context to the attribute vs. XML file debate which was passing me by. And I have to say, the thought of bypassing XML file management is pretty appealing for a hillbilly with the first signs of carpal tunnel. Data schema dependency be damned, that's some bit of magic when you can dump a bunch of attributes on a class and not write a single line of data access code.</p>
+<p>Which brings me to the real reason for this here hootenanny. One of my classes is called FiscalSystem. Its implementation is not worth explaining except for one of its properties. To wit: StateProvince a class which in turn has a property called Country. I.E. A FiscalSystem belongs to a State/Province which belongs to a Country. (I didn't do the reverse relationship because the app is small enough that I don't need it.)</p>
+<p>So to get a FiscalSystem's country: myFiscalSystem.State.Country.Name.</p>
+<p>Next comes the query: Show me all FiscalSystem objects&nbsp;that apply to a particular country. Here's the query I tried:</p>
+<pre class="code"><span style="background: rgb(255,255,255)">    <span style="color: rgb(128,128,0)">ICriterion</span>[] <span style="color: rgb(128,0,0)">criteria</span> = <span style="color: rgb(0,0,128)">new</span> <span style="color: rgb(128,128,0)">ICriterion</span>[]
+        {
+            <span style="color: rgb(128,128,0)">Expression</span>.<span style="color: rgb(128,0,0)">Eq</span>( </span><span style="background: rgb(192,192,192)">"State.Country.Id"</span><span style="background: rgb(255,255,255)">, <span style="color: rgb(128,0,0)">countryID</span> )
+        };
+    <span style="color: rgb(128,128,0)">FiscalSystem</span>[] <span style="color: rgb(128,0,0)">systems</span> = <span style="color: rgb(128,128,0)">ActiveRecordBase</span>&lt;<span style="color: rgb(128,128,0)">FiscalSystem</span>&gt;.<br />         <span style="color: rgb(128,0,0)">FindAll</span>( <span style="color: rgb(128,0,0)">criteria</span> );
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p style="border-right: black 1px solid; padding-right: 0.5em; border-top: black 1px solid; padding-left: 0.5em; float: left; padding-bottom: 0.5em; margin: 0.5em; border-left: black 1px solid; width: 200px; padding-top: 0.5em; border-bottom: black 1px solid; background-color: #dddddd">Side note: In reality, all I actually wanted on my FiscalSystem class were StateName and CountryName properties because I didn't need the semantics of a full State or Country object anywhere else. But I was unable to determine a way of having ActiveRecord look up information from more than one table (i.e. State and Country) for my FiscalSystem class. So I had to create objects for each of them.</p>
+<p>No dice. The error is long gone now but it went something like "Could not resolve property name 'State.Country.Id'". Works if I query at the State level, but not at the Country level. Which leaves me to believe it has something to do with reflection.</p>
+<p>Incidentally, you get a similar error if you try to bind&nbsp;a GridView to a list of FiscalSystem objects and use a BoundField that references State.Country.Id (or anything at the Country level). You get around that be using a TemplateField instead with Eval( "State.Country.Id" ).</p>
+<p>My alternate solution was to dig into HQL which is amazing in its own right:</p>
+<pre class="code"><span style="background: rgb(255,255,255)">    <span style="color: rgb(128,128,0)">SimpleQuery</span>&lt;<span style="color: rgb(128,128,0)">FiscalSystem</span>&gt; <span style="color: rgb(128,0,0)">query</span> = <span style="color: rgb(0,0,128)">new</span> <span style="color: rgb(128,128,0)">SimpleQuery</span>&lt;<span style="color: rgb(128,128,0)">FiscalSystem</span>&gt;( @"
+    FROM FiscalSystem fs
+    WHERE fs.ParentState.ParentCountry.Id = ?
+    ", <span style="color: rgb(128,0,0)">countryID</span> );
+    <span style="color: rgb(128,0,0)">FiscalSystem[] fiscalSystems =</span> (<span style="color: rgb(128,128,0)">FiscalSystem</span>[])<span style="color: rgb(128,0,0)">ExecuteQuery</span>( <span style="color: rgb(128,0,0)">query</span> );
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Man, there is a price to be paid living out of the loop down in the caribbean all these years.</p>
+<p>Kyle the Impressionable</p>

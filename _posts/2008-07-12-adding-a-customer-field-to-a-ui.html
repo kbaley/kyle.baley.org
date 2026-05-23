@@ -1,0 +1,55 @@
+---
+layout: post
+title: Adding a customer field to a UI
+date: 2008-07-12 03:13:19.000000000 -04:00
+categories: []
+tags:
+- Conscientious Coding
+- User Interface
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '349948678'
+  hl_twitter_has_auto_tweeted: 'New post: Adding a customer field to a UI, Full text:
+    http://blog.baley.org/?p=125'
+  pvc_views: '1085'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><strong>The Dilemma</strong></p>
+<p>I've always tried to be conscious of building a decent UI while still recognizing that I'm better at critiquing them than creating them. And now, I'm looking at a problem that's been staring me in the face for nigh on eight years.</p>
+<p>It's a simple one really. On a web page that adds or edits a &quot;job&quot; or &quot;order&quot; or &quot;project&quot; or whatever, how do I allow users to select and add customers to the job/order/project?</p>
+<p>Here's where my critiquing skills come into play. I know plenty of ways others have done it but I don't usually like them. And more importantly, if I *did* like them, it was because it was so seamless that it was unnoticeable. Which doesn't help me either because &quot;unnoticeable&quot; means I didn't remember where I saw it.</p>
+<p>This is an internal LOB application so it's a little different than your typical e-storefront. On almost every web page I've been on, the natural progression is:</p>
+<ul>
+<li>Build up your order </li>
+<li>Check-out </li>
+<li>Go to a separate page to login or enter your customer info </li>
+<li>If you're lucky, return to your existing order and carry on </li>
+</ul>
+<p>I've skipped a lot of steps here, mostly ones where you try to remember if you've ever shopped at that place before and try variations of common usernames you use, all of which don't &amp;*%$ work so you finally *attempt* to create a new account and only AFTER you enter all your data (and it's a crap shoot whether it'll take a non-US address) you discover your e-mail address is ALREADY IN THEIR &amp;*%*# <strong>SYSTEM SOMEHOW!!!1!!.</strong></p>
+<p>I digress.</p>
+<p>For this internal application, the requirements are similar, yet different. I want to be able to determine whether the customer for the current job is a new one or an existing one, but I don't want to go to a separate screen to do it. (Note: pop-ups, either modal or modeless, count as separate screens, only evil-er.)</p>
+<p>In addition, I'd like the ability to, when an existing customer is selected, populate a few extra fields with that customer's default contact information but still provide the ability to override it. This is for cases where, say, a company calls up for a job. You may have done work for them in the past but for someone else. You still want to register the job against the same company but you want to attach different contact information to the job in case you need to, y'know, contact them.&#160; </p>
+<p>Furthermore, I'd also like the option of overwriting the default contact information for a company from the same screen.</p>
+<p>So yes, I know what I want the screen to do. Just not <em>quite</em> how to present it.</p>
+<p>If this was a different field, say a manufacturer or car model or something, this could be solved reasonably well with a drop-down list that has &lt;New Item&gt; as the first option. This is okay for simple fields that don't grow in length very often. For a customer, it won't do. There are just too darn many of them.</p>
+<p>So to sum up, I'd like the following on the job entry page:</p>
+<ul>
+<li>Search for existing customers </li>
+<li>If one exists, populate the customer info with default values </li>
+<li>Allow user to override customer defaults for this particular job </li>
+<li>Allow user to override defaults for the customer overall </li>
+<li>If a new customer, automatically save the customer info to the database with the entered defaults when the job is saved </li>
+<li>Do all this on the same page (assuming it can be done reasonably well) </li>
+</ul>
+<p>Keep in mind that all these requirements are my own. The client (i.e. my mom and dad and all my brothers) just want it done. They would probably accept a multi-page wizard-like solution but they already mock me for not going into the family business. So I'm not going to give them any more ammunition for the omnipresent &quot;You went to college for this?&quot; discussion.</p>
+<p>I do have a solution in mind and will post it shortly. But let's see where this preamble takes us first.</p>
+<p>Kyle the Interfaced</p>

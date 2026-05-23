@@ -1,0 +1,62 @@
+---
+layout: post
+title: Automating browser actions with Vimium and AutoHotKey
+date: 2010-06-23 14:41:51.000000000 -04:00
+categories: []
+tags:
+- Tools
+- Utilities
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1303'
+  dsq_thread_id: '358050239'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Quick PSA today on automating tasks in web apps that don’t have keyboard shortcuts.</p>
+<p>I had to migrate about 110 stories from one <a href="http://agilezen.com">AgileZen</a> project to another. As yet, AgileZen’s API is read-only so after confirming that the eldest offspring was unwilling and the youngest (being seven months old) was unable, I set up doing the task manually.</p>
+<p>(Side note: The reason for the migration is that we were originally using BaseCamp. All our stories were stored as tasks for our beta version and version 1. We had originally moved all the V1 stories into a fake phase for AgileZen just for the sake of getting them out of BaseCamp. At the time, I glanced through the AgileZen API documentation and had mistakenly concluded that I’d be able to migrate them to a new project programmatically when the time came.)</p>
+<p>Copying the stories wasn’t too onerous a task. They were all in the same phase and didn’t have any details assigned to them so it was about fifteen minutes of cut and paste from one browser to another.</p>
+<p>Deleting the original stories proved a little more monotonous. They can only be deleted by opening the details, clicking Delete, then clicking OK. After doing this manually about five times, I started exploring other options.</p>
+<p>On Chrome, I have <a href="https://chrome.google.com/extensions/detail/dbepggeogbaibhgnhhndojpepiihcmeb">Vimium</a> installed. It gives you Vim navigation keyboard shortcuts, similar to <a href="http://vimperator.org/">Vimperator</a> for Firefox. With it, when you can “click” links by pressing f, then typing the appropriate code corresponding to the link. That means I can handle the clicking involved to delete a story from the keyboard.</p>
+<p>I also have <a href="http://www.autohotkey.com/">AutoHotKey</a>, which is designed to automate keystrokes and mouse clicks. I use it to create keyboard shortcuts like Win+n for notepad and Win+g to open the hillbilly community forums website and an <a href="http://codebetter.com/blogs/kyle.baley/archive/2009/09/17/using-autohotkey-to-map-the-ctrl-key-or-how-to-ctrl-your-closure.aspx">alternate way to close an app without using Alt-F4</a>.</p>
+<p>Between the two of them, I came up with this quick ‘n dirty script to delete stories:</p>
+<pre>#q::
+Delete()
+return
+
+Delete() {
+  Send f
+  Sleep 250
+  Send s
+  send h
+  Sleep 1000
+  Send f
+  Sleep 250
+  Send a
+  Send f
+  Sleep 500
+  Send f
+}</pre>
+<p>Now, when I press Win+q, the following happens:</p>
+<ul>
+<li>Press f to tell Vimium I’m going to navigate to a link </li>
+<li>Pause a quarter of a second; without this, the script goes too fast for Vimium </li>
+<li>Enter the key code for the story I want to delete. Note that this is always the top story in the phase so the code is always the same as long as there is at least one story in the phase </li>
+<li>Pause a second to give the browser time to navigate to the story </li>
+<li>Press f again for Vimium navigation and pause </li>
+<li>Enter the key code for the delete button </li>
+<li>Pause half a second to give the confirmation dialogue time to appear </li>
+<li>Press f again for Vimium navigation </li>
+</ul>
+<p>At this point, I enter the key code for the OK button manually just to be on the safe side.</p>
+<p>Pausing for a second to let the browser navigate to the story details is a minor hack. I’m pretty sure I could get AutoHotKey to wait until the title of the window changes or something else more accurate. But I have to balance out the time it takes to figure this out versus the time it takes to do it manually…ignoring the time it took to write this post, of course.</p>
+<p>Kyle the Served</p>

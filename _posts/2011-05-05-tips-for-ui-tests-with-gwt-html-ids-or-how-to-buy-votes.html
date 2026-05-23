@@ -1,0 +1,65 @@
+---
+layout: post
+title: 'Tips for UI Tests with GWT: HTML IDs, or “How to buy votes”'
+date: 2011-05-05 20:33:20.000000000 -04:00
+categories: []
+tags:
+- BDD/TDD
+- Cucumber
+- GWT
+- Ruby
+- UI Testing
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2500'
+  dsq_thread_id: '349717711'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Earlier this year, I resolved to be twice as entertaining as last year and I’m so confident that I can attain that goal that I’m going to actively flaunt it by talking about automating UI tests against a GWT/AppEngine application.</p>
+<p>But first, an appeal. Our <a href="http://bookedin.net">little startup that could</a> is going to Google IO this year and is participating in the <a href="http://www.google.com/events/io/2011/sandbox.html#bookedin-online-scheduling">Developer Sandbox</a>. There’s a little contest going on over at <a href="http://shortform.com/googleio">http://shortform.com/googleio</a>. Everyone who votes for the BookedIN video (the one with all the orange boxes in the thumbnail) will receive honorary hillbilly status for a period of one year*.<a href="http://www.google.com/events/io/2011/sandbox.html#bookedin-online-scheduling"><img style="margin: 5px 5px 24px; display: inline; float: right" alt="io2011logo_sandbox_striped_WEB" align="right" src="/assets/io2011logo_sandbox_striped_WEB.gif" /></a></p>
+<p>This won’t be a full-on “how to” because we’re still working on the “how to” part ourselves. But we’ve got enough running that if I can save just one person a few headaches, then I can submit an invoice to that person for the time it took me to write this post.</p>
+<p>At present, we use <a href="http://code.google.com/p/jukito/">Jukito</a> for the majority of our unit and even integration tests. It’s a testing framework that combines Guice for IoC, Mockito for mocking and automocking, and JUnit to actually run the tests. A full-fledged post on Jukito is warranted because it’s helped tremendously. But I’m going to try to coerce the project’s creator into doing at least a first pass at that post. Then I can hillbillify it.</p>
+<p>We’re using Cucumber and Capybara for our UI tests and for the most part, they’ve worked as advertised. But GWT has thrown up its share of hurdles. For today, I’ll describe just one.</p>
+<h2>Problem: No HTML IDs</h2>
+<p>Capybara <em>really</em> wants HTML elements to have IDs (or readable CSS class names; that problem to be discussed in another post). This being a GWT app, we don’t care about the HTML output too much so we let the framework worry about it. And it doesn’t create HTML IDs for most things. This is different than the ASP.NET problem of creating one that is unusable. I mean that GWT just doesn’t create them. At all.</p>
+<h2>Our solution #1: Use xpath</h2>
+<p>Capybara lets you find elements by xpath so if you are manipulating a form with a standard layout, this can help. For example, we have the following web step for filling in a text box in a form:</p>
+<pre>When /^(?:|I )fill in &quot;([^&quot;]*)&quot; 
+   for &quot;([^&quot;]*)&quot;(?: within &quot;([^&quot;]*)&quot;)?$/ 
+   do |value, field, selector|
+
+   with_scope(selector) do
+    
+      sibling = &quot;//label[.=' #{field} ']/following-sibling::*[1]/input&quot;
+    
+      find(:xpath, sibling).set value
+   end
+
+end</pre>
+<p>(Side note: I’ve left the <em>with_scope</em> call here but in practice, we’ve all but removed it. The scope is limited to CSS selectors which, as I’ve alluded to previously, is another issue we’ve have to overcome in the GWT/UI Test saga.)</p>
+<p>So when we fill in the value for &quot;First Name&quot;, we look for a label with the specified text and we populate the input element in the following-sibling.</p>
+<p>This obviously doesn’t work if the element you want to populate doesn’t follow this rule. And as an added bonus, xpath queries appear to be crazy slow for both Chrome and IE. So whenever possible, we turn to a GWT feature.</p>
+<h2>Our solution #2: Use ensureDebugId</h2>
+<p>You can force GWT to create an HTML id for specific elements. Doing so doesn’t affect how the page works but it does add a slight bit of overhead for circumventing the normal GWT process. At least I’m guessing there’s overhead. Otherwise it would be on by default, one would think…</p>
+<p>To force GWT to create an id attribute, you need to update your &lt;module&gt;.gwt.xml file by adding this line:</p>
+<p>&lt;inherits name=&quot;com.google.gwt.user.Debug&quot;/&gt;</p>
+<p>After that, whenever you want to add an id to an element, you do so via code:</p>
+<blockquote>
+<p>proofAmount.ensureDebugId( &quot;proofAmountInput&quot; );</p>
+</blockquote>
+<p>Note that we need the id attribute only when we’re doing our UI tests. And until we can afford the same laissez-faire attitude toward our users that Facebook can, we’ve been doing our UI tests against a non-production version of the app. For production, we’d prefer not to generate the id attribute as it is not necessary.</p>
+<p>This means we want the UI test version of the app to generate debug IDs and the production version not to. This can be done by removing the &lt;inherits&gt; element above from the .gwt.xml file when we move to production. Of course, we’ll need to automate this but I’ll pull out my foreshadowing card once more and defer that to another post.</p>
+<p>We use both methods in our tests though recently, we’re leaning more heavily on the second as it is faster and less prone to breakage if we decide to reorganize things.</p>
+<p>We’re still fairly early in our UI testing journey which is my way of saying be gentle, but constructive, if some of this sounds ludicrous. And if you’re doing something similar and you will be at IO, come find me at the BookedIN booth at the Developer Sandbox.</p>
+<p>But first, go vote for our video.</p>
+<p>Kyle the Solicitous</p>
+<p><font size="1">* Disclaimer: Any offspring produced while an honorary hillbilly DO NOT automatically receive honorary hillbilly status.</font></p>

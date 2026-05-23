@@ -1,0 +1,39 @@
+---
+layout: post
+title: 'The HTML Theme: Please don''t let me be misunderstood'
+date: 2008-08-05 17:00:32.000000000 -04:00
+categories: []
+tags:
+- ASP.NET MVC
+- Presenting
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1169'
+  dsq_thread_id: '734761861'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Presented last week at the Calgary .NET User Group and the Edmonton .NET User Group. Both went swimmingly in this hillbilly's view and I had a fantastic time doing both. At some point, I'm going to have to admit to myself that I probably do this for my benefit more than the attendees. But as long as both our interests align, I'll keep telling myself I do it to help the community. </p>
+<p>As a bonus, I get this nice shiny blog post out of it. Because the same question came up at both meetings and I didn't give it its due either time. The question was, and I'm paraphrasing:</p>
+<blockquote><p>I'm diggin' the new framework and all and your love of plaid is refreshing, but I'm a WebForms guy. This new-fangled way of putting these &quot;INPUT&quot; controls on a page is strange and unfamiliar, but not in a good way. You're asking me to abandon all I know of web development. My asp:ListBox? My asp:DropDownList?!? FOR THE LOVE OF ALL THAT IS HILLBILLY, DON'T MAKE ME GIVE UP MY PRECIOUS GRIDVIEW!!</p>
+</blockquote>
+<p>The response I gave to this question in Edmonton was: We're web developers. Learn HTML.</p>
+<p>I was about to say that this probably sounds more condescending than I meant it to be but I don't think that's true. Subconsciously, that's kind of what I think whenever I'm asked. Usually I sugarcoat it but I'm testing the waters into beligerence these days to see where it takes me. So far, I don't think I have the stomach for it but I'll give it a couple more weeks.</p>
+<p>Anyway, as much as Microsoft has gone to great lengths to protect us from the scary world of HTML, let's not forget that the web is still very much powered by it. It behooves us to learn it (and I'm not using the Webster definition of &quot;behooves&quot;, not the one I learned from my sister-cousin).</p>
+<p>Here's the thing: HTML is not hard. Javascript is not hard. HTTP is not hard. Statelessness is not hard. In general, WebForms is an abstraction over a problem that is not hard. Especially now that we have some pretty mature Javascript libraries, like jQuery and Prototype. And certainly now that pretty much any problem you might encounter related to managing statelessness has already been solved several times over.</p>
+<p>Web applications have become pretty sophisticated over the years such that users are starting to demand more for their &quot;money&quot;. It is my experience that the demands they are making do not play nice with server-side controls. WebForms was a nice model back when it was acceptable to perform a full-on postback every time you wanted to go to the next page in a grid.</p>
+<p>But this is 2008. And I'd like to be able to bookmark that page now and e-mail the link to someone else. I'd like the ability to click the Back button and not get a Page Expired error. I'd like to sort a list of items and not have it add to my browser history.</p>
+<p>You can do all this in WebForms, of course. But usually, people say it like this: &quot;Well, that's <em>possible</em> in WebForms....&quot; Not &quot;Dude, that's a freakin' BREEZE in WebForms. It was designed with that specific scenario in mind.&quot;</p>
+<p>So yes, if you're interested in MVC, you'll need to know a bit about HTML. You'll need to manage any &quot;state&quot; yourself. You'll need to understand what happens when a form is submitted via POST vs. GET. You'll need to account for things like validation during a form submittal.</p>
+<p>But don't shy away from it. Give it a try, <a href="http://blog.wekeroad.com/blog/asp-net-mvc-avoiding-tag-soup/">it's not hard</a>. The &lt;INPUT&gt; tag has its flaws but it's pretty simple to figure out. Maybe take a Javascript library out for a spin. You might even find that it's fun.</p>
+<p>Or at the very least, that it's never been easier to add rounded corners to a DIV.</p>
+<p>Kyle the Web-Formed</p>
+<p>PS. Code from the presentation will be forthcoming.</p>

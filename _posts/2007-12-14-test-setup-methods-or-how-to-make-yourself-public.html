@@ -1,0 +1,40 @@
+---
+layout: post
+title: Test SetUp Methods, or "How to make yourself public"
+date: 2007-12-14 12:04:10.000000000 -05:00
+categories: []
+tags:
+- BDD/TDD
+- Refactoring
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1147'
+  dsq_thread_id: '472970634'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Here's a little sidebar that I bet you didn't know. Actually, that was probably more accurate at my old site where my readership measured on a more, shall we say, intimate, scale.</p>
+<p>Anyway, I recently converted a project from NUnit to MbUnit just because I felt like it. (Oh, I'm kidding. I have reasons. Boring but valid ones. So don't sic the alt.net police on me.) In the past, that has involved adding the assembly reference for MbUnit, then performing a global search and replace of the appropriate using statement. Perhaps cleaning up the different Assert syntax but in general, it's a pretty painless process.</p>
+<p>This time, I got null reference errors in all tests in several class and to make a long story short (don't get used to it, I don't do it often), I traced it to the SetUp method:    </p>
+<pre class="code">    [ <span style="color: rgb(0,128,128)">SetUp</span> ]
+    <span style="color: rgb(0,0,255)">protected</span> <span style="color: rgb(0,0,255)">void</span> SetUp( )
+    {
+        <span style="color: rgb(0,128,0)">// Do stuff
+</span>    }</pre>
+<p><a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a></p>
+<p>Notice that it is protected, which apparently makes it all but invisible to MbUnit. I switched it to public and my world is fully tested again.</p>
+<p>Initially, I thought it might be worthy of a bug report. But here is kind of what I typed out:</p>
+<blockquote>
+<p>Hey dudes! You got yerself a fine 'n dandy little product here. But I got meself some tests here someone was nice enough to write out for me in NUnit and when I converted them to MbUnit, they done gone failed on me 'cause the SetUp method is protected even though... the tests themselves are...ummm... y'know...public...</p>
+</blockquote>
+<p>Here's where I started to feel a little silly and considered that maybe the MbUnit folks knew what they're doing when they wrote the product (although I wouldn't mind it <a href="http://kyle.baley.org/NullableTypesOrHowToMakeYourTestsPassBySwitchingTestingFrameworks.aspx">handling nullable types</a> a little differently).</p>
+<p>So I guess I don't really make this long story all that shorter. The Hillbilly is nothing if not contradictory.</p>
+<p>Kyle the Taciturn</p>

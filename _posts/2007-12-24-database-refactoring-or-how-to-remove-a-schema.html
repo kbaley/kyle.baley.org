@@ -1,0 +1,53 @@
+---
+layout: post
+title: Database refactoring, or "How to remove a schema"
+date: 2007-12-24 13:34:32.000000000 -05:00
+categories: []
+tags:
+- Refactoring
+- Utilities
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1157'
+  dsq_thread_id: '396901359'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Welcome back, revolutionaries! We've had a small reprieve from the fight to let our early anarchy settle in and---....y'know what. The revolutionary jargon is getting too hard to write and the refactorings more involved so I'll just throw out a &quot;The revolution will be blogged!&quot; and go back to bein' a hillbilly, iffen it's all the same to you.</p>
+<p>Today I'm throwing myself at the data access layer and the database. The data access layer is an easy target just because it exists and we've long since switched to NHibernate for our data access in other applications. So the refactoring there will entail ripping it out mostly. Along with most of the stored procedures which haven't inspired me with a lot of confidence ever since I found three of them that refer to tables that don't exist.</p>
+<p>One of the pain points I've encountered in dealing with this particular database is the different schemas it uses. For those of you not familiar with the concept (as I wasn't until about a week ago), most databases will use the default schema, which is usually dbo, probably for database owner but don't quote a humble hillbilly. In this case, almost all the tables were created under a different schema. For example, the users table belongs to a Admin schema and the FieldList table belongs to a Dictionary schema.</p>
+<p>To create the table under a different schema:</p>
+<pre class="code"><span style="color: rgb(0,0,255)">CREATE SCHEMA </span>[Admin]</pre>
+<pre class="code"><span style="color: rgb(0,0,255)">CREATE TABLE </span>[Admin].[tbUsers]
+(
+[UserID] [int] <span style="color: rgb(0,0,255)">NOT NULL IDENTITY</span>(1, 1),
+[NetworkUserName] [varchar] (255) <span style="color: rgb(0,0,255)">NULL</span>,
+[RoleID] [int] <span style="color: rgb(0,0,255)">NOT NULL</span>,
+[PreferredPlaidColour] [varchar] (50) <span style="color: rgb(0,0,255)">NULL<br /></span>)</pre>
+<p>After this, you'll need to qualify the table in any queries you make to it:</p>
+<pre class="code"><span style="color: rgb(0,0,255)">SELECT </span>* <span style="color: rgb(0,0,255)">FROM</span> [Admin].[tbUsers]</pre>
+<p>I'm certain there are advantages to using schemas. Security comes to mind as I'm betting you can apply security rules to a schema to grant/limit access to it. And they probably appeal to DBAs that like to keep things pseudo-organized.</p>
+<p>For our case, it was overkill and a surprisingly potent distraction when we had to query the database. This was the only application that used them and it wasn't exactly a high-profile, high-security type application. It's used by one app, ours, and you either have access to the app or you don't. And they weren't even used consistently. There were two tables using the default dbo schema, at least one of which shouldn't have been.</p>
+<p>So after talking with some developers who worked on the previous version and confirming that they weren't being used in a meaningful way, we set about removing them. Which is much easier than one might think:</p>
+<pre class="code"><span style="color: rgb(0,0,255)">ALTER SCHEMA </span>dbo
+<span style="color: rgb(0,0,255)">TRANSFER <font color="#000000">Admin.tbUsers</font></span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>I do have to send a shout-out to DataDude, which you may know by it's official name (and I'm going by memory so it may be off a bit): Microsoft Visual Studio Team</p>
+<div style="border-right: #cccccc 1px solid; padding-right: 1em; border-top: #cccccc 1px solid; padding-left: 1em; float: right; padding-bottom: 1em; margin: 1em; border-left: #cccccc 1px solid; width: 150px; padding-top: 1em; border-bottom: #cccccc 1px solid; background-color: #dddddd">
+<p>Did you know?</p>
+<p>You can't compare tables in DataDude if one or both tables in the comparison has no primary key</p>
+</div>
+<p>Partner Coding System for Professional Licensed Database Practioners and Ornothologists, the Spongebob Squarepants Edition.</p>
+<p>This nifty little VS add-in/utility/whole entire version of the product has been a tremendous help during this refactoring. It has a Schema Compare feature that I used to generate the initial scripts to create the database and a Data Compare feature I used to generate test data for our QA environment.</p>
+<p>But a nice feature I wasn't expecting: after I changed our CREATE TABLE scripts to use the new default schema, Visual Studio immediately popped up a pile of clickable warnings indicating stored procedures, foreign key scripts, etc, that were no longer valid because the name of the table had changed. Not quite as clean as a ReSharper Rename, mind you, but better than hunting through scripts manually and inevitably missing some.</p>
+<p>It was also DataDude that discovered the three stored procedures referencing non-existent tables.</p>
+<p>The net result: a database more in tune with its sister databases and one that inspires far less cursing from developers who are prone to typing in SQL statements without the schema.</p>
+<p>Kyle the Databound</p>

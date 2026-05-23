@@ -1,0 +1,63 @@
+---
+layout: post
+title: Genres, or "How to Remove Value From A Value Object"
+date: 2007-05-21 15:46:20.000000000 -04:00
+categories:
+- Flamingo
+tags:
+- Professional Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '770'
+  dsq_thread_id: '1703966837'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>This is part&nbsp;moot of&nbsp;inconsequential posts&nbsp;on my <a href="http://kyle.baley.org/OnlineProfessionalDevelopmentOrQuotHowToBringAFlamingoBackToLifequot.aspx">professional development odyssey</a> in which I try to develop an online music library application using whatever techniques and technology strike my fancy at the time. Code can be found at: svn://208.109.223.228/Suvius.Flamingo if memory serves.</p>
+<p>In our <a href="http://kyle.baley.org/InitialFlamingoSetupOrQuotHowToGetStartedquot.aspx">last episode</a>, I popped up an initial test to see if we could retrieve all songs by an artist. I've since added a test, ShouldBeAbleToRetrieveSongsWithPartialTitle, that tests to see if we can retrieve songs by title (or partial title). It's not altogether interesting so I'll skip it here.</p>
+<p>The next test was ShouldBeAbleToRetrieveSongsByGenre which garners slightly more air time because if the notion of a Genre. Here is the test in its current incarnation:</p>
+<pre class="code"><span style="background: rgb(255,255,255)">  [ <span style="color: rgb(128,0,0)">Test</span> ]
+  <span style="color: rgb(0,0,128)">public</span> <span style="color: rgb(0,0,128)">void</span> <span style="color: rgb(128,0,0)">ShouldBeAbleToRetrieveSongsByGenre</span>( )
+  {
+      <span style="color: rgb(128,128,0)">Genre</span> <span style="color: rgb(128,0,0)">genre</span> = <span style="color: rgb(0,0,128)">new</span> <span style="color: rgb(128,128,0)">Genre</span>( </span><span style="background: rgb(192,192,192)">"Really &amp;*%$ old"</span><span style="background: rgb(255,255,255)"> );
+      <span style="color: rgb(0,0,128)">int</span> <span style="color: rgb(128,0,0)">numberOfSongs</span> = <span style="color: rgb(128,0,0)">songRepository</span>.<span style="color: rgb(128,0,0)">GetSongsByGenre</span>( <span style="color: rgb(128,0,0)">genre</span> ).<span style="color: rgb(128,0,0)">Count</span>;
+      <span style="color: rgb(0,0,128)">using</span> ( <span style="color: rgb(128,0,0)">mockery</span>.<span style="color: rgb(128,0,0)">Record</span>( ) )
+      {
+          <span style="color: rgb(128,128,0)">ISong</span> <span style="color: rgb(128,0,0)">fakeSong</span> = <span style="color: rgb(128,0,0)">mockery</span>.<span style="color: rgb(128,0,0)">DynamicMock</span>&lt;<span style="color: rgb(128,128,0)">ISong</span>&gt;( );
+          <span style="color: rgb(128,128,0)">SetupResult</span>.<span style="color: rgb(128,0,0)">For</span>( <span style="color: rgb(128,0,0)">fakeSong</span>.<span style="color: rgb(128,0,0)">Genre</span> ).<span style="color: rgb(128,0,0)">Return</span>( <span style="color: rgb(128,0,0)">genre</span> );
+          <span style="color: rgb(128,0,0)">songRepository</span>.<span style="color: rgb(128,0,0)">AddSong</span>( <span style="color: rgb(128,0,0)">fakeSong</span> );
+      }
+      <span style="color: rgb(128,128,0)">Assert</span>.<span style="color: rgb(128,0,0)">AreEqual</span>( <span style="color: rgb(128,0,0)">numberOfSongs</span> + 1, <br />          <span style="color: rgb(128,0,0)">songRepository</span>.<span style="color: rgb(128,0,0)">GetSongsByGenre</span>( <br />              <span style="color: rgb(0,0,128)">new</span> <span style="color: rgb(128,128,0)">Genre</span>( </span><span style="background: rgb(192,192,192)">"Really &amp;*%$ old"</span><span style="background: rgb(255,255,255)"> ) ).<span style="color: rgb(128,0,0)">Count</span> );
+  }
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>And here is the GetSongsByGenre method:</p>
+<pre class="code"><span style="background: rgb(255,255,255)">    <span style="color: rgb(0,0,128)">public</span> <span style="color: rgb(128,128,0)">IList</span>&lt;<span style="color: rgb(128,128,0)">ISong</span>&gt; <span style="color: rgb(128,0,0)">GetSongsByGenre</span>( <span style="color: rgb(128,128,0)">Genre</span> <span style="color: rgb(128,0,0)">genre</span> )
+    {
+        <span style="color: rgb(128,128,0)">List</span>&lt;<span style="color: rgb(128,128,0)">ISong</span>&gt; <span style="color: rgb(128,0,0)">songsWithGenre</span> = <span style="color: rgb(0,0,128)">new</span> <span style="color: rgb(128,128,0)">List</span>&lt;<span style="color: rgb(128,128,0)">ISong</span>&gt;( );
+        <span style="color: rgb(0,0,128)">foreach</span> ( <span style="color: rgb(128,128,0)">ISong</span> <span style="color: rgb(128,0,0)">song</span> <span style="color: rgb(0,0,128)">in</span> <span style="color: rgb(128,0,0)">songList</span> )
+        {
+            <span style="color: rgb(0,0,128)">if</span> ( <span style="color: rgb(128,0,0)">song</span>.<span style="color: rgb(128,0,0)">Genre</span>.<span style="color: rgb(128,0,0)">Equals</span>( <span style="color: rgb(128,0,0)">genre</span> ) )
+            {
+                <span style="color: rgb(128,0,0)">songsWithGenre</span>.<span style="color: rgb(128,0,0)">Add</span>( <span style="color: rgb(128,0,0)">song</span> );
+            }
+        }
+
+        <span style="color: rgb(0,0,128)">return</span> <span style="color: rgb(128,0,0)">songsWithGenre</span>;
+    }
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>(NOTE: No this isn't my final implementation. But it's enough to pass the tests for now.)</p>
+<p>I've decided&nbsp;to make the Genre a Value Object which you might be able to determine from the comparison in GetSongsByGenre. The inital reason for this is that a Genre seems like it should be an object and I'd like to be able to compare two songs' genres.</p>
+<p>But as I write this, I realize I probably should apply the same thinking to an artist. If a genre is to be its own object, why not use an Artist object rather than a string? For the purpose of our application, both are to be used identically (i.e. as search criteria and metadata on a song).</p>
+<p>So I should create an Artist object, yesno? Now it's starting to sound more complicated than it probably needs it to be. Do I care about genres or artists other than as a property on the song? Is there any other data about them that is interesting to me?</p>
+<p>At this point, I'd say the answer is no. Certainly for genres. But also for artists for the moment. Maybe we'll get to the point where we want to store the names, birthdates, country, aliases, and a little bio on each one but for now, I believe it's time to demote Genres back to a string.</p>
+<p>Kyle the Devalued</p>

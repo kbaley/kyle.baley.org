@@ -1,0 +1,94 @@
+---
+layout: post
+title: Delayed execution with yield, or “How to abdicate, cede, and relent”
+date: 2009-06-02 14:47:26.000000000 -04:00
+categories: []
+tags:
+- ".NET"
+- Development
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '549399251'
+  pvc_views: '1420'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>“Yield” is not generally a word we hillbillies understand all too well as my meanderings yesterday can attest to. I’ve been using the yield keyword for nigh on three years now while having only a vague understanding of how it works behind the scenes. And even now, I’m not quite sure where my logical fallacy is but I’m sure that over the time it takes to write this all out, I’ll have formed an opinion.</p>
+<p>Here is a the first test I wrote for a new class:</p>
+<pre class="c-sharp" name="code">[TestMethod]
+[ExpectedException( typeof( ArgumentException ) )]
+public void Should_throw_exception_if_search_term_is_not_provided()
+{
+    var sut = new VacationDestinationService();
+    sut.FindDestinationsByRegion(string.Empty);
+}</pre>
+<p>Bear with me on the ExpectedException. I’m pretty sure my problem is that I’m writing the wrong tests but for now, let’s just follow the “thought” process.</p>
+<p>To get this test to pass, I created the following class:</p>
+<pre class="c-sharp" name="code">public class VacationDestinationService
+{
+    public void FindDestinationsByRegion( string region )
+    {
+        if (string.IsNullOrEmpty(region))
+        {
+            throw new ArgumentException(&quot;C'mon, feller. You gotta pick a place.&quot;);
+        }
+    }
+}</pre>
+<p>Of course, I don't want this class to return void in the long run, but it gets the test passing.</p>
+<p>Here's the next test:</p>
+<pre class="c-sharp" name="code">[TestMethod]
+public void Should_retrieve_search_results()
+{
+    var sut = new VacationDestinationService();
+    var results = sut.FindDestinationsByRegion(&quot;North America&quot;);
+    Assert.IsTrue(results.Count() &gt; 0);
+}</pre>
+<p>Again, don't get semantic on me. This isn't *really* the actual test. But like most developers, I don't want to get bogged down in dependencies and explaining context.</p>
+<p>To pass this test, I modified my VacationDestinationService accordingly:</p>
+<pre class="c-sharp" name="code">public class VacationDestinationService
+{
+    public IEnumerable&lt;string&gt; FindDestinationsByRegion( string region )
+    {
+        if (string.IsNullOrEmpty(region))
+        {
+            throw new ArgumentException(&quot;C'mon, feller. You gotta pick a place.&quot;);
+        }
+
+        var destinations = new List&lt;string&gt;(new[] {
+            &quot;Ozarks&quot;,
+            &quot;Appalachia&quot;,
+            &quot;Western Manitoba&quot;
+        });
+        foreach ( var destination in destinations )
+        {
+            yield return destination;
+        }
+    }
+}</pre>
+<p>And lo! This passes our test. So I re-run all my tests again before checking in, and lo!:</p>
+<p><a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/bd0560ef25d8_8993/image_2.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="/assets/image_thumb.png" width="644" height="298" /></a> </p>
+<p>“What?!” says I, “Why is the first test failing?” Reaching for the debugger yields (teehee) no help because setting a breakpoint in FindDestinationsByRegion doesn’t do anything. That is, for all intents and purposes (pet peeve: NOT “intensive purposes”), the code in FindDestinationsByRegion is not called in the first test anymore. Hence, the exception isn’t thrown. Hence, the test fails.</p>
+<p>If you’re the type of guy/gal to dive into the IL for this kind of thing, then you may know where this is heading. From what I can gather, the yield causes this method to execute <em>only when the results are iterated</em>. That is, even if we call this method and gather up the results in a variable, the code still won’t execute. But as soon as you throw it in a foreach loop, then you’ve got gold, baby.</p>
+<p>Maybe this is what smarter people mean when they throw out terms like “delayed execution”. Maybe this is the cornerstone of lambdas. All I know is that I can’t check in my code until I’ve solved this problem to my liking.</p>
+<p>As a test for this theory, I modified the first test slightly:</p>
+<pre class="c-sharp" name="code">[TestMethod]
+[ExpectedException( typeof( ArgumentException ) )]
+public void Should_throw_exception_if_search_term_is_not_provided()
+{
+    var sut = new VacationDestinationService();
+    sut.FindDestinationsByRegion(string.Empty).Count();
+}</pre>
+<p>Note the extra call to Count() at the end of the second line. Now we are not only retrieving the results, we are iterating over them. This test passes.</p>
+<p>So what is the big picture? Is the code wrong or my tests? Assuming I *do* want to throw an exception if the argument is wrong, is the code correct? What if someone provides an empty string to this method and never iterates over the collection? Apparently, this method won't fail in that case, but that may not be a bad thing. Or it could be because then we have code that's kind of useless.</p>
+<p>It seems to me that the test should be modified to cause the iteration to happen and force the exception. If someone wants to call this method without iterating, I see no problem with that. I don't think.</p>
+<p>Another thing I did was to replace the yield and return the List<string> itself. This worked too but I don't like the idea of modifying my code for what appears to be a faulty test.</string></p>
+<p>Was expecting to have formed an opinion by now but it's still kind of fuzzy. I'll let it sit for a while and perhaps a solution will present itself to me in the form of a better developer fixing it.</p>
+<p>Kyle the Iterative</p>

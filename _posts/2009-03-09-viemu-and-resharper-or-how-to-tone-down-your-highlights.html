@@ -1,0 +1,44 @@
+---
+layout: post
+title: ViEmu and ReSharper, or “How to tone down your highlights”
+date: 2009-03-09 02:34:14.000000000 -04:00
+categories: []
+tags:
+- Hardware
+- ReSharper
+- Tools
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '368725719'
+  pvc_views: '1444'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Let it not be said the RSI is all fun and games. The hillbilly has just realized that he can legally date someone half his age and while that might open up a world of possibilities within his family tree alone, it also means he’s getting elderly.</p>
+<p>One of the symptoms is a nice dull ache above my right elbow. I’m attributing it to one or more of three factors:</p>
+<ul>
+<li>Having to reach over both the cursor key cluster and the numeric keypad whenever I need to reach for my mouse </li>
+<li>My wrists twisting at odd angles on the keyboard </li>
+<li>My constant habit of wh---....actually let’s leave it at two reasons </li>
+</ul>
+<p>My current keyboard is the <a href="http://www.apple.com/keyboard/">standard Apple one</a> (the wired one) which I picked up within a week of receiving my new desktop. The stock Dell one is not unlike a Speak N Spell when it comes to typing, the most egregious failure being the funky home key cluster. I’m not sure when they switched from the standard 2 x 3 to a 3 x 2 but I have to wonder what the thinking is behind such a switch. My own fault I guess for shelling out three large without putting any thought into my primary interface for the thing.</p>
+<p><a href="http://www.kinesis-ergo.com/advantage.htm">Its replacement</a> is on its way based on the recommendation of someone whose opinion I respect highly and whose state of mental well-being is frighteningly similar to my own. Which is the only reason I shell out that much sight unseen, especially in a country not generally known for its excellent warranty service.</p>
+<p>In the meantime, I giving another college try to various vim incarnations, particularly <a href="http://vimperator.org/trac/wiki/Vimperator">Vimperator</a> and <a href="http://www.viemu.com/">ViEmu</a>. I tried both (and vim itself) for about a month some time ago and just couldn’t get into it. These days, I’m doing a lot more hard-core coding and have a more vested interested in getting off the mouse. Surprisingly, it wasn’t as hard as I thought to get back into the saddle, at least for the basic navigation commands.</p>
+<p>Anyway, on to the real reason I called you all here today.</p>
+<p>ViEmu and ReSharper are not quite best friends yet. They’re tolerant of each other and try to stay out of each others’ way but I hit some issues after installing ViEmu. There may be more incompatibilities but I ran into two before negotiating a detente ‘twixt the two:</p>
+<ul>
+<li>Shift-Alt-L no longer works (R# shortcut for opening Solution Explorer with the current file highlighted) </li>
+<li>In Fonts and Colors, the ReSharper options disappeared under the Text Editor settings. </li>
+</ul>
+<p>The second caused some issues because in my fit of re-ergonomics, I’m also trying out a light-on-dark Visual Studio theme again after also discarding that some years ago. I’ve also got the <a href="http://stevenharman.net/blog/archive/2008/05/16/visual-studio-usability-tip-highlight-current-line.aspx">Highlight Current Line</a> option turned on in ReSharper and if you don’t have the ReSharper Current Line option listed in Fonts and Colors, the default is a very bright and very unintelligible white.</p>
+<p>The issue seems to be the order in which things are installed. I had installed ReSharper first, then ViEmu. I also uninstalled both, then re-installed them in the same order. But before installing ViEmu, I verified that Highlight Current Line worked as expected. After installing ViEmu, I was back to a veritable blank line for my highlighted row.</p>
+<p>Next, I uninstalled both and installed ViEmu first, followed by ReSharper and all appears right with the worl—...well, let’s not get carried away. I’ve got Visual Studio working the way I want is all.</p>
+<p>Kyle the Mediator</p>

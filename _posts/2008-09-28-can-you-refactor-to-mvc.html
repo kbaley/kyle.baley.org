@@ -1,0 +1,35 @@
+---
+layout: post
+title: Can you refactor to MVC?
+date: 2008-09-28 13:27:01.000000000 -04:00
+categories: []
+tags:
+- ASP.NET MVC
+- Brownfield
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1179'
+  dsq_thread_id: '363254400'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Not feeling too subtle today so I've given the punchline away in the title here. After wandering neck-deep into <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/09/10/mvc-vs-mvp-a-hillbilly-s-journey.aspx" target="_blank">MVP and MVC</a>, I'm now thinking about refactoring brownfield applications toward them. And it occurred to me: is it reasonable to refactor to MVC? Then, is it feasible? Then, is it even possible?</p>
+<p>I've <strike>built</strike> started three or four MVC applications and love the framework for greenfield apps. But assuming you have a nice, healthy (and I'm using the definition &quot;of great size&quot;) web application, would you go through the exercise of converting it to MVC?</p>
+<p>Here are some reasons why I wouldn't.</p>
+<p>First and foremost, your URLs will change. Instead of http://myapp/ProductList.aspx, you have http://myapp/Products/List. Depending on the size of the app, I'm not sure I'd trust a global search and replace for that. Besides which, I'd rather be using one of the helper methods to generate the URLs in MVC.</p>
+<p>Granted, you might be able to get around this with some combination of HttpHandler or HttpModule. Whether or not there is enough benefit to be gained from MVC to go through this exercise probably depends on the size of the app, your deadlines, and just how much blogging material you want to generate.</p>
+<p>This segues into my next point. Unless you plan to refactor every page all at once, you need a way to have WebForms pages sitting along side MVC pages. Which means you need to be able to navigate directly to some .aspx pages in some cases, and to controller actions in others. This might be possible in the same project but it makes my head hurt thinking about it. You'll be giving the routing engine a hernia with all the heavy lifting it would have to do. Either that or, again, implement your own HttpModule before the routing module in the pipeline.</p>
+<p>Alternatively, you'd create a second web project, an MVC one, and move your UI over to it over the span of many moons. Your URLs will <em>really</em> get messed up as you'll be essentially working in two separate web applications.</p>
+<p>All of this presumes your logic is separated enough to withstand such a change. When talking about refactoring to layers in the <a href="http://www.manning.com/baley" target="_blank">brownfield book</a>, we recommend doing so incrementally. That is, start by creating a seam and move all the code into it leaving a little bit behind in the UI. Then repeat for the big bulk of code you moved all the way down the line to the data access. (There, now you don't have to read Chapter 8.)</p>
+<p>Refactoring to MVC feels like this would be hard to do. Mind you, it shouldn't really be any harder than refactoring to MVP. Maybe just feels that way because of the brownfieldedness of the apps I have swirling in my head. (Full disclosure: many of which I contributed to.)</p>
+<p>Speaking of MVP, one of the main reasons I think this is too much work is because MVP is such a reasonable alternative. Maybe not 100% idea, but it's a very viable compromise. On the one hand, yes, you still have to deal with the ViewState and the ASP.NET Pipeline and all the happiness that comes from trying to separate concerns in a real application as opposed to the contrived examples in books and blogs that make it look so easy. On the other hand, it's less work to attain and in the end, you'll end up with a more maintainable application.</p>
+<p>So after all this windage about why I wouldn't refactor to MVC...has anyone...y'know...tried it?</p>
+<p>Kyle the Armchair Refactorer</p>

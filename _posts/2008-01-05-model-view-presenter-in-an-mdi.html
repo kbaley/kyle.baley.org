@@ -1,0 +1,41 @@
+---
+layout: post
+title: Model-View-Presenter in an MDI
+date: 2008-01-05 15:48:16.000000000 -05:00
+categories: []
+tags:
+- Brownfield
+- Refactoring
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1571'
+  dsq_thread_id: '356505137'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The &quot;How to&quot; is gone from the title to be resurrected at appropriate intervals. In my <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/01/04/monitoring-code-coverage-or-quot-how-to-descend-into-madness-quot.aspx" target="_blank">last post</a>, it was brought up in the comments that it was, and I quote, &quot;naff&quot;. Wikipedia helped me with a <a href="http://en.wikipedia.org/wiki/Naff" target="_blank">definition</a> which confused me a little because &quot;cheesy&quot; and &quot;tacky&quot; were the exact adjectives I had in mind when I started using the device some <a href="http://kyle.baley.org/SubversionOrQuotHowILearnedToAlmostCareAboutSourceControlquot.aspx" target="_blank">eight months ago</a> in a fit of Kubrick-love (and looking over that link: yoy, I gotta stop writing my thoughts down).</p>
+<p>No matter, the Hillbilly is nothing if not easily swayed by anonymous commenters. So the &quot;How to&quot; will be limited to posts on Guerrilla Factoring and Code Coverage Nazis and the like. Back to the show!</p>
+<p>The topic of the day is MVP and/or MVC within an MDI application and the blog will act more as a sounding board this time around because I'm having trouble putting my thoughts into something concrete I can type. It probably could also apply to a master form that uses MVP/MVC and which contains several user controls that use the same pattern. If it does, that's not my fault.</p>
+<p>Here's the scenario: The main container form has a menu item that says Open which will open the currently selected item as an MDI child. And ummm....I suppose that's it really now that I think about it.</p>
+<div style="border-right: #666666 1px solid; padding-right: 0.5em; border-top: #666666 1px solid; padding-left: 0.5em; font-size: 8pt; float: right; padding-bottom: 0.5em; margin: 0.5em; border-left: #666666 1px solid; width: 200px; padding-top: 0.5em; border-bottom: #666666 1px solid; background-color: #dddddd">
+<p style="font-weight: bold">Off topic</p>
+<p>If anyone needs further proof that comments tend to end up as distracting noise, consider the following comment lifted directly from one of our classes:</p>
+<p><font face="Courier New">//Ajouter le dernier &#233;lement ou le premier si aucun AND/OR</font></p>
+<p>Semi-related suggestion: If you're going to cut and paste code from the web, consider translating the exceptions into the users' first language.</p>
+</p></div>
+<p>At the moment, both the main form and the child forms are <strike>monolithic hydra-like beasts</strike> forms that contain all presentation logic and a good chunk of business logic. And so, being a diligent hillbilly, I'm adding a presenter to the main form. Clicking on Open passes the call on to the presenter. Which does....?</p>
+<p>My first reaction was that it would create the child forms (which I'll call Estimates, mostly because that's what they are) and maintain them. This would be the easiest implementation because it would involve cutting and pasting code without thinking about it too much. But it feels funky to be manipulating Windows.Form objects in a presenter. Plus how would one interact with them? If I wanted to, for example, save an Estimate, would I need to call a Save method on the Estimate view which would delegate to its presenter? Or do I maintain a list of Estimate presenters instead and make the calls directly on them? And so on, and so forth.</p>
+<p>Then I took a step back (tripping over the sofa) and thought &quot;what's the model here?&quot; The main form is generally just a window manager, I think, and its model should reflect that. So rather than having the presenter do all the form management, it should delegate to a WindowManager. Which sounds to me like it would be a UI-based model but a model nonetheless.</p>
+<p><a href="http://codebetter.com/blogs/jeremy.miller/default.aspx" target="_blank">Jeremy Miller</a>'s <a href="http://storyteller.tigris.org/" target="_blank">StoryTeller</a> has a similar UI metaphor (hierarchical view on the left, tabs on the right) and provided some guidance in this regard. It threw me at first with the main form being a mere 68 lines long (compared with ours at 2344 lines). In it, he passes everything off to an ApplicationController, which is managed through his hierarchical view. The ApplicationController has all necessary dependencies injected into it and it handles opening screens, mostly by delegating them on to the panel that is going to house them.</p>
+<p>This kind of jibes with the conclusion I had eventually come to above. And this post was a couple of days in the making so don't be assumin' all of this is off the top of my head.</p>
+<p>So in summary: The model for the main form of an MDI application is a window manager/controller that knows how to open other windows.</p>
+<p>Thanks for listenin' and if the end result makes me look good, I'll come back and let you know how it turned out.</p>
+<p>Kyle the Round-about</p>

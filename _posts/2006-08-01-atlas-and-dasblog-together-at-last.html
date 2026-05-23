@@ -1,0 +1,29 @@
+---
+layout: post
+title: Atlas and dasBlog, together at last!
+date: 2006-08-01 02:37:14.000000000 -04:00
+categories:
+- dasBlog
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '912'
+  dsq_thread_id: '362993834'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Last entry today, I promise. And I'll try not to switch topics so fast. Sorry if I'm giving you whiplash.</p>
+<p>If you take a look at the search box at the top, you'll see the <a href="http://atlas.asp.net/atlastoolkit/TextBoxWatermark/TextBoxWatermark.aspx">TextBoxWatermark</a> Atlas control in action. Tell me it's not glorious!</p>
+<p>But to get it to work, I had to rip out the compression module from the web.config. Try as I might, I couldn't configure it to leave the WebResource.axd file alone. I used <a href="http://www.fiddlertool.com/fiddler/">Fiddler</a> to monitor the traffic and every time WebResource.axd appeared, I saw content-encoding: gzip and X-Compressed-By: HttpCompress. Yes, I have WebResource.axd in my &lt;excludePaths&gt; for the module. Not sure why it's happening on my server and not locally.</p>
+<p>So here I am with pages flying around uncompressed. I feel like it's 1998 again.</p>
+<p>Next step will be to try and get some other extenders incorporated. As I alluded to in a previous post, this won't be easy. Whereas the search box is nicely contained in an .ascx UserControl, the other controls are all WebControls. Which means creating the Atlas controls programmatically.</p>
+<p>In the meantime, I have been seriously neglecting <a href="http://www.2kgames.com/pirates/pirates/home.php">Sid Meier's Pirates!</a> these last few days so I'm off to find some buried treasure.</p>

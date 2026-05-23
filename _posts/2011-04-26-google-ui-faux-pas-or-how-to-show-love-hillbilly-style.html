@@ -1,0 +1,47 @@
+---
+layout: post
+title: Google UI Faux Pas, or “How to show love, Hillbilly-style”
+date: 2011-04-26 02:46:34.000000000 -04:00
+categories: []
+tags:
+- Code review
+- Google App Engine
+- GWT
+- User Interface
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '4152'
+  dsq_thread_id: '349718612'
+  _edit_last: '1'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><strong>Executive Summary: </strong>Google doesn’t always get things right.</p>
+<p>To make my transformation from Microsoft lackey to Google stooge complete, <a href="http://www.bookedin.net" target="_blank">BookedIN</a> is going to Google IO this year. And thanks to developer extraordinaire, <a href="http://twitter.com/#!/PhilBeaudoin" target="_blank">Philippe Beaudoin</a>, we’ve even got a spot on the <a href="http://www.google.com/events/io/2011/sandbox.html#bookedin-online-scheduling" target="_blank">developer sandbox</a>. Kind of odd that after all my years in .NET, the first time I’ll meet anyone from <a href="http://jetbrains.com">JetBrains</a> is at a Google conference. Which is good because now I can go to their booth every ten minutes and ask if they’ve finished TeamCity 6.5 yet. (Note to the JetBrains booth babes: If you’re thinking of thwarting my plan by releasing 6.5 before IO, I have a backup plan: My own personal list of feature requests.)</p>
+<p>So I’m showing my gratitude to Google by talking about some recent changes to their Google Apps and their forums and, in particular, how much they suck. This isn’t me being all wishy-washy “well, maybe I’m doing something wrong” or “I’m sure they have their reasons”. I feel so strongly that there’s something seriously wrong with what Google’s done to the UI here, that I’m willing to bore each and every one of you about it.</p>
+<p>The first change: Google Apps accounts are now being <a href="http://www.google.com/support/a/bin/answer.py?hl=en&amp;answer=182075">transitioned</a> into a sort of single sign-on thing whereby users can use their accounts to access more Google services. Sometime this year, everyone will be transitioned whether they want to or not. And it means for many services, you can use your Google Apps account to access a bunch of services rather than having to create a generic Google account (i.e. one with @gmail.com).</p>
+<p>I’ve been running my family’s email, calendar, roadkill recipe site, etc, on Google Apps for some years now and have no complaints. So I transitioned my own account early. I was minorly distressed by the note saying I have one conflicting user. Not because of the conflict, mind you, but because they give no indication who the user in conflict is. I mean, this is my family. If one of them is in conflict, I feel it is my Deity-given right to butt in and make a mess of things for that person. But alas, all I know is only that someone in my family is conflicted. <a href="http://www.baley.org/Stories/SemenScandal.aspx">Good</a> <a href="http://www.baley.org/Stories/JCrowPart1.aspx">luck</a> <a href="http://www.baley.org/Stories/ComputerSaddam.aspx">narrowing</a> that <a href="http://www.baley.org/Stories/InvestigativeReport.aspx">down</a>.</p>
+<p><a href="http://baley.org/content/binary/Windows-Live-Writer/046aff4a50aa_EB27/Transition%20Users_2.png"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: inline; padding-top: 0px; border-style: initial; border-color: initial; border-image: initial; border-width: 0px;" title="Transition Users" src="/assets/Transition%20Users_thumb.png" alt="Note the classy use of &quot;1 users&quot; in the text" border="0" /></a></p>
+<p>But that’s not what I came here to complain about.<a href="http://baley.org/content/binary/Windows-Live-Writer/046aff4a50aa_EB27/Google%20sign%20in_4.png"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: inline; padding-top: 0px; border-style: initial; border-color: initial; border-image: initial; border-width: 0px; margin: 5px;" title="Google sign in" src="/assets/Google%20sign%20in_thumb_1.png" alt="Google sign in" align="right" border="0" /></a></p>
+<p>At my <a href="http://www.bookedin.net">startup</a>, we also use Google Apps. In addition, we use <a href="http://code.google.com/appengine/">AppEngine</a>, <a href="http://code.google.com/webtoolkit/">GWT</a>, and <a href="http://code.google.com/p/rietveld/">Rietveld</a>, all awesome tools and all wanting to know who you are to varying degrees. At this point, I shall point out that all of these tools (including the email management piece) are free, or close enough to it that this whole post could come across as ungrateful. You’re probably right but I wouldn’t be a software developer if I didn’t come with a healthy dose of self-entitlement.</p>
+<p>Rietveld, so far, has been a nice citizen. I’ve had no issue with it. Install is almost non-existent through the Google Apps console. Logging in and out plays nice with other Google Apps. Once again, I can not <a href="http://baley.org/content/binary/Windows-Live-Writer/046aff4a50aa_EB27/Proper%20Sign-in_4.png"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: inline; padding-top: 0px; border-style: initial; border-color: initial; border-image: initial; border-width: 0px; margin: 5px;" title="Proper Sign-in" src="/assets/Proper%20Sign-in_thumb_1.png" alt="Proper Sign-in" align="left" border="0" /></a>recommend <a href="http://codebetter.com/kylebaley/2010/06/22/rietveld-update-or-how-to-make-code-reviews-fun-without-canceling-them/">this tool enough</a>. It’s free. It works for SVN, Git, and Hg. If you use Google Apps, it installs easily for private codebases (not just OSS). Let me pause for a moment and step out of character so as to give weight to my next statement:</p>
+<blockquote><p>Use it.</p></blockquote>
+<p>Then there’s AppEngine. I often have to access the AppEngine console. And I do that with my company email address. But my email session is almost always using my personal email address. If I log into the AppEngine console from the generic login page (see right), inevitably I will be signed out of my email.</p>
+<p>This was annoying until I discovered a workaround. <em>Always</em> sign into Google AppEngine using the URL: http://appengine.google.com/a/&lt;domain name&gt;. This gives a slightly different login page (at left). Both pages take you to the same place but the second one has the advantage of leaving the rest of my Google apps alone.</p>
+<h3 style="clear: both;">Google Forums</h3>
+<p>Because there’s a workaround, this doesn’t annoy me too much. The faux pas that led to this post happened when I tried to access either the GWT or the AppEngine forums. Once upon a time (i.e. a year ago), they were proper Google Groups. Now, they are Google Forums which, as far as I can tell, is the same information but with twice the scrollbars:</p>
+<p><a href="http://baley.org/content/binary/Windows-Live-Writer/046aff4a50aa_EB27/Scrolling_2.png"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: inline; padding-top: 0px; border-style: initial; border-color: initial; border-image: initial; border-width: 0px;" title="Scrolling" src="/assets/Scrolling_thumb.png" alt="Scrolling" border="0" /></a></p>
+<p>Again, this isn’t the punchline yet. That actually comes when I want to post a question to the forum. AppEngine has several forums and I suppose each one is shown with a different widget initially because when it can’t quite figure out who I am, I’m faced with this:</p>
+<p><a href="http://baley.org/content/binary/Windows-Live-Writer/046aff4a50aa_EB27/SuckyAccountHandling_2.png"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: inline; padding-top: 0px; border-style: initial; border-color: initial; border-image: initial; border-width: 0px;" title="SuckyAccountHandling" src="/assets/SuckyAccountHandling_thumb.png" alt="SuckyAccountHandling" border="0" /></a></p>
+<p>Screen real estate and my own good sense prevents me from showing the bottom of this page but the important piece of information is: there’s no button on it. I.e. After selecting your account there is no <em>obvious</em> way to tell the page to use it. Instead each widget is showing a Submit button. You have to select the text and drag down to see it. Some HTML magic to hide the internal scrollbars for each DIV, I suspect.</p>
+<p>Now even all of this wasn’t enough to sour my mood. All of these images have been sitting in my Humorous Anecdotes folder for a post a lot lighter in tone but still making the underlying point which is: this all sucks. The final UI excrement that had me looking through all of <a href="http://www.google.com/search?sourceid=chrome&amp;ie=UTF-8&amp;q=%22code+review%22+site%3Aayende.com%2Fblog">Oren’s posts labelled Code Review</a> for inspiration on how to word things was this:</p>
+<p><a href="http://baley.org/content/binary/Windows-Live-Writer/046aff4a50aa_EB27/Nested%20crap_2.png"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: inline; padding-top: 0px; border-style: initial; border-color: initial; border-image: initial; border-width: 0px;" title="Nested crap" src="/assets/Nested%20crap_thumb.png" alt="Nested crap" border="0" /></a></p>
+<p>Kyle the Nested</p>

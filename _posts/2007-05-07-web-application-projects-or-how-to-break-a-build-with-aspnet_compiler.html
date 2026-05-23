@@ -1,0 +1,38 @@
+---
+layout: post
+title: Web Application Projects, or "How to Break a Build With aspnet_compiler"
+date: 2007-05-07 21:01:50.000000000 -04:00
+categories: []
+tags:
+- ".NET"
+- BDD/TDD
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1285'
+  dsq_thread_id: '355649272'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Apologies in advance if I've misspelled aspnet_compiler as aspnet_compilter anywhere in this post. For the life of me, I can't figure out why my fingers always want to add that 't'.</p>
+<p>Interesting little quirk. Many moons ago, I installed Scott Guthrie et al's <a href="http://webproject.scottgu.com/" target="_blank">Web Application Project</a>, probably because I needed to for dasBlog to compile. Since then, I've kind of ignored it in my project list.</p>
+<p>Today I <a href="http://www.hanselman.com/blog/ProgrammersKeepYourWitsAboutYouAndCodeMindfully.aspx" target="_blank">absent-mindedly</a> added one to my solution thinking it was a regular VS2005 Website and I received errors in the build step that used aspnet_compiler to precompile the app: Could not load type 'SampleWebPage.aspx.cs'.</p>
+<p>I set up debugging this already knowing in the back of my mind that it probably had something to do with the type of web project it was. My first clue was that when I built the web project in Visual Studio itself, it was compiled using csc:</p>
+<p><a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/WebApplicationProjectsorHowtoBreakaBuild_EF53/CSC-WebApp-Output%5B1%5D.png" atomicselection="true"><img style="border-right: 0px; border-top: 0px; border-left: 0px; border-bottom: 0px" height="79" src="/assets/CSC-WebApp-Output.png" width="240" border="0" /></a> </p>
+<p>Whereas the output for a Web Site build is as follows:</p>
+<p><a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/WebApplicationProjectsorHowtoBreakaBuild_EF53/CSC-WebSite-Output%5B1%5D.png" atomicselection="true"><img style="border-right: 0px; border-top: 0px; border-left: 0px; border-bottom: 0px" height="88" src="/assets/CSC-WebSite-Output.png" width="240" border="0" /></a> </p>
+<p>The other hint was the property pages. For a Web Application Project, you get property pages that look like they do for a class library or WinForms app:</p>
+<p><a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/WebApplicationProjectsorHowtoBreakaBuild_EF53/CSC-WebApp-Properties%5B3%5D.png" atomicselection="true"><img style="border-right: 0px; border-top: 0px; border-left: 0px; border-bottom: 0px" height="135" src="/assets/CSC-WebApp-Properties%5B2%5D.png" width="240" border="0" /></a> </p>
+<p>For a Web Site:</p>
+<p><a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/WebApplicationProjectsorHowtoBreakaBuild_EF53/CSC-WebSite-Properties%5B1%5D.png" atomicselection="true"><img style="border-right: 0px; border-top: 0px; border-left: 0px; border-bottom: 0px" height="137" src="/assets/CSC-WebSite-Properties.png" width="240" border="0" /></a> </p>
+<p>Plus they're called different things in the right-click menu (Properties vs. Property Pages).</p>
+<p>Finally, there's the actual error message itself. Web Applications Projects, of course,&nbsp;use an explicit namespace, Web Sites do not. And the big ol' honkin' namespace declaration at the top of the class was a pretty solid indication that this ain't no VS2005 Web Site.</p>
+<p>So the choices were pretty obvious: modify the build to accommodate the Web Application Project or use a Web Site. I chose two as the path of least resistance since I had but one (incomplete) page in it.</p>
+<p>Kyle the Rebuilt</p>

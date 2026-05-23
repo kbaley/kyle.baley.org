@@ -1,0 +1,27 @@
+---
+layout: post
+title: Muzak Discourages Loitering Teen Thugs
+date: 2006-05-29 02:41:00.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '636'
+  dsq_thread_id: '362996376'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The Atlas UpdatePanel is amazing. I've been enamored pretty much since I saw my <a href="http://weblogs.asp.net/scottgu/archive/2006/01/01/434314.aspx">first demo</a> on it. This isn't like the demos you've seen on ASP.NET 1.0 dealing with DataConnections and DataAdapters. You know the ones: they'd drop a connection, an adapter and a dataset on the page, wire them all up and say, "Look how easy!". The problem there is that no one outside of a student facing a serious deadline would build their applications like that.</p>
+<p>But the UpdatePanel not only makes a great demo, it is genuinely a better way to add AJAX to your applications. There is such little effort required to get a whole lot of benefit.</p>
+<p>The idea behind the UpdatePanel is that you wrap it around existing pieces of your page, set it to trigger on certain events and....well, that's it. Atlas takes care of the details: loading the XMLHTTP object, setting up the asynchronous call, ensuring the readystate is set to 4, checking the status of the request, etc, etc. No changes to the code-behind required. No decorating your web services. No special Atlas versions of the ASP.NET controls.</p>
+<p>In a <a href="http://kyle.baley.org/archive/2006/05/14/390.aspx">previous post</a> on the subject, I claimed it would be useful mostly for converting existing applications to use AJAX. I'm backtracking now. It is still great for that purpose. But I have no problem recommending it for new applications either. Two main reasons for using AJAX is to make your application more responsive (or, more importantly, making it APPEAR more responsive) and to reduce the network traffic that comes with regenerating an entire page which each postback. The UpdatePanel accomplishes both of these objectives. Yes, you have more control and can get greater bandwidth savings doing it yourself. But balance that with the cost of a developer's time to develop it (and for someone to maintain it).</p>
+<p>Incidentally, I've also <a href="http://www.ben-rush.net/blog/PermaLink,guid,9cf1bffa-8398-4f52-89cb-a8d0f8697124.aspx">learned</a> that it is the Atlas ScriptManager that ensures only the delta comes back from the server. Apparently, it overrides the Page's Render method. Why can't I think of these things?</p>

@@ -1,0 +1,33 @@
+---
+layout: post
+title: Settings in VS2005
+date: 2006-12-02 14:04:49.000000000 -05:00
+categories: []
+tags:
+- ".NET"
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '949'
+  dsq_thread_id: '355813286'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Minor config issues this morning that warrant discussion. I had imported Scott Hanselman's <a href="http://www.hanselman.com/blog/ShortMyVisualStudioColorSettings.aspx" target="_blank">font and colour settings</a> because I wanted to see what all the fuss was about with coding on a terminal. Thanks, Scott, for providing those because I wouldn't have had the patience to go through the settings myself.</p>
+<p>Initial thoughts on that before continuing. The light on dark thing is kinda cool. Not entirely sure it's easier than dark on light because it's a little jarring whenever I switch to VS from every other application I work with. Still need to do some tweaking of the <a href="http://www.jetbrains.com/resharper/" target="_blank">ReSharper</a> settings but I'll keep it like this for a while. I do find that I'm able to work in a smaller font comfortably, though. And I can't believe I waited this long before&nbsp;discovering Shift+Alt+Enter = Full Screen (which is MUCH easier to use after coming across Steven Rockart's <a href="http://www.stevenrockarts.com/blog/PermaLink,guid,e06c184a-c560-43ad-aa6d-c03d9835b0a0.aspx" target="_blank">list of shortcuts</a>).</p>
+<p>Next: The Inconsolata font. That lasted about fourteen seconds. Judging from the comments on the <a href="http://www.hanselman.com/blog/InSearchOfThePerfectMonospacedProgrammersFontInconsolata.aspx" target="_blank">page where I discovered it</a>, I am apparently the only one who notices&nbsp;the little pixel sticking out along the bottom of the a's, e's, o's, etc. It's even more noticeable as you make the font smaller.</p>
+<p>Not sure why that was the first thing that jumped out at me because I'm not generally that observant. But once I noticed it, I couldn't focus on anything else. Still, it looks like the font is a work in progress. I'll monitor the progress but for now, I'll stick with Consolas.</p>
+<p>Start of my configuration issues: The first time I compiled a project with the new settings, the output window (which *really* looks weird with light on dark) spewed gibberish. Can't quite explain that and I'm afraid I didn't take a screenshot but trust me. It wasn't even a proper language.</p>
+<p>Weird thing: I cut and pasted to Notepad and it was fine. So I changed the font settings for the output window to Consolas (it was set at Inconsolata) and the problem went away. Switched the font back to Inconsolata (curiosity, y'know) and the problem didn't return. Hence, I can't be more specific than: it was gibberish.</p>
+<p>Next problem: My toolbox icons. They were all replaced to one of two icons. The first was the usual icon you see for controls that are in your project. The second, more prevalent one was an icon I have never seen before. Again, no screenshot because frankly, I was more concerned with fixing the problem than entertaining you people with pretty pictures.</p>
+<p>Solution: Export my settings, then re-import them. I've heard tell that resetting your toolbox will do the same but I've added a vatload of the DexExpress editors and didn't much feel like redoing it. Re-importing worked except...</p>
+<p>A few ReSharper shortcut keys couldn't be rebound. Looks like the ones that overrode existing Global shortcuts. Solution: Re-install ReSharper (assuming you haven't customized your ReSharper shortcuts).</p>
+<p>So I'm back to where I was yesterday but a little wiser and a little darker.</p>
+<p>Moo</p>

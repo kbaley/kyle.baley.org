@@ -1,0 +1,36 @@
+---
+layout: post
+title: Defect culture, or “How to broach quality”
+date: 2010-04-28 02:59:49.000000000 -04:00
+categories: []
+tags:
+- Brownfield
+- Conscientious Coding
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '411191222'
+  pvc_views: '1166'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>My marketing skillz aren’t the greatest. Which is probably why two of my three <a href="http://manning.com/baley">favorite sections of Brownfield Application Development in .NET</a> are available free. The one that isn’t is chapter 1 which I like because it opens with a sample brownfield scenario. It was the place where <a href="http://igloocoder.com">Donald</a> and I could be most creative. <a href="http://codebetter.com/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/kyle.baley/Welcome-to-Twilight-Stars.zip">I’ve attached my own homegrown excerpt</a> from that chapter but I’m not entirely sure what the official procedure is for doing that so grab it before I get in trouble.</p>
+<p>The second section I’m proud of wasn’t written by us. It’s the <a href="http://manning.com/baley/excerpt_foreword.html">foreword</a> by <a href="http://laribee.com">David Laribee</a>. He was our first choice to write the foreword for a few reasons. First, he was there at the beginning providing encouragement to write the book in the first place. Second, his writing style jibes with ours. And third, we knew he’d make us look good. That third reason is why I’m proud of it because he came through in spades.</p>
+<p>The third part I like is pretty much all of chapter 6 which is freely available on the book’s site. It’s unassumingly titled “Defect management” which sounds about as exciting as a discussion on Russia’s economic policy. Well, it turns out <a href="http://www.youtube.com/watch?v=83tnWFojtcY">Russia’s economic policy can be pretty entertaining</a> when you look at it from the right angle.<img style="display: inline; margin-left: 0px; margin-right: 0px" align="right" src="/assets/full.jpg" width="349" height="480" /></p>
+<p>As we wrote and re-wrote the chapter, a funny thing happened. A theme emerged. I’d heard of themes before from, y’know, legitimate writers and stuff. It never occurred to me that I might actually create one, however inadvertently.</p>
+<p>We wrote the first draft of the chapter pretty much as you’d expect a chapter on defects to be written. Then we forgot about it until the next pass. By that time, we’d finished the first draft of the book and had a better sense of how the whole thing should flow. And chapter 6, coming as it did at the end of part 1, seemed like a logical place to try our hand at being inspirational.</p>
+<p>In some respects, a brownfield project is defined not only by its defects but by the team’s attitude toward them. A large backlog of defects sends a message to the team: These defects aren’t the most important thing in our workload. Maybe the team (and by team, I mean developers, QA, client, project managers, etc.) had reasons that seemed good at the time when the defects started piling up. New features needed to be pushed out. The defect was going to be addressed after rewriting the UI layer. It was due to a defective third-party web service. But at some point, a prioritization decision was made before the developer started a new task. And unless the developer started picking off defects, the decision was: something else is more important than every single defect in this list.</p>
+<p>There’s a psychological barrier to fixing defects. They’re boring. It’s code we’ve already written and don’t want to look at again. New features are more fun. And more profitable. There’s always the risk that we’ll submit the fix and it’ll come back again and that we’ll be saddled with this defect for the rest of our natural lives. Customers often learn to live with defects so who are they hurting really?</p>
+<p>I’m in the early stages of a start-up and to date, I’ve been the sole developer. In the next month, the development team will triple and today, we had a discussion on team culture. As a solo developer, it’s much easier to be lax when it comes to letting quality slide. After all, who else is looking at the code? Don’t we have *real* deadlines to meet?</p>
+<p>But such is the thinking that leads to brownfield applications and it is *not* something that we are willing to stand for in our greenfield project. We are placing a high priority on code quality. Not because we want to blog about how cool it is to write good code and how superior we feel because of it. But because we believe very strongly that high quality code will save us a boatload of money in the long run in ease of maintenance and flexibility.</p>
+<p>You can see how a discussion on defects can lead to one on culture and the priority you place on quality. I believe in the benefits of TDD and BDD and mocking and IoC containers and OR mappers and all the other things the kids are developing with these days. But what good is all that if, when defects are found, I ignore them? Worse yet, what does that practice tell the two new people coming in, one of whom is a junior developer? Seems a little too hippy-critical for my tastes.</p>
+<p>So while we started out talking defects in chapter 6, these kinds of issues started bubbling to the surface. What type of culture do you want to install in the team? How can you achieve and maintain a zero defect count? How do you place a high priority on quality while maintaining a decent pace on productivity?</p>
+<p>It’s been a while since I re-read the chapter so I hope the answers to some of these questions are in there. But the part I’m proud of most is the fact that we even asked the questions.</p>
+<p>Kyle the Morphed</p>

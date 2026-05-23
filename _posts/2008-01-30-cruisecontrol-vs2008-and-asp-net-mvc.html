@@ -1,0 +1,50 @@
+---
+layout: post
+title: CruiseControl, VS2008 and ASP.NET MVC
+date: 2008-01-30 16:55:00.000000000 -05:00
+categories: []
+tags:
+- ASP.NET MVC
+- Continuous Integration
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '352104796'
+  pvc_views: '1832'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+
+<p>Everyone who e-mailed me asking about the realities of working down here, I will respond on this blog in the coming days. I need to take a break first and write on a technical topic since those seem to inspire far fewer e-mails for me to respond to.</p>
+<p>Before I do, quick reminder that the South Florida Code Camp is this weekend in Miramar, which is somewhere 'twixt Miami and Fort Lauderdale, I hope. Come check it out. There are twelve, count 'em, TWELVE tracks, including a Spanish one. I will be there in full hillbilly regalia chattin' on MVC, TDD, and Brownfield development. Some awesome looking sessions too. I may duck out of my own MVC talk to see the one on For Love or More Money (which is co-presented by the uncannily-named David Silverlight). Anyway, back to our own little vaudeville here...</p>
+<p>I'm setting up a brand new ASP.NET MVC project and I've created for it a shiny new NAnt build file that performs the following steps, in order:</p>
+<ul>
+<li>Compiles the application </li>
+</ul>
+<p>I want to do this in baby steps, you see. My goal is to get everything into CruiseControl as quickly as possible and for the time being, all I need is to compile the app. After that's done, I'll start adding test projects, test targets, deployment packages, real code, and so on and so forth. But first, CI.</p>
+<p>Harder than one might think, don't you know, and the rest of this post will consist of various error messages and the minor tweaks involved in getting around them.</p>
+<p>Getting the build file to compile the app on my local machine was relatively straightforward thanks, once again, to Jeff Palermo's <a href="http://code.google.com/p/codecampserver/" mce_href="http://code.google.com/p/codecampserver/" target="_blank">CodeCampServer</a> sample project. There was one minor hiccup in that the version of NAnt I had didn't like the 3.5 framework but Jeff already <a href="http://codebetter.com/blogs/jeffrey.palermo/archive/2007/11/28/upgrade-nant-for-use-with-vs2008-solutions-and-net-3-5.aspx" mce_href="http://codebetter.com/blogs/jeffrey.palermo/archive/2007/11/28/upgrade-nant-for-use-with-vs2008-solutions-and-net-3-5.aspx" target="_blank">had that covered</a>.</p>
+<p>So I copy and paste my way through setting up the project on my build server and lo!</p>
+<pre name="code">BUILD FAILED<br /><br />Failed to initialize the 'Microsoft .NET Framework 2.0' (net-2.0) target framework.<br /><br />    Property evaluation failed.<br />Expression: ${path::combine(sdkInstallRoot, 'bin')}</pre>
+<p>Google helps me determine that this has been fixed in the latest nightly build for NAnt. So bada-build-bing, I switch to the uber-latest version of NAnt, check it works locally, check in to Subversion and wait for the build to complete:</p>
+<pre name="code">./Trilogy.Gunton.sln(2): Solution file error MSB5014: File format version <br />is not recognized. MSBuild can only read solution files between versions 7.0 <br />and 9.0, inclusive.<br /><br />External Program Failed: <br />C:WINDOWSMicrosoft.NETFrameworkv2.0.50727msbuild.exe (return code was 1)</pre>
+<p>Fix for this was to read Jeff Palermo's previous post *all* the way through and set the <font face="Courier New">nant.settings.currentframework</font> property to net-3.5 in my build file. Which leads to the next error:</p>
+<pre name="code">C:dataccnetTrilogy.GuntonsrcappTrilogy.Gunton.WebTrilogy.Gunton.Web.csproj(89,11):<br />error MSB4019: The imported project <br />"C:Program FilesMSBuildMicrosoftVisualStudiov9.0WebApplicationsMicrosoft.<br />WebApplication.targets" was not found. Confirm that the path in the &lt;Import&gt; <br />declaration is correct, and that the file exists on disk.<br />External Program Failed: C:WINDOWSMicrosoft.NETFrameworkv3.5msbuild.exe <br />(return code was 1)</pre>
+<p>This was an interesting one in that I found <a href="http://weblogs.asp.net/mnissen/archive/2006/06/19/Building-Web-Application-Projects-with-CCNET.aspx" mce_href="http://weblogs.asp.net/mnissen/archive/2006/06/19/Building-Web-Application-Projects-with-CCNET.aspx" target="_blank">a solution</a> right away but didn't much like it. It says to copy the Microsoft.WebApplications.targets file to your solution directory, then modify your .csproj file directly so that it uses the copied file rather than the one it's expecting in Program Files.</p>
+<p>What I don't like about the solution is that it involves copying a file that might change. Plus, it's seems more than a little subversive. Having said that, the only other solution I found was to install a version of Visual Studio on the build server and blimey, I'm surprised how many people think that's okay. I'll have to pick someone's brain on that because it feels really, really wrong. But I've gotten used to worse.</p>
+<p>Anyway, in the end, I went with copying the targets file to my solution directory. Note: in order to pass the SolutionDir variable to MSBuild from NAnt, as the link suggests, you pass it in through the /p switch. Example:</p>
+<pre class="xml" name="code">&lt;exec program="${framework::get-framework-directory(framework::get-target-framework())}msbuild.exe" 
+    commandline="${solution.file} /t:Rebuild /p:Configuration=Debug;SolutionDir=${current.dir} /v:q" workingdir="." /&gt;</pre>
+<p>After that, it worked!</p>
+<p>OK, that's a lie. The next error was thus:</p>
+<pre name="code">ControllersHomeController.cs(3,18): error CS0234: The type or <br />namespace name 'Mvc' does not exist in the namespace 'System.Web' <br />(are you missing an assembly reference?)</pre>
+<p>This was a fairly easy one. I could either install the ASP.NET Web Extensions CTP on the build server or reference all the relevant assemblies locally. I chose the former because the eventual production server will need to have it installed anyway.</p>
+<p>So here's hoping this string of errors helps a soul as lost as mine.</p>
+<p>Kyle the Cruised</p>

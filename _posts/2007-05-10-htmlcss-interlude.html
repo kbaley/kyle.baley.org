@@ -1,0 +1,32 @@
+---
+layout: post
+title: HTML/CSS Interlude
+date: 2007-05-10 14:37:53.000000000 -04:00
+categories: []
+tags:
+- Web development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '774'
+  dsq_thread_id: '448305287'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>One of the things I've always hated about my otherwise-dashing Coding Hillbilly theme is that there was no easy way to get back to the home page. Normally, it's a pretty easy thing to do. Apply an anchor tag to the text and/or image in the title and away you go.</p>
+<p>Unfortunately, I made a design decision early on that prohibits this. The image you see at the top is actually a background image for a &lt;div&gt;, not an &lt;img&gt; tag. Originally it was an &lt;img&gt;. But when I did that, I noticed the browser would start throwing up horizontal scroll bars when it was resized to be not as wide as the image + the search bar. And while I don't mind forcing users to scroll when the actual text warrants it, I *hate* forcing it just because you're proud of your pretty picture.</p>
+<p>So I made it a background image and lo! I could now resize the screen so that the search bar can overlay that image if a user so desires. But it meant that there is no actual content to which I could apply an &lt;a&gt; tag to get users back to the home page. What to do, what to do.</p>
+<p>Enter my CSS archnemesis: spacer.gif. Oh, how I loathe you and the fact that people still use you for layouts even though you are no longer necessary.</p>
+<p>But you still can be useful. All I need to do is add you to the &lt;div&gt; at the top with an anchor tag and people will click you thinking they are clicking the image!</p>
+<p>So that lasted about ten minutes until I came to my senses. A freakin' transparent gif filling the entire header? Not on my blog, sister.</p>
+<p>The eventual solution: modify the &lt;td&gt; that makes up the left part of the header:</p>
+<p>&lt;td style="cursor:hand;" onclick="location.href='/'"&gt;</p>
+<p>Yeah, Firefox doesn't recognize "cursor" in CSS&nbsp;but it's still better than nothing.</p>
+<p>*UPDATE* Guess I'm showing my age. Firefox does support "cursor" in CSS. Just not cursor: hand. The correct, non-IE-specific version is cursor: pointer.</p>

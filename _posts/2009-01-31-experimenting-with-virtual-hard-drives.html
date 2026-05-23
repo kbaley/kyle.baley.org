@@ -1,0 +1,30 @@
+---
+layout: post
+title: Experimenting with virtual hard drives
+date: 2009-01-31 20:11:35.000000000 -05:00
+categories: []
+tags:
+- Environment
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '577047138'
+  pvc_views: '1103'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Some interesting comments to yesterday's post on working with VMs, enough so that I'm going to free-associate in a follow-up. </p>
+<p>A couple of people reported success with using a second virtual hard drive rather than a shared folder. I did start down the road of separate virtual hard drives for databases and projects. But I found out pretty early that you can't share it between virtual machines. Or rather, if you do share it 'twixt machines, you can't have both of them open at the same time. </p>
+<p>That may not be too big a deal-breaker. At the time, I had visions of using it to store documents, code, and databases on it. <a href="http://www.tqcblog.com/">Tom Clarkson</a> outlined what I think is a better solution. Use a shared drive for documents and store code and databases on virtual drives. </p>
+<p>This scenario will work provided I don't need to share too much among VMs. Which I think will be the case. At the moment, I have only two development VMs, one for coding and one for Livelink. I don't expect there to be any overlap there. </p>
+<p>I know other people that spin up a separate VM for each client they have. I have a base image ready to do that should the need arise but at the moment, I'm trying to keep it simple. If I do need to do that, I suspect there will be considerable overlap in the tools and utilities I use in each one. (Note: And I'd prefer not to store them with the underlying VM itself because they change often as I pick up new tools, update existing ones, and drop others.) But in this case, I don't see the harm in some overlap. Disk space is cheap. </p>
+<p>What I envision then is thus:    <br />- Shared drive for documents, music, videos, etc.     <br />- A separate virtual hard-drive per VM to store code and databases used by that VM. </p>
+<p>Some may claim I should have one drive for code and another for databases. I'm open to that. But at the moment, this already sounds like a lot of overhead. It's easy enough to move files around at a later date. I suppose I won't truly appreciate the effort I'm putting in until my hard drive crashes or I get a new computer.</p>
+<p>Kyle the Optimistic</p>

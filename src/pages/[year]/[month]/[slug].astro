@@ -1,0 +1,25 @@
+---
+import { getArchivePosts } from "../../../lib/archive";
+
+export function getStaticPaths() {
+  return getArchivePosts().map((post) => ({
+    params: { year: post.year, month: post.month, slug: post.slug },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const target = post.archivePath;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Redirecting to {post.title}</title>
+  </head>
+  <body>
+    <p>Redirecting to <a href={target}>{post.title}</a>.</p>
+  </body>
+</html>

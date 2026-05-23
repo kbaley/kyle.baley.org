@@ -1,0 +1,69 @@
+---
+layout: post
+title: Command pattern architecture, or “How to do it a little at a time”
+date: 2010-10-21 03:15:48.000000000 -04:00
+categories: []
+tags:
+- ASP.NET MVC
+- GWT
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1968'
+  dsq_thread_id: '349718645'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>In the comments of <a href="http://codebetter.com/blogs/kyle.baley/archive/2010/09/06/relationships-in-bigtable-or-how-to-put-extra-effort-into-being-lazy.aspx">a recent post</a>, some people pointed out some questionable practices:</p>
+<ul>
+<li>Modifying the data access when I should be modifying the business model </li>
+<li>Using a NoSQL data store when a relational one would be more appropriate for slicing and dicing data </li>
+<li>Changing the business model to accommodate the UI </li>
+</ul>
+<p>Will ignore the second point for now. I’ve <a href="http://codebetter.com/blogs/kyle.baley/archive/2010/02/19/bigtable-concerns-or-how-to-put-your-trust-in-the-cloud.aspx">covered part of the concern</a> already anyway.</p>
+<p>For the other two, it’s worth explaining the architecture that I think Google Web Toolkit encourages.</p>
+<p>Both points mention “business model” and I’ve probably called it that on occasion as well. I’ve never liked using the term because I don’t think I’ve worked on a project that’s done any form of DDD except use repositories. My domain is usually anemic because there isn’t a lot of business logic in a CRUD app. Unless you count the many forms of GetFullName I’ve written on a customer object.</p>
+<p>But now I’m in an app that has real business logic. “Find next available appointment”, for example. Or better yet, “find optimal appointment time” for the ominous “smart scheduling” feature. Seems like a good candidate for a rich domain model. Except that our “domain” is still all DTOs. </p>
+<p>I’m fine with this because it works for our architecture. In a more traditional .NET web app, I would probably define a proper domain model with behaviours and such. On the front end, I’d diligently translate between it and screen-specific DTOs or JSON objects or what-have-you.</p>
+<p>We’re using GWT. It’s *all* JSON. And it’s not even JSON we control. (We could control it but we choose not to and use the built-in GWT RPC translation.) Every single action is an AJAX call launched from a button, or a link, or a drag and drop. Nothing is screen-specific because presenting a single screen is too big a concept. Instead, we replace individual pieces of it as necessary and make individual requests for the corresponding data for those pieces.</p>
+<p>So we’ve adopted an architecture based around what I have been calling (possibly erroneously, so you may want to look it up) the command pattern. This sounds like a grand architectural decision from a big software mucky-much but really, this architecture is nigh impossible to avoid with GWT applications. The implementation is courtesy of <a href="http://code.google.com/p/gwt-platform/">gwt-platform</a>, which also handles our MVP structure as well. </p>
+<p>Here is a 998-word picture of the process:</p>
+<p>&#160;</p>
+<p><a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/84b4d0c9544c_76FC/image_8.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="/assets/image_thumb_3.png" width="690" height="242" /></a> </p>
+<p>&#160;</p>
+<p>Notice there are no domain objects anywhere. That’s because it’s my diagram and I’ve specifically doctored it so that there are no domain objects.</p>
+<p>I jest, slightly. There are no domain objects because they aren’t interesting. All the real magic happens in the “Process command” step. This is where we examine the data we’ve been given, do some stuff like save to a data store or calculate a person’s likelihood of arrest before the age of 18 or some other piece of logic befitting our “domain”.</p>
+<p>The “data we’ve been given” is the command, which is a fancy word for a specialized DTO. For example, if we want to search for a suitable liquor store, we create a FindClient command and populate the SearchText proper—…whoops, this is Java. I mean we call the setSearchText method. The server matches, through dependency injection, the FindLiquorStore command with the FindLiquorStoreHandler and executes it.</p>
+<p>After doing whatever magic needs to be done, we create a result, which is another specialized DTO. It has a getResults method which returns a list of LiquorStore “domain” objects.</p>
+<p>With this architecture, the domain objects are little more than property bags. All the real work is done in handlers. To summarize the objects used in our “find liquor store” example:</p>
+<table border="0" cellspacing="0" cellpadding="2" width="774">
+<tbody>
+<tr>
+<td valign="top" width="200">FindLiquorStore</td>
+<td valign="top" width="572">Command object. Class name helps determine which handler to run. Property accessors store relevant data needed to execute the command</td>
+</tr>
+<tr>
+<td valign="top" width="200">FindLiquorStoreHandler</td>
+<td valign="top" width="572">Handler that examines the data within the command and does whatever needs to be done with it. Also creates a result object and returns it.</td>
+</tr>
+<tr>
+<td valign="top" width="200">FindLiquorStoreResult</td>
+<td valign="top" width="572">Contains any data that the caller might be interested in after processing the command; in this case, a list of LiquorStore objects</td>
+</tr>
+<tr>
+<td valign="top" width="200">LiquorStore</td>
+<td valign="top" width="572">An “domain” object in the sense that it is called something that a business person might recognize</td>
+</tr>
+</tbody>
+</table>
+<p>Seems a lot of infrastructure but it’s not so far removed from MVC applications where a controller action takes parameters from a query string (or form), process it, then sends a model back to the view. The difference is we don’t do it at the page level with a model that contains a bunch of lookup data as well as the one piece of info we care about (notwithstanding <a href="http://mikehadlow.blogspot.com/2010/10/populating-drop-down-lists-in-aspnet.html">some interesting work in this area</a>).</p>
+<p>This is more in line with the types of apps I’m building more often even using MVC. That is, the page loads with very little actual information on it and each section takes care of its own data. One section might load the client data, another the alcohol consumption stats for the staff, and another the customer satisfaction charts. Each of these would entail a separate AJAX call to a controller action that would likely return a JsonResult (or even more likely, a custom Json result so that I can avoid the serialization issues inherent with the native MVC JsonResult object).</p>
+<p>This probably doesn’t necessarily obviate the need for a full-fledged domain model complete with all the behaviours and other keywords that I have no business pretending I know anything about. You can translate between DTOs and domain objects very easily these days. But given that the sole access to the application is through commands, I’m more inclined to leave everything as DTOs and have the handlers contain all our business logic.</p>
+<p>Kyle the Commandeered</p>

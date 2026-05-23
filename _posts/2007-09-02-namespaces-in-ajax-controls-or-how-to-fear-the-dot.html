@@ -1,0 +1,56 @@
+---
+layout: post
+title: Namespaces in Ajax Controls, or "How to fear the dot"
+date: 2007-09-02 04:51:32.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1627'
+  dsq_thread_id: '355170380'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The <a href="http://asp.net/AJAX/Control-Toolkit/Live/Default.aspx" target="_blank">ASP.NET Ajax Control Toolkit</a> has a hate-on for namespaces, let me tell you. Their <a href="http://asp.net/AJAX/Control-Toolkit/Live/Walkthrough/CreatingNewExtender.aspx" target="_blank">sample</a> works slicker'n a greased hog when you use nice project names like "DisableButton" or "AlertBox". But use a name like "Suvius.DynamicFamilyTreeSorter" and you're in for a world of hurt.</p>
+<p style="border: 1px solid rgb(204, 204, 204); margin: 0.5em 1.25em 0.5em 0.5em; padding: 0.5em; font-size: 9pt; float: left; width: 200px; background-color: rgb(170, 170, 170);">Side note: Call me old-fashioned, but I like having the namespace in my project name. Saves me having to muck with assembly names in the project properties and makes things obvious when I'm staring at a twenty-project solution with four projects named DataAccessLayer. Plus it fosters creativity in naming if the project contains classes from different namespaces.</p>
+<p>So what's a hillbilly to do if they like seeing they're comp'ny name embedded in the control project name? Let's assume you have just created an AJAX Control project with the name "Suvius.DynamicFamilyTreeSorter". Your project will contain three files:</p>
+<ul>
+<li>Suvius.DynamicFamilyTreeSorterBehavior.js  </li>
+<li>Suvius.DynamicFamilyTreeSorterDesigner.cs  </li>
+<li>Suvius.DynamicFamilyTreeSorterExtender.cs</li>
+</ul>
+<p>The first task is to rename each of these files, removing "Suvius." from the beginning of each. After that, here are the steps for the contents of each file:</p>
+<p><strong>DynamicFamilyTreeSorterBehavior.js</strong></p>
+<ul>
+<li>First non-commented line of code: Change the namespace to Suvius  </li>
+<li>Last non-commented line of code: Change the first argument in the call to registerClass to Suvius.DynamicFamilyTreeSorter (i.e. removing the trailing ".Suvius")</li>
+</ul>
+<p><strong>DynamicFamilyTreeSorterDesigner.cs</strong></p>
+<ul>
+<li>Remove "Suvius." from the name of the class  </li>
+<li>Remove "Suvius." from the generic part of the ExtenderControlBaseDesigner&lt;&gt; declaration. This isn't totally necessary but helps keeps things clear</li>
+</ul>
+<p><strong>DynamicFamilyTreeSorterExtender.cs</strong></p>
+<ul>
+<li>Remove "Suvius." from the name of the class  </li>
+<li>Remove "Suvius." from&nbsp;the [Designer] attribute  </li>
+<li>In the [assembly: WebResource] declaration, remove the *second* "Suvius.". I.E. It should read
+<pre class="code">[assembly: <span style="color: rgb(0, 128, 128);">WebResource</span>(<span style="color: rgb(128, 0, 0);">"Suvius.DynamicFamilyTreeSorter.<br />DynamicFamilyTreeSorterBehavior.js"</span>, <span style="color: rgb(128, 0, 0);">"text/javascript"</span>)]</pre>
+<p><a href="http://11011.net/software/vspaste"></a>
+</li>
+<li>In the [ClientScriptResource] attribute, remove the *second* "Suvius." from *both* arguments, similar to the previous step</li>
+</ul>
+<p>For the longest time, I was getting a run-time error: Assemby&nbsp;'yadda yadda'&nbsp;contains a Web resource with name 'Suvius.DynamicFamilyTreeSorter.DynamicFamilyTreeSorterBehavior', but does not contain an embedded resource with name 'Suvius.DynamicFamilyTreeSorter.DynamicFamilyTreeSorterBehaviour.js'. This after I had performed all the steps above. Except renaming the files in the first place.</p>
+<p>So it would appear that WebResource locates files based on their location (replacing slashes with dots). Lesson learned. Or at least documented.</p>
+<p>*EDIT*</p>
+<p>One more step: In DynamicFamilyTreeSorterBehavior.js, replace all instances of Suvius.DynamicFamilyTreeSorterBehavior.Suvius with Suvius.DynamicFamilyTreeSorterBehavior.</p>
+<p>Kyle the Assembled</p>

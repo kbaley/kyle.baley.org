@@ -1,0 +1,34 @@
+---
+layout: post
+title: Max-width in IE
+date: 2006-08-01 01:27:55.000000000 -04:00
+categories:
+- dasBlog
+tags:
+- Web development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '703'
+  dsq_thread_id: '362993878'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I'm no designer but there are a couple of things I know I like. One of them is max-width. On my first attempt at a theme, I fixed the width at 775px. I've never liked doing that because it looks so crappy on my 1600x1200 resolution laptop. By the same token, I'm getting too old to read text that scrolls across that entire screen.</p>
+<p>So what I really want is to say, "expand this as the window expands, but only up to a point." In other words, I want to set a maximum width on my content.</p>
+<p>That's what the max-width CSS property is supposed to do and that's exactly what it does do in Firefox. IE6 doesn't support it but there is a workaround: </p>
+<blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+<p>width: expression( document.body.clientWidth &gt; 990 ? "990px" : "auto" );</p>
+</blockquote>
+<p dir="ltr">Seems IE lets you insert javascript into your CSS which was easier for them to implement than just following the CSS spec...I guess...Whatever, the reason, my theme uses that (plus a little additional ditty to impose a minimum width) and now I get what I want.</p>
+<p dir="ltr">But not without some problems. When I tested it originally in my theme, the maximum width worked in that it wouldn't go past 990px. But it also wouldn't adjust when I made the window smaller than that. In essence, I had a fixed width 990px DIV. But I had seen this working in <a href="http://www.svendofte.com/code/max_width_in_ie/">practice</a> so I couldn't figure out why mine didn't work.</p>
+<p dir="ltr">It wasn't until I removed the DOCTYPE declaration for loose.dtd at the top of my theme that it actually did start working. Weird.</p>
+<p dir="ltr">The only other major thing I wanted to change is the image at the top. I switched it from an explicit &lt;img&gt; to a background-image so that, again, I could make my page more liquid without having scrollbars appear at inopportune moments.</p>
+<p dir="ltr">And it's *$%-ing annoying having to support two browsers again. One of them had better win this war soon...</p>

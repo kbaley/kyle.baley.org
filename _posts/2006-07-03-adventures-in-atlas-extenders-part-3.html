@@ -1,0 +1,33 @@
+---
+layout: post
+title: 'Adventures in Atlas Extenders: Part 3'
+date: 2006-07-03 11:59:00.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '885'
+  dsq_thread_id: '362994896'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Changing the title of the series slightly so as not to confuse Googlers who think that I might actually get a working extender out of this. So to clarify, I'm <em>trying</em> to build an extender and reporting back on my trials and tribulations.</p>
+<p>So on the advice of <a href="http://forums.asp.net/thread/1312734.aspx">Ted Glaza</a>, I tried creating my own Sys.UI.Control within my code. I added the following line to the initialize call for my extender:</p>
+<p class="code">_collapsePanel = <font color="#0000ff">new</font> Sys.UI.Control( _collapsePanelID );</p>
+<p>Re-compile because even though this is javascript, you need to do this with Atlas. Probably something to do with registering it with ScriptManager but I'm not one to dwell on reasons for implementation details, just on implementation details themselves. Load the page and voila!</p>
+<p><img src="/assets/o_displayModeError.jpg" /></p>
+<p>Again this highlights some issues that still remain&nbsp;when working with&nbsp;Atlas. If I choose to debug, I get a page that's too much trouble to screen capture at a decent size and include here. It's a line somewhere in the Atlas javascript that calls the initialize function on my extender. It's clearly the new line causing the error but the debugger doesn't delve deep enough for me to see where.</p>
+<p>There's more. When I try to leave the page, I also get the following:</p>
+<p><img src="/assets/o_exitError.jpg" /></p>
+<p>No idea what to make of that. As you probably suspect, there is no mention of displayMode in any of my code. So how do I track this down? And if I do track this down and it's in Atlas code where I think it is, what do I do about it?</p>
+<p>To be clear, I know the bug is in my code, not in the Atlas code. What I mean by that last question is: If I can even find which line is causing the error, what do I do to fix it?</p>
+<p>Stay tuned, kiddies!</p>

@@ -1,0 +1,36 @@
+---
+layout: post
+title: Excluding WebResource.axd, or "How to initially compress what you want"
+date: 2007-06-05 18:27:46.000000000 -04:00
+categories:
+- dasBlog
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1333'
+  dsq_thread_id: '350404280'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>This is kind of an extension to my <a href="http://kyle.baley.org/BlowerywebAndASPNETAJAXOrQuotHowToMediateTwixtCompressorsquot.aspx">earlier post</a> on Blowery.web and ScriptResource.axd. I've completed the migration to <a href="http://www.dasblog.info" target="_blank">dasBlog</a> 1.9.7-ish (doesn't it look awesome?). Which probably wasn't a wise thing to do since a brand new release version is expected in the next couple of weeks after which time, it looks like I won't need to upgrade the project to ASP.NET 2.0 myself anymore. But <a href="http://www.hanselman.com/blog/DasBlogJune2007Release.aspx" target="_blank">Scott's timing</a> doesn't mesh with my vacation schedule (come June 14, I's be a European Hillbilly for a couple of weeks).</p>
+<p>Tweaking dasBlog to work with the current version of ASP.NET AJAX and the AJAX Toolkit will wait for a future post. For now, I just want to discuss an issue that actually came up the <a href="http://kyle.baley.org/AddingAtlasToDasBlogAlmost.aspx">last time I did this</a> but I didn't look into it in much detail. Essentially, whenever a postback was required (posting a comment, updating the configuration, etc, etc, and so on and so forth), I would get an error that WebForm_PostBackOptions was undefined.</p>
+<p>The most likely reason for this: Something is messed up with your WebResource.axd file. I know not the details of this file but apparently it is required for ASP.NET 2.0 forms to do postbacks. And in fact, it's not actually a file but a file served up by (I think) an HTTP handler.</p>
+<p>So if you get this error, chances are the WebResource.axd file isn't doing its job. Or the HTTP handler isn't do its job and isn't even serving up WebResource.axd. The easy way to check for that is to look at your page source and see if you can find a line like the following:</p>
+<pre>&lt;script<br />   src="/ajaxtoolkit/WebResource.axd?d=cCvonavza7NGh4PxQfj5rw2&amp;amp;t=633135374249468480"<br />   type="text/javascript"&gt;&lt;/script&gt;</pre>
+<p>The path to WebResource.axd will be different of course (this was taken from one of the samples over at <a href="http://ajax.asp.net/ajaxtoolkit">http://ajax.asp.net/ajaxtoolkit</a>). If you can't find that reference, I dunno, try Google to see if you need to register an HTTP handler somewhere. Maybe your ISP doesn't have it in the machine.config. I haven't run into this particular problem.</p>
+<p>The one I *have* hit is when the reference to WebResource.axd does exist but you still get this message. Normally, when you navigate to the path specified by the &lt;script&gt; tag, you'll see a bunch of javascript (with the very first function being WebForm_PostBackOptions, in fact). But if you get this message, you will probably get a blank HTML page when you navigate to WebResource.axd.</p>
+<p>As happened last time, I had to add WebResource.axd to the excluded paths for &lt;blowery.web&gt;. I guess this isn't a file that want compressed (although ScriptResource.axd seems to handle it fine, provided blowery is the only thing compressing it).</p>
+<p>And just like <a href="http://kyle.baley.org/JavascriptReferencesInAtlas.aspx" target="_blank">last time</a>, when I moved it to my server, it didn't work. This time though, I was a little wiser and had more time to kill so I thought I'd try to track it down.</p>
+<p>Turns out you don't exclude WebResource.axd from compression in blowery.web. Rather you need to exclude ebResource.axd. That's not a typo. Here is what my blowery.web section looks like:</p>
+<p>&lt;blowery.web&gt;<br />    &lt;httpCompress preferredAlgorithm="gzip" compressionLevel="high"&gt;<br />        &lt;excludedPaths&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;           &lt;add path="WebResource.axd"/&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;add path="ebResource.axd"/&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/excludedPaths&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;excludedMimeTypes&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;add type="image/jpeg"/&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;add type="image/gif"/&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/excludedMimeTypes&gt;<br />&nbsp;&nbsp;&nbsp; &lt;/httpCompress&gt;<br />&lt;/blowery.web&gt;</p>
+<p>For whatever reason, blowery has code that skips the first letter in its&nbsp;excluded paths. And I can't take <a href="http://www.ventrian.com/Resources/Articles/tabid/213/articleType/ArticleView/articleId/46/Enabling-HTTP-Compression-for-DotNetNuke.aspx" target="_blank">any credit</a> for discovering this.</p>
+<p>So there you have it. I now have a current dasBlog installation with compression turned on. You can tell all your friends about me now.</p>
+<p>Kyle the Decompressed</p>

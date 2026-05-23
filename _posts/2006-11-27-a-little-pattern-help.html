@@ -1,0 +1,32 @@
+---
+layout: post
+title: A little pattern help
+date: 2006-11-27 13:47:12.000000000 -05:00
+categories: []
+tags:
+- ".NET"
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '712'
+  dsq_thread_id: '732450996'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Let's say you're building a wizard to create a project. On the first page, you specify the project name and date. On the second, you select from a list of available tasks the ones you want to apply to the project. On the third page, you enter some more data. And so on and so forth.</p>
+<p>Now let's say you want to edit the list of tasks that apply to the project. We go back to the wizard, remove some tasks, add others, and click Finish.</p>
+<p>To summarize what I would like to accomplish: I want the ability to go back to this wizard, edit the list of tasks, and record only the changes to the database. I.E. I can't use DELETE FROM ProjectTasks WHERE ProjectID = @projectID, then re-insert the user's new selections.</p>
+<p>The reason for this is, as you suspect, because this is a simplified version of my problem. So just assume that I can't wipe the slate clean like this. When any changes are made, I need to add the new Tasks to ProjectTask and delete any that were deselected.</p>
+<p>Now, I'm all over this if I were using DataSets, DataTables, and DataRows. Been doing it for years with the RowState property. Attach select, insert, update, and delete commands to your adapter/SqlHelper/whatever, run UpdateDataSet, and watch the magic.</p>
+<p>This time around, though, I'm using a domain model. And at the moment, my Project item has as its properties: ID, Name, Date, and Tasks. My Tasks property is of type Dictionary&lt;int, ProjectTask&gt; where the key is the TaskID.</p>
+<p>ProjectTask has properties: ID, Name, DateAdded, Status. Status is an Enum which basically does what the RowState property did. I use it in the UI to record whether the item was added/deleted/left alone. The data access layer uses it to figure out which command to call.</p>
+<p>By the way, the changes have to be done as a batch like this because of how wizards work. Users can click Finish at any time or Cancel at any time. I can't start deleting or adding things as soon as the user selects/deselects a Task because the user may click cancel on the next page. The entire Project update must happen when Finish is clicked.</p>
+<p>So essentially, I have the DataSet model transported to objects and I'm wondering if there is a better way. I'll bet the life of someone I'm at least mildly fond of that there is at least one pattern to handle exactly this so if someone wants to respond with just the name of that pattern, I don't mind doing the research on my own. In the meantime, I'm offline as I type this and I will see if I can find it on my own as soon as I return to the connected world.</p>
+<p>In return, I'll probably post my wizard framework code shortly because it's actually not bad if you don't mind a bit of hillbilly boasting. Not nearly as easy to use as the one I bought from <a href="http://www.divelements.com" target="_blank">DivElements</a> but I wanted to make mine look a little less Windows 95 than the standard wizard.</p>

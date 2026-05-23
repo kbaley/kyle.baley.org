@@ -1,0 +1,40 @@
+---
+layout: post
+title: Revisiting the onion
+date: 2008-08-31 01:16:32.000000000 -04:00
+categories: []
+tags:
+- Brownfield
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '349948198'
+  hl_twitter_has_auto_tweeted: 'New post: Revisiting the onion, Full text: http://blog.baley.org/?p=117'
+  pvc_views: '1084'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I'm working on a chapter on layering for the upcoming <a href="http://www.manning.com/baley" target="_blank">Brownfield book</a>, and for better or for worse, we're including a section on the onion architecture. I've heard the term mentioned for some time now but for the life of me, I can find only one meaty <a href="http://jeffreypalermo.com/blog/the-onion-architecture-part-3/" target="_blank">series of posts</a> on it in recent months. That one caused a bit of a kerfuffle but the ado was big enough that I said to myself, &quot;hillbilly, you don't want to be treadin' into dem waters anytime soon.&quot; But I need some excuse to do some extemporizin' and I'm hoping this will help crystallize things in my head.</p>
+<p>I'll start with my own version of the diagram because I spent enough &amp;*%$ time on the thing. Wanna get some mileage out of it.</p></p>
+<p>Jeff's explained it pretty well, I think. It's clear that the Domain is at the centre and thus, is the focus of the application. I've skipped the Domain Service layer for two reasons:</p>
+<ul>
+<li>It should be part of the Domain layer </li>
+<li>There's a good chance that your domain services should really be methods on your domain objects. (e.g. FundsTransferService should really be a TransferFundsTo method on the Account object)</li>
+</ul>
+<p>So here's where my take comes in. I don't like the onion metaphor, or the diagram a whole lot. For someone coming at it from a traditional n-tier approach, it's confusing. It looks to me like the UI talks to Application Services, which talks to the Domain. That is, it's not obvious that the outside layers can talk to any inside layer without some fancy footnotin'.</p>
+<p>The problem I think is with the term &quot;layer&quot;. It implies a level of insulation. That is, the Domain looks like it is insulated from the UI and Infrastructure by the Application Services layer. Which isn't the case by any stretch.</p>
+<p>Next issue is that the diagram does *not* make clear what was a hard concept for me to understand initially. Namely, that the interfaces for the repositories live in the domain but the implementations in the infrastructure. And it's done without the UI referencing the infrastructure layer (usually with an IoC container).</p>
+<p>Then there's the whole UI segment abutting against the infrastructure which is kinda wacky. Can the UI talk to the Infrastructure? Does the Infrastructure even use the Application Services? In my experience, not really. It interacts directly with the Domain.</p>
+<p>Which brings up another issue. How does the use of DTOs affect this diagram? I'm on the fence about this, but I've seen cases where the UI doesn't ever use domain objects. The objects are translated into DTOs by the Application Services. So the UI &quot;layer&quot; doesn't technically have access to the Domain &quot;layer&quot;.</p>
+<p>Having said that, I don't know if I could come up with a better diagram. As it is, I don't know if I could even properly define &quot;Application Services&quot;. All I know is that, for someone relatively new to this, an analogy should not need three posts to explain it.</p>
+<p>When Jeff's posts came up, I read them with interest and they jibed with my understanding of onions in general, so I moved on. The metaphor seemed natural but I admit, I didn't look into its meaning too much. Hillbillies aren't a naturally metaphorical species.</p>
+<p>Now I'm having to dive into it a little more and I find myself wondering if it will do more harm than good. To the inexperienced, it looks like a vastly different take on the traditional n-tier diagram. And on more than one occasion, it occurred to me that they aren't really that different. To oversimplify, you could just substitute the domain layer for the business logic layer, change the direction of some arrows, and have a passable draft of it.</p>
+<p>On the other hand, this line of thinking does *not* bode well for me finishing chapter 8 this weekend.</p>
+<p>Kyle the Indecisive</p>

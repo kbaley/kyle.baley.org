@@ -1,0 +1,35 @@
+---
+layout: post
+title: Lucene.net vs. Indexing Services, or “How to conquer your fear of index management”
+date: 2009-09-10 16:26:20.000000000 -04:00
+categories: []
+tags:
+- Lucene.NET
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '351530295'
+  pvc_views: '1293'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Long-winded background for this long-winded post can be found <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/05/13/researching-search.aspx">here</a> and <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/07/07/trying-to-access-windows-search-from-sql-server-an-appeal.aspx">here</a>. The short version is: I have an app that searches using a full-text search of a document repository consisting of Office docs and PDFs.</p>
+<p>The current version uses Microsoft Indexing Service and it is all but obsolete. Which is fine with me for the time being because of the economics of the situation. Namely, the app isn’t big enough to warrant putting the effort into updating it just for the sake of the technology.</p>
+<p>Two things happened recently though that made me decide it <em>was</em> time to update. First was <a href="http://codeclimber.net.nz/">Simone Chiaretta’s masterfully-timed tutorial series</a> on getting started with Lucene.NET. The second was the boss discovering the current version doesn’t actually work.</p>
+<p>By many orders of magnitude, the boss is the biggest user of this application. And recently, he went about searching for a relatively common term: R&amp;D. He was met with a nicely formatted 500 Server Error page and asked me if I would be so bold as to fix it.</p>
+<p>A day and a half later and I simply had no fix. The existing app uses a SQL query to search the Indexing Service which, at the time, I thought was tres clever. But after trying a dozen methods of escaping it, there was no way I could get it to accept an ampersand. Furthermore, I also discovered the page failed when including words like ‘AND’ and ‘OR’. This problem was fixable but required some parsing of the search term and again, the cost/benefit for making this sort of thing bullet-proof just wasn’t there.</p>
+<p>So when Simone’s tutorial started coming across my RSS feed, it just made sense to re-think the problem.</p>
+<p>The main reason I resisted moving away from Indexing Service for so long is thus: I don’t need to manage the index myself. Once configured, the only thing I needed to do to add a document to the index was drop it into a folder.</p>
+<p>But therein lay the problem: Because I don’t manage the index, I have no control over it. During my travels, I discovered I was getting false positives for some terms and that it was not returning all documents in some cases.</p>
+<p>How did I discover this? I implemented Lucene and compared the results. If I discovered a discrepancy and it was because of how I indexed with Lucene, well, then I tweaked the indexing process. If the discrepancy was with Indexing Services…well, then I said, “&amp;*%$ it! You’re getting replaced!”</p>
+<p>Another bit of fortuitousness came in the form of one <a href="http://www.persistall.com/">Brian Donahue</a>. One of my fears going into this was how I would get the text out of the documents in order to index it. I had waking nightmares of Windows API calls and IFilters, dreading having to deal with this. So when, after outlining my pain on Twitter, Brian responded with, and I’m paraphrasing, “Here, take this code. It will do that for you and it WORKS RIGHT OUT OF THE BOX!”. I don’t mind admitting I developed an unhealthy infatuation with him for a short time after that.</p>
+<p>In fact, it was through the process of managing the index myself with Lucene that I discovered one reason some documents weren’t getting indexed. They were RTF documents but they had a .doc extension so it was using the wrong IFilter to capture the text. It was through Brian’s code for extracting text that I figured this out. It threw errors on some documents and I couldn’t figure out why until I tried to Save As… when working with them in Word. Change the extension to its rightful .rtf and the indexing process hummed along. But with the Indexing Service, these documents simply weren’t indexed. No error, no notification. It’s possible a message was posted to the event log but that’s a little too passive even for me.</p>
+<p>I hope to have some more technical details but I want to wait until Simone is further along so I don’t duplicate. I’ll very likely piggy-back off a couple of his posts but to summarize: Lucene.NET rocks and should be used any time you have a button labeled “Search”, “Find”, “Locate”, or “Git it!” Fear not the index-management process because like WebForms, the problem isn’t hard enough that it needs to be abstracted.</p>
+<p>Kyle the Co-located</p>

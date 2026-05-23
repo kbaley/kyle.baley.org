@@ -1,0 +1,61 @@
+---
+layout: post
+title: Rhino Fakes, or "How to Create Fake Objects In Rhino Mocks"
+date: 2007-05-04 21:27:53.000000000 -04:00
+categories: []
+tags:
+- BDD/TDD
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2078'
+  dsq_thread_id: '358303833'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>In the comments of my recent Rhino Mocks post, <a href="http://www.jameskovacs.com/blog" target="_blank">James Kovacs</a> pointed me to <a href="http://www.ayende.com/Blog/archive/2007/04/05/Guidelines-to-using-Interaction-Based-Testing.aspx" target="_blank">this post</a>&nbsp;from Oren on interaction-based testing. In it, Oren gives guidelines for using Rhino Mocks to create fake objects. Namely, use DynamicMock instead of CreateMock and use SetupResult instead of Expect or LastCall.</p>
+<p>So that said, here is my original test:</p>
+<pre class="code"><span style="background: rgb(255,255,255)">        [ <span style="color: rgb(128,0,0)">Test</span> ]
+        <span style="color: rgb(0,0,128)">public</span> <span style="color: rgb(0,0,128)">void</span> <span style="color: rgb(128,0,0)">JobNumberShouldNotBeZeroAfterReconstitution</span>( )
+        {
+            <span style="color: rgb(0,0,128)">int</span> <span style="color: rgb(128,0,0)">jobNumber</span> = 42;
+            <span style="color: rgb(128,0,0)">fakeAJob</span>( <span style="color: rgb(128,0,0)">jobNumber</span> );
+            <span style="color: rgb(128,128,0)">IJob</span> <span style="color: rgb(128,0,0)">job</span> = <span style="color: rgb(128,0,0)">jobRepository</span>.<span style="color: rgb(128,0,0)">GetJob</span>( <span style="color: rgb(128,0,0)">jobNumber</span> );
+
+            <span style="color: rgb(128,128,0)">Assert</span>.<span style="color: rgb(128,0,0)">AreEqual</span>( <span style="color: rgb(128,0,0)">job</span>.<span style="color: rgb(128,0,0)">JobNumber</span>, <span style="color: rgb(128,0,0)">jobNumber</span> );
+        }
+</span></pre>
+<pre class="code"><span style="background: rgb(255,255,255)">        <span style="color: rgb(0,0,128)">private</span> <span style="color: rgb(0,0,128)">void</span> <span style="color: rgb(128,0,0)">fakeAJob</span>( <span style="color: rgb(0,0,128)">int</span> <span style="color: rgb(128,0,0)">jobNumber</span> )
+        {
+            <span style="color: rgb(128,128,0)">Job</span> <span style="color: rgb(128,0,0)">job</span> = <span style="color: rgb(128,0,0)">jobFactory</span>.<span style="color: rgb(128,0,0)">CreateJob</span>( );
+            <span style="color: rgb(128,128,0)">JobRepository</span>.<span style="color: rgb(128,0,0)">SetFieldWhenReconstitutingFromPersistence</span>( <span style="color: rgb(128,0,0)">job</span>, </span><span style="background: rgb(192,192,192)">"jobNumber"</span><span style="background: rgb(255,255,255)">, <span style="color: rgb(128,0,0)">jobNumber</span> );
+            <span style="color: rgb(128,0,0)">jobRepository</span>.<span style="color: rgb(128,0,0)">AddJob</span>( <span style="color: rgb(128,0,0)">job</span> );
+        }
+
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"><a href="http://11011.net/software/vspaste"><a href="http://11011.net/software/vspaste"></a></p>
+<p>This is following pretty closely with Jimmy Nilsson's Applying Domain-Driven Design, at least in the early chapters which I'm currently scouring, including the problem he mentions about creating a job with an order number without specifying it in the constructor. SetFieldWhenReconstitutingFromPersistence uses reflection to set the field which he knows is bad but I haven't got to that part of the book yet.</p>
+<p>Instead, I thought I'd have a go at creating a fake object in Rhino Mocks, leading to the following revised code:</p>
+<pre class="code"><span style="background: rgb(255,255,255)">        [ <span style="color: rgb(128,0,0)">Test</span> ]
+        <span style="color: rgb(0,0,128)">public</span> <span style="color: rgb(0,0,128)">void</span> <span style="color: rgb(128,0,0)">JobNumberShouldNotBeZeroAfterReconstitution</span>( )
+        {
+            <span style="color: rgb(0,0,128)">int</span> <span style="color: rgb(128,0,0)">jobNumber</span> = 42;
+            <span style="color: rgb(128,128,0)">MockRepository</span> <span style="color: rgb(128,0,0)">mockery</span> = <span style="color: rgb(0,0,128)">new</span> <span style="color: rgb(128,128,0)">MockRepository</span>( );
+            <span style="color: rgb(128,128,0)">IJob</span> <span style="color: rgb(128,0,0)">fakeJob</span> = <span style="color: rgb(128,0,0)">mockery</span>.<span style="color: rgb(128,0,0)">DynamicMock</span>&lt;<span style="color: rgb(128,128,0)">IJob</span>&gt;( );
+            <span style="color: rgb(128,128,0)">SetupResult</span>.<span style="color: rgb(128,0,0)">For</span>( <span style="color: rgb(128,0,0)">fakeJob</span>.<span style="color: rgb(128,0,0)">JobNumber</span> ).<span style="color: rgb(128,0,0)">Return</span>( <span style="color: rgb(128,0,0)">jobNumber</span> );
+            <span style="color: rgb(128,0,0)">jobRepository</span>.<span style="color: rgb(128,0,0)">AddJob</span>( <span style="color: rgb(128,0,0)">fakeJob</span> );
+            <span style="color: rgb(128,128,0)">IJob</span> <span style="color: rgb(128,0,0)">job</span> = <span style="color: rgb(128,0,0)">jobRepository</span>.<span style="color: rgb(128,0,0)">GetJob</span>( <span style="color: rgb(128,0,0)">jobNumber</span> );
+
+            <span style="color: rgb(128,128,0)">Assert</span>.<span style="color: rgb(128,0,0)">AreEqual</span>( <span style="color: rgb(128,0,0)">job</span>.<span style="color: rgb(128,0,0)">JobNumber</span>, <span style="color: rgb(128,0,0)">jobNumber</span> );
+        }
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Both tests pass which was nice to see. I'm throwing this out partially as an example of how to create a fake with Rhino Mocks (because I had trouble finding any&nbsp;explicit ones) but mostly to get confirmation that I'm still testing what I want to test, which I think I am.</p>
+<p></a></a></p>

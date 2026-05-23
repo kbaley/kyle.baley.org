@@ -1,0 +1,31 @@
+---
+layout: post
+title: On Naming Conventions
+date: 2006-07-16 14:11:00.000000000 -04:00
+categories: []
+tags:
+- Conscientious Coding
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '694'
+  dsq_thread_id: '362994607'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I've been following the <a href="http://igloocoder.com/">Igloo Coder</a>'s series on <a href="http://igloocoder.com/archive/2006/07/04/394.aspx">Code Naming Conventions</a>. Think I'm past the point where I can change my naming conventions (or at least to do so consistently) but the articles have a good layout with a summary of the main schools of thought followed by the Inuit's intuitions.</p>
+<p>The series fits in with the idea of <a href="http://kyle.baley.org/archive/2006/05/06/387.aspx">Conscientious Coding</a> I mentioned in an earlier article so I'll throw in some of my own comments. My own naming conventions are moot but for the record, I'm not a fan of Hungarian notation. Part of my philosophy is that the code has to “look” good and throwing str's and int's at the beginning of variable names takes away from the aesthetics. Not very scientific, I know, but it's in keeping with the Conscientious Coding mantra: Be nice to the next person looking at your code. You could argue that giving clues to your variable's intent is being nice but I would argue that a decent developer will have no issues deciphering what type of variable it is from the code itself. Hard to misinterpret <font face="Courier New">errorMessage = “An error occurred: ” + exception.Message</font>; and where there is ambiguity, maybe some comments.</p>
+<p>Having said that, the Visual Studio IDE tends to use Hungarian Notation for the controls you drop on a page in the designer but one of the corollaries of Conscientious Coding is: if extra work doesn't add any value, don't do it. And prefixing the control names with their type is a nice way of differentiating controls from your own variables. (On a side note: I'm making these rules up as I go but really, doesn't everybody?)</p>
+<p>Also, the Igloo Coder doesn't mention this but I use a combination of the two methods he <a href="http://igloocoder.com/archive/2006/07/08/405.aspx">mentions</a> for module variable naming. That is, I prefix them with m_. The reason is that I don't like using just m because it looks hideous when you use camelCasing (which I <em>usually</em> use) as the Iceman mentions. But, and again this has more to do with aesthetics, I don't like looking at words that begin with an underscore. There's something unnatural about it. Maybe it's my grammatically anal nature (remind me to rant someday on why I'm forced to use the&nbsp;American spelling of&nbsp;“color“ in my CSS). But I recognize the value of differentiating module level variables.</p>
+<p>Regardless, I don't feel strongly enough about any naming convention to defend it to the death so if you don't agree with me, I will lose no sleep trying to come up with ways to convince you. As it is, I'll switch from camelCasing to PascalCasing depending on the lunar cycle. Not within a project, mind you, but every time I start my own little side project, I'll think about it and justify one or the other and start using. Halfway through, I'll wonder why which might explain why none of my side projects are finished.</p>
+<p>But something is often overlooked in discussions about naming conventions: you rarely go to a place that is starting from scratch. Especially as a consultant. Chances are, the company you're with has a bunch of applications already. If you're lucky, they have naming conventions already and if you're really lucky, they're being followed. More often, the standards are at the whim of whatever developer worked on it. And if more than one developer was involved, you can usually tell which sections were worked on by different ones (and I don't mean because they've left comments with their names attached).</p>
+<p>In this case, the conscientious coder will follow the standards already in place in the organization. If there are, it doesn't matter in the least what your preference is. As a consultant, your goal is to create an application that some other poor sap at the organization is going to have to maintain so you'd better make it look like every other application in that organization. They use Hungarian Notation for their properties, you use Hungarian Notation for your properties. They name their functions based on characters in Charles Dickens' books, you'd better get a copy of Great Expectations and start highlighting. (Of course, you are well within your rights to make suggestions for changing the standards. In my experience, Stephen King's books are usually a more appropriate source for function names. There's a sense of freedom when you “Cujo“ an object.)</p>
+<p>If there are no formal ones, this is tough because you have a decision to make. There may be some loose standards emerging if you've somehow managed to retain the same group of people for more than six months. Your goal should always be to make the application maintainable by the existing developer base so if there are some obvious standards being followed, try to stick with them. If they are unreasonably restrictive, you may be justified in following a different one but do so very carefully. You can never underestimate the power of consistency.</p>
+<p>If the standards are all over the place from application to application, then you have even more latitude but even here, I think it's best to try not to introduce new standards unless you are making a formal recommendation for naming standards throughout the organization. Again, the goal is to make the application look like it was written within the organization. (By that I mean the naming standards, not the logic, so stop rolling your eyes and saying, “Yeah right”.) If you can do so while still making the application clean and easy to read, and more importantly, if you can justify it, well, you're a better consultant than I am.</p>

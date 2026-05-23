@@ -1,0 +1,44 @@
+---
+layout: post
+title: Auto-generated vs. human-generated IDs
+date: 2008-03-11 12:58:56.000000000 -04:00
+categories: []
+tags:
+- Miscellaneous
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '943'
+  _edit_last: '1'
+  dsq_thread_id: '1358901430'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Got myself a delicious problem but there is another discussion to be had so I will leave you hanging on that one until a later post.</p>
+<p>I've already <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/03/06/client-side-scripting-eight-years-on.aspx" target="_blank">hinted at</a> the software I'm working on for the time being. It's essentially something to help manage a land surveying office but what it does isn't really the point. What *is* the point is that it has some major domain object that needs to be managed. In this case, it's a Job (to use the domain term).</p>
+<p>A brief history: Jobs in land surveying office have always historically been a paper-based entity. There is a lot of physical information to collate. Land titles, plans, deeds, even the sketches the crews make in the field. These are all key pieces of information that need to be kept organized in some fashion. And it's all either visual information or third party data that they have no control over (and sometimes both). So to think that all of this information can be moved into the digital world is a little ambitious at this point.</p>
+<p>So historically, they tend to organize them into a Job. And naturally, a job must be assigned a number. And typically, companies will use a numbering system that will convey some information in the number. This can be something relatively simple, like M070123 which indicates that this was the 123rd job in 2007 for the Montenegro office. Or it could be somewhat more complex like BLC-08-A31 which might mean it's a BLC (domain term, don't ask 'cause I don't know) from 2008 from zone A of the city and it's the 31st job in that zone for the year.</p>
+<p>However it is generated, the fact remains that they need to maintain a running list of these numbers in a &quot;book&quot; (another domain term, again don't ask 'cause I've never heard of it either) so that they can generate a new one easily. As a new job is ordered, the person recording it must take care to record a new number in the running list so that there are no duplicates.</p>
+<p>Now here comes the consultant (i.e. me, and seriously, do NOT ask about this one) to automate some of this data. And as I start working, the inevitable question arises: Why are we still using this archaic process of generating job numbers manually? Computers *love* generating IDs automatically. Databases do it natively. NHibernate can get you a GUID in less time than it takes to remember what the acronym stands for.</p>
+<p>And so it was that I made a suggestion: Why not ditch the current mechanism and start over with something more computer-friendly? Like starting with an ID of 1 and going up from there. They can still refer to jobs easily. And though we're losing that tiny bit of metadata embedded in the previous version, we can glean that information (and a whole lot more) in the form of reports on the system. My job's easier and they've saved money during development.</p>
+<p>This being a family business (and <em>my</em> family's business to boot), they have reservations but defer to the &quot;expert&quot;. There's a lot of &quot;well, there may be some pushback from the others but if you think it'll be easier, go for it.&quot; I'm happy at a job well-done.</p>
+<p>So confident am I that I think nothing of an e-mail from my brother asking me to contact one of the &quot;others&quot;. That is, someone outside the family but who is actively going to *use* the system. She has some reservations but is leery about bringing them up. She's young, inexperienced. What could she possibly say to sway the mind of the big, bad consultant?</p>
+<p>&quot;How do we enter in existing jobs?&quot;</p>
+<p>An honest question that deserves an honest answer, rather than the back-pedalling one I gave. Which basically suggested we'll have a field for OldJobNumber to handle legacy job numbers. And even as I spoke the words, the whole idea kind of unravelled in my head.</p>
+<p>Because the old job number is important. They've got cabinets and cabinets filled with files referring to them. And all of a sudden, I'm suggesting they create a whole new filing system. And that's just the physical aspect. Even within the application I'm writing, I'd have to present the job number differently. I had visions of: <font face="Courier New">if ( old job number exists ) show it, else show job ID</font> peppered throughout the code.</p>
+<p>So I swallowed my pride and admitted I hadn't thought of that. After which case, the floodgates opened and it was admitted that no one was really looking forward to it.</p>
+<p>And after some questioning, it turns out there is a very good reason for this, though not an obvious one. There is something psychological in having metadata in the job number. Sitting in the office, you'll notice that they are constantly bandying job numbers about. &quot;What's the status of job M080050?&quot; &quot;Where are the plans for job V070758?&quot;</p>
+<p>And when they call the jobs out like this, they can make a mental filter as they try to remember which job it is. You can imagine the thought process: &quot;B-07-C98, that's that BLC from late last year in the Soho area, I've got those plans right here.&quot; Compare that job number with another that has an ID of 78945 and it suddenly becomes a lot harder to create that mental filter. In essence, it's more than an identifier. It's also a name. And a filter. And even a kind of mini-report.</p>
+<p>The lesson learned: <em>Don't subvert your client's domain with all this new-fangled computer jargon.</em></p>
+<p>The net result is job numbers will still be auto-generated but they will be generated in the form that they're used to. It's not quite as automatic as an auto-increment but it's still very much algorithmic and can be done somewhat easily by the application.</p>
+<p>But I have *seriously* simplified how they generate them for the sake of this post. The reality is the tasty problem I referred to in the opening paragraph. By way of foreshadowing (or even foreboding), they have not one, not two, but *six* methods of generating a number for a job based on various factors, some of which require intimate knowledge of a map of the area.</p>
+<p>Stay tuned!</p>
+<p>Kyle the Auto-generated</p>
+<p>Final closing point, because someone may comment on it, is that I have no intention of dropping the auto-incrementing ID. But like most IDs, it won't be as in-your-face as I originally expected.</p>

@@ -1,0 +1,51 @@
+---
+layout: post
+title: How do you tame the many heads of the hydra?
+date: 2008-12-10 18:04:08.000000000 -05:00
+categories: []
+tags:
+- Brownfield
+- Refactoring
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1161'
+  dsq_thread_id: '365883568'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>There have been numerous posts about hiring the &quot;right&quot; people. One of the more ideal characteristics is a passion for the industry and for learning new techniques. But as I look at more and more code written by these zealots (and I don't mean that to be derogatory because I count myself as one of them) and because I have been thinking about brownfield applications lately for some reason, a kind of pattern seems to emerge in projects written by them.</p>
+<p>The way to recognize this pattern is if you can tell what the developer has been learning or reading about from scanning various parts of the codebase. Here's a scenario:</p>
+<hr />
+<p>New guy: How are we handling dependencies in the code?</p>
+<p>Eager and enthusiastic veteran: Oh, it's awesome, man! At first, we were just newing shite up. Then I went to <a href="http://www.jpboodhoo.com" target="_blank">JP's course</a> and he had this pretty cool hand-rolled IoC container so we started using that in the service layer. Eventually, we took the plunge and brought in Windsor. We don't use it everywhere but some of the newer presenters do. But then we saw the new stuff in StructureMap so this one part of the app is using that.</p>
+<p>NG: So you have four different ways to get new instances of a class?</p>
+<p>EaEV: Yeah, but don't worry your purty li'l head over it none. We'll be standardizing on one soon.</p>
+<p>NG: Oh yeah? Which one?</p>
+<p>EaEV: Well, it *was* going to be StructureMap but NInject looks pretty cool...</p>
+<hr />
+<p>The point being: How do you handle implementing new techniques as you're learning them? You have a web application built by a team that still things they're coding in classic ASP and now you want to move it to an MVP pattern.</p>
+<p>Naturally, for new screens, you can do this pretty easily. But as the code grows, you eventually get to a mishmash of new MVP screens and old code-smackdab-in-front screens that everyone treats like your disfigured, but still oddly attractive sister/cousin who's kept locked in the basement except during family reunions/speed-dating sessions.</p>
+<p>What's worse, the problem is exacerbated as new techniques come in vogue and as new people are brought on to the project. </p>
+<p>Also, for the most part, we usually don't want to go refactorin' just for the intellectual exercise. Most of the time, I like to move to a pattern or implementing some new technique on an as-needed basis. Which means you don't overhaul the entire application just because you're working in one area. If your admin section is working, I say leave it alone, despite your psychological issues with DataSets. (But at the first sign of bugs or new features in that area, bring in your hacksaw and have at 'er.)</p>
+<p>In any case, it's cute little dichtomy. You certainly don't want to keep doing things the old and busted way but you are hesitant to fork part of the application down a new and inconsistent path.</p>
+<p>And this isn't limited just to large projects. I'm experiencing it even know on an application I started earlier this year. An application, I might add, where I'm the sole developer. It's an MVC app with bits of Fluent NHibernate in it but not all the mappings have been migrated over yet.</p>
+<p>The way to avoid this, of course, is to stop learning. But if you're one of those eager types, then let's explore some options. Unfortunately, all I've got are the thoughts in my head. And keep in mind, these are the same thoughts that evoked that little speed-dating analogy a few paragraphs up.</p>
+<p><strong>// TODO: Refactor this when the client stops reporting bugs and adding features</strong></p>
+<p>This is kind of the bare minimum you can do to at least acknowledge that some work needs to be done. It's well-intentioned but not very practical. Most of the time, we leave these comments because we want to cover our asses in case someone goes looking through the code and spontaneously goes blind. In any case, if the client isn't reporting bugs or adding features, that means no one is actually using the app.</p>
+<p><strong>The &quot;Refactoring&quot; Iteration</strong></p>
+<p>&quot;That's it. I've had enough looking at this code. You, Mr. Project Manager Person, tell the client that we have deemed the application unpalatable and that we are holding it ransom until such time that it we feel warm and fuzzy about working with it again.&quot;</p>
+<p>Don't need any limbs to count the number of times this has worked for me.</p>
+<p><strong>Leave it the way it is and strive for consistency</strong></p>
+<p>If you think you can get away with this, I applaud your ability to hire Type-B programmers.</p>
+<p><strong>Deal with it</strong></p>
+<p>This is probably my default approach. Hunker down and get your work done within the constraints laid out for you. Fix what you can, when you can. The application will morph. Try to control the shape and rate in which it does so. Knock of one head of the hydra at a time and hope three more don't grow in its place. It's probably not the most glamourous position to take but like any stance that involves lowering your standards, it's easier to attain your goals.</p>
+<p>None of this strikes me as being all that encouraging, which is probably why this post lingered in my //TODO list for so long. I'm not sure there are any solutions to this other than to practice deep breathing exercises whenever you look at the code. Best I ever hope for is to provide value for my pay and try to learn something as I go.</p>
+<p>Kyle the Acknowledged</p>

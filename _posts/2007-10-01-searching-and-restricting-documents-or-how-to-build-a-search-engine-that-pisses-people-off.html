@@ -1,0 +1,56 @@
+---
+layout: post
+title: Searching and restricting documents, or "How to build a search engine that
+  pisses people off"
+date: 2007-10-01 11:28:24.000000000 -04:00
+categories: []
+tags:
+- ".NET"
+- Development
+- Security
+- Web development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1490'
+  dsq_thread_id: '390617351'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>One of my contracts involves what is essentially a document management system where users can search for legal documents based on metadata attributes as well as their contents. I've been working on it since before the days of SharePoint and even before Content Management Server was somewhat affordable. I mention this to cut off any comments that might say, "Why don't you just use a document management system?" It's in .NET and could benefit from migration to another platform. I'm not going to do it for reasons not worth mentioning. ACCEPT IT!</p>
+<p>There are two things worth posting about. Neither are new&nbsp;techniques by any stretch. The first is how to search the content and tie that into the metadata search. The second is how to restrict access to the documents (all in Word format) which are not restricted by IIS by default.</p>
+<p><strong>Searching</strong></p>
+<p>In order to search the contents of the repository, I'm using a technique that's been around for many moons. It starts with Microsoft Indexing Services (right-click My Computer, select Manage..., and it's under Services). I created a catalog and added the directory containing my documents. Easy enough. Now I have a catalog you can query from code using the Indexing Service query provider.</p>
+<p>I'd give you sample code but I don't have any; I don't query the catalog from code. It's no good to me on its own. I need to merge the results in with the metadata search in SQL Server. And rather than get one set of results from SQL Server and another from Indexing Services and merging them, I'm letting SQL Server do everything.</p>
+<p>To do this, I added a linked server to SQL Server:</p>
+<p><font face="Courier New" size="2">EXEC sp_addlinkedserver MyDocs, 'Index Server', 'MSIDXS', '&lt;Indexing Service Catalog Name&gt;'</font></p>
+<p>The first parameter can be whatever name you want. The next two are fixed and the last is the name of the Indexing Service catalog.</p>
+<p>From here, you can query the results directly from SQL Server and join them with any other query you want. For example:</p>
+<p><font face="Courier New" size="2">SELECT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MetadataField1, MetadataField2, DocumentFileName<br />FROM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; doc_metadata dl<br />INNER JOIN&nbsp; OpenQuery( MyDocs, 'SELECT Filename FROM SCOPE( ) WHERE CONTAINS( Contents, ''&lt;search term&gt;'' ) ') q<br />ON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dl.DocumentFileName = q.Filename<br />WHERE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;filter conditions&gt;</font></p>
+<p>And just like that, that squirrel's done, as my pappy used to say. The Indexing Service includes a bunch of properties you can return if you like, but for my poor man's document management system, all I need it for is to filter the list of search results.</p>
+<p>NOTE: Out of the box, the Indexing Service will index all forms of Office documents. For anything else, you'll need to find an appropriate filter that plugs into the service. Adobe makes one for PDFs but that's the extent of my knowledge.</p>
+<p><strong>Restricting access to Word documents</strong></p>
+<p>The application uses Forms Authentication to ensure you have appropriate access to the system. There are three roles: admin, subscriber, and guest (and an implied fourth role: ya can't git in). With the default forms authentication setup, anytime you navigate to an .aspx page, it will automatically redirect to the login page. This doesn't hold true for "unmapped" file extensions, such as image files or documents.</p>
+<p>By "mapped", I mean that IIS recognizes the extension and maps it to an ISAPI filter. Whenever IIS receives a request for a file with an extension it knows about, it filters the request through the corresponding ISAPI filter, which can then perform whatever funkiness it needs to before and/or after the request.</p>
+<p>Without getting too technical about the ASP.NET ISAPI filter (mostly 'cause I don't know too much about its inner workings including whether it actually *is* an ISAPI filter vs. an ISAPI application),&nbsp;I wanted any requests to Word documents to redirect to the login page if the user hadn't logged in. The same as any other page. So in IIS, I went to the application properties and added a mapping for .doc files (from the Virtual Directory tab,&nbsp;click Configuration..., then Mappings) to the ASP.NET executable (usually C:WINDOWSMicrosoft.NETFrameworkv2.0.50727aspnet_isapi.dll or something akin).</p>
+<p>With that in place, users can no longer navigate directly to Word documents. Such requests will be re-directed to the login page. But there is one last requirement: guests aren't allowed to view documents. Easy enough: add a separate web.config to the documents folder restricting access only to subscribers and admins:</p>
+<pre class="code"><span style="color: rgb(0,0,255)">&lt;?</span><span style="color: rgb(128,0,0)">xml</span><span style="color: rgb(0,0,255)"> </span><span style="color: rgb(255,0,0)">version</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">1.0</span>"<span style="color: rgb(0,0,255)"> </span><span style="color: rgb(255,0,0)">encoding</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">utf-8</span>"<span style="color: rgb(0,0,255)"> ?&gt;
+&lt;</span><span style="color: rgb(128,0,0)">configuration</span><span style="color: rgb(0,0,255)">&gt;
+     &lt;</span><span style="color: rgb(128,0,0)">system.web</span><span style="color: rgb(0,0,255)">&gt;
+          &lt;</span><span style="color: rgb(128,0,0)">authorization</span><span style="color: rgb(0,0,255)">&gt;
+               &lt;</span><span style="color: rgb(128,0,0)">allow</span><span style="color: rgb(0,0,255)"> </span><span style="color: rgb(255,0,0)">roles</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">subscriber, admin</span>"<span style="color: rgb(0,0,255)"> /&gt;
+               &lt;</span><span style="color: rgb(128,0,0)">deny</span><span style="color: rgb(0,0,255)"> </span><span style="color: rgb(255,0,0)">users</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">*</span>"<span style="color: rgb(0,0,255)"> /&gt;
+          &lt;/</span><span style="color: rgb(128,0,0)">authorization</span><span style="color: rgb(0,0,255)">&gt;
+     &lt;/</span><span style="color: rgb(128,0,0)">system.web</span><span style="color: rgb(0,0,255)">&gt;
+&lt;/</span><span style="color: rgb(128,0,0)">configuration</span><span style="color: rgb(0,0,255)">&gt;</span></pre>
+<p>Note: You can also accomplish this with a &lt;location&gt;&nbsp;element in your application's main web.config file. I picked this method because I have a feeling I'll be moving the documents out to a separate virtual directory altogether very soon.</p>
+<p>And that's that. I shan't go into the details of setting up your roles but as you may have guessed from the web.config, that is a requirement in order for this to work. It's pretty straightforward Forms Authentication stuff so Google should be able to help you out easily enough. If not, <a href="mailto:kyle@baley.org" target="_blank">my door</a> is always open.</p>
+<p>So with these two techniques, I now have a method for users to search the contents of documents&nbsp;without allowing them to actually open them. Maybe I can get a job at <a href="http://www.experts-exchange.com">www.experts-exchange.com</a>.</p>
+<p>Kyle the Restrictive</p>

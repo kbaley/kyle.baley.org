@@ -1,0 +1,47 @@
+---
+layout: post
+title: Refactoring to Model-View-Presenter
+date: 2007-04-11 13:41:38.000000000 -04:00
+categories: []
+tags:
+- BDD/TDD
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1401'
+  dsq_thread_id: '355731387'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I do believe the light has come on, vis a vis Test Driven Development. Which isn't to say I've done it to a great extent. I've just finished refactoring a small WinForms app to Model-View-Presenter and the exercise was a bit of an epiphany for me.</p>
+<p>So here are the things I've been told that I now "get":</p>
+<ul>
+<li>Model-View-Presenter aids in testability</li>
+</ul>
+<blockquote>
+<p>Whoa, nelly, is my view ever stupid. Like brother-cousin Zeke stupid. The form that implements it references System, System.Windows.Forms, and my presentation namespace and that's it. All methods/properties do one of three things: manipulate the value(s) of&nbsp;a form element, manipulate the value(s) of a local variable, or raise an event.</p>
+<p>I'd like to say I made that rule early on and stuck to it but the fact is, it just ended up that way as a consequence of the refactoring.</p>
+<p>That leaves a presenter with references to a bunch of non-UI assemblies (System.Collections, System.Xml, System.IO and the like) that does everything the original form did. All easily tested should I feel the need to write the tests (and take heart, I do feel the need; possum steps, readers, possum steps).</p>
+</blockquote>
+<ul>
+<li>Refactoring and adding unit tests is not TDD</li>
+</ul>
+<blockquote>
+<p>I was ever-so-slightly befuddled when I read this in <a href="http://www.jpboodhoo.com/blog/GettingStartedLearningSomeNewDeveloperHabits.aspx" target="_blank">JP's post</a>. I knew you were supposed to write your tests firsts in TDD but I thought he was being overly semantic when he said adding unit tests to an existing project is not TDD. But I knew better than to throw down with a guy who has four kids so I kept my mouth shut. And thank David I did.</p>
+<p>Had I done this application the&nbsp;TDD way from the beginning, I would have ended up (presumably) with the same core code I have now plus a bunch of supporting tests. And the tests would cover 100% of the code I had written because you don't write any code unless it is fulfilling a test.</p>
+<p>But that doesn't necessarily mean that the application does everything it's supposed to; only everything that the tests cover. We make the assumption that the tests cover the functional specs (i.e. the user's expectations, which I think is a better term).</p>
+<p>The point is, TDD is a design methodology, not a testing methodology. JP et al have lovingly tried to drill this into my skull since the beginning but until now, those were just words I knew the meaning of individually but didn't quite grasp as a whole.</p>
+</blockquote>
+<p>The biggest thing for this exercise for me wasn't to become an advocate of Model-View-Presenter. Sure, I can probably defend it to some extent to a naysayer but I'm not one to hold fast to any given pattern/methodology/way of life. I don't have that kind of conviction in pretty much any aspect of my professional life.</p>
+<p>No, the best thing about MVP for me is that it's a damn fun little package. There's something karmic about making a stupid view and a presenter that could be re-used (even if the chances of doing so are pretty remote). It keeps me on my toes trying to think about a problem non-procedurally, which will save me a ton of money in crossword puzzle books I usually buy when I'm working on a more mind-numbing contract. (For the record, I generally boycott Sudoku these days on the basis that I've been playing it for nigh on twenty years in puzzle books when it didn't have a sexy Japanese name.)</p>
+<p>In short, MVP is fun. And it makes developing fun. The fact that it is useful is just semantics.</p>
+<p>Final thought: In a comment to a <a href="http://kyle.baley.org/ModelViewsPresenters.aspx">previous post</a>, alert reader, <a href="http://www.opgenorth.net/" target="_blank">Tom Opgenorth</a>, suggested a method for retrieving data from the view in a Parameter object. I did not do that in my refactoring and here's why: I already had a Preferences domain object that stored all the data I needed to pass back and forth. So originally, I refactored using that object as the DTO which (and correct me if I'm wrong) is kind of what Tom was suggesting.</p>
+<p>But then, I refactored further and got rid of it altogether, choosing instead to expose getter properties on the view for each of the properties in the Preferences object. A couple of reasons for that. First, it felt awkward passing the entire DTO when I just wanted to work with a single property. Second, by removing the reference to the Preferences object, I remove the dependency the form had on my Domain layer altogether leaving it to deal only with primitive types.</p>
+<p>Note that the Preferences object was small enough (half a dozen properties, give or take) that I could do this pretty easily. I can imagine more complicated scenarios where a DTO might be more appropriate.</p>

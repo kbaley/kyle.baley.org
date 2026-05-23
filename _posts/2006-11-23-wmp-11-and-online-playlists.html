@@ -1,0 +1,31 @@
+---
+layout: post
+title: WMP 11 and online playlists
+date: 2006-11-23 14:29:42.000000000 -05:00
+categories:
+- Flamingo
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '699'
+  dsq_thread_id: '802945527'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Looking through the features of Windows Media Player 11, one might think that they have something against Hillbillies. Firstly, they appear to have made playlist management much more intuitive. Or at least they claim to on the website. I haven't actually played with any of the new features yet.</p>
+<p>This kind of reduces the impact of what I had planned for Flamingo, which was to have playlists as sort of a combination of saved searchs, not a static list of songs. That way, you could add songs by artists you like and not have to redo your playlist.</p>
+<p>If it were just that, though, it wouldn't be too big a deal. Especially given that I'm not pursuing any sort of commercial venture with this. The problem is, not only has WMP 11 undermined my efforts with features that are six versions too late, it also completely changes how Flamingo currently works.</p>
+<p>With WMP 10, you would select a bunch of songs, click Play, and that list of songs would appear in the Now Playing list. With WMP 11, instead of a list of songs in the Now Playing list, you get a single entry that says Default.</p>
+<p>The songs still play, mind you. But you can't see which ones you've selected, nor can you select a song on your own. You can only navigate forward and back through the list without knowing what you'll hit next.</p>
+<p>It is because of this exact deficiency with the <a href="mms://24.244.177.17/hillbaleyRadio/" target="_blank">Hillbaley Radio</a> (built using Windows Media Services) that I started Flamingo in the first place (at the request of a friend who wanted the ability to "filter out the crap" when listening to my library). So now I'm back to square one. Except that it took much, much longer to build software that doesn't work any better than what Media Services does out of the box.</p>
+<p>The issue with WMP 11 is that it wraps the playlist I generate in another playlist. What Flamingo does is generates an XML file in .wpl format and serves it up in a response, relying on WMP to interpret it and do its thing. But rather than simple interpreting the .wpl file as-is, the way WMP 10 does, WMP 11 creates another .wpl file of its own with a single entry called Default. That entry is a reference the temporary .wpl file Flamingo serves up.</p>
+<p>The net result is that you are now listening to a playlist that references another playlist, not a playlist that references a bunch of songs.</p>
+<p>Most inconvenient.</p>

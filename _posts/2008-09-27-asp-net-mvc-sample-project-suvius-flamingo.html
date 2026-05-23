@@ -1,0 +1,34 @@
+---
+layout: post
+title: 'ASP.NET MVC Sample Project: Suvius.Flamingo'
+date: 2008-09-27 01:26:39.000000000 -04:00
+categories:
+- Castle
+tags:
+- ASP.NET MVC
+- NHibernate
+status: publish
+type: post
+published: true
+meta:
+  hl_twitter_has_auto_tweeted: 'New post: ASP.NET MVC Sample Project: Suvius.Flamingo,
+    Full text: http://blog.baley.org/?p=110'
+  pvc_views: '1257'
+  dsq_thread_id: '349776259'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>When presenting on ASP.NET MVC, I use an application I started nigh on two years ago when I was a wee whelp extolling the virtues of Atlas. It's no longer AJAX-y but it does demonstrate MVC and I've <a href="http://code.google.com/p/suvius-flamingo/" target="_blank">put it online</a> at Google Code mostly because I've been promising I would for many months.</p>
+<p>It's a music catalogue that will extract metadata from all WMA and MP3 files in a folder of your choice and store it in a database. There are some simple controller actions used to query the catalogue in various ways.  </p>
+<p>Check out the ReadMe.txt file for some tips on getting started. Note that you can't just download the code and open it up in Visual Studio. You need to run the build file at least once. There is a batch file that will make this easier the first time (clicktobuild.bat) but bear in mind that this *will* drop and re-create your database. And before you do that, you'll need to create a local-properties.xml file in the confi--...actually, just read the ReadMe.txt.</p>
+<p>There is a unit testing project in there that I added after the Edmonton presentation. The Edmug guys have whipped their city into shape there because when I said MVC is conducive to TDD, they called me out and said &quot;Prove it, Plaid Man&quot;. Hardly complete coverage by any stretch but hopefully demonstrative enough.</p>
+<p>If you're semantically inclined, this does indeed mean I built the app without using TDD. There's actually a very good reason for that. You see, a plague of locusts appeared when I was first building it and they told me in locust-ese that if I used TDD, they would become a blight upon the land. I'm sure you see my dilemma.</p>
+<p>Final note on the name. Suvius is just a code name my brothers and I use and I've always liked the sound of it. Flamingo is the national bird of the Bahamas. How do they relate to an online music catalogue application? They don't. I've got a rant I've all but memorized on people's fixation on names but the short version of it is: Amazon, Sun, Java, Oracle, eBay, Facebook, Windsor, and Hibernate.</p>
+<p>I'd tell you to enjoy but that implies some sort of emotional attachment to the project.</p>
+<p>Kyle the Flaming-o</p>

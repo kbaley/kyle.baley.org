@@ -1,0 +1,34 @@
+---
+layout: post
+title: On Livelink Development
+date: 2006-10-12 13:32:37.000000000 -04:00
+categories: []
+tags:
+- Livelink
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2211'
+  dsq_thread_id: '351024958'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I've been developing in Open Text Livelink for nigh on six months now and have avoided talking too much about it because frankly, I think it would be a career-limiting move. But I think it's time...</p>
+<p>Livelink development is a strange&nbsp;beast coming from the .NET world. It has its own development language, OScript, which I have no doubt was quite powerful in its day. Today, it's pretty archaic.</p>
+<p>One of the major data types is an Assoc. It's used everywhere and for everything. It's essentially an array of name/value pairs. To add to it, you just start using a new key:</p>
+<blockquote><p>Assoc emailAddresses<br />emailAddresses.CodingHillbilly = kyle@hillbilly.org<br />emailAddresses.SisterWife = ma@hillbilly.org</p>
+</blockquote>
+<p>So to summarize: it's a hash table. Except that you don't have to explicitly add values, you just start using them. Which in my opinion makes it a dangerous hash table. (There's a reason good VB programmers turn Option Explicit on.) And it seems to be the cornerstone of most OScript code I've seen.</p>
+<p>The development environment also strikes me as "revolutionary in its day". Nowadays, a hillbilly gets testy when the scroll-wheel doesn't work out of the box. And when Ctrl-Left Arrow only works on the first word. And when you can add breakpoints only at the beginning of a function (except when you have actually broken into the function). And when there's no watch window. And so on and so forth.</p>
+<p>Next up: the development community. Whoa Nellie, are .NET&nbsp;developers a spoiled bunch! Google the text of an error message and more often than not, you'll find at least something to get you started down the path of righteousness.</p>
+<p>For Livelink, the main (and as far as I can tell, only) source of answers is their Knowledge Centre, which I won't bother linking to because you need to log in to see it. Which means no Googling. And answers are fairly sparse, I suspect because it's such a pain having to log in and navigate through the discussion forums to provide your insight.</p>
+<p>Most of my frustration, to be fair, is because like I said, .NET&nbsp;developers are spoiled. OScript isn't as prevalent as C# or Java so that also contributes to the lack of help for tough problems. It has its own little web architecture that differs from what I'm used to with ASP and ASP.NET as well.&nbsp;And I'm only six months into this little odyssey so I imagine it gets easier with time.</p>
+<p>But despite this, I'm having fun with the product as I often do when I'm playing with something I've never done before. Archaic or not, it's still a new language. And they allow you almost inhuman access to modify absolutely anything in it, including the development IDE itself. Which is good because their Records Management and Physical Objects modules are some of the buggiest software I've ever seen in an enterprise-level product.</p>
+<p>I'm also encouraged by the fairly recent partnership with Microsoft which will almost certainly improve the SharePoint integration. Until then, I shall continue to die a little every time I use a variable without declaring it.</p>

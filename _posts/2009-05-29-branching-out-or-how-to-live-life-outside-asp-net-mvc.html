@@ -1,0 +1,64 @@
+---
+layout: post
+title: Branching out, or “How to live life outside ASP.NET MVC”
+date: 2009-05-29 01:40:13.000000000 -04:00
+categories: []
+tags:
+- ASP.NET MVC
+- Javascript
+- Web development
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '441688574'
+  pvc_views: '1997'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I’m in the early stages of writing a web app with a friend who has been somewhat on the periphery of ASP.NET MVC. As in, when someone says “let’s build a web app”, he doesn’t automatically reach for the MVC project template as I typically do. Bear in mind, he’s also not a web forms fan either.</p>
+<p>Instead, he has a very specific architecture in mind that has taken me some time to come around to. A simplified version of it is thus: there is one web application for the various HTML files (and yes, they will be HTML only) and another for the “services”. The services one will serve up primarily JSON to the client which will interact with it with a very healthy dose of JavaScript. This is one reason we’ve decided on <a href="http://www.ohloh.net/p/openrasta">OpenRasta</a> for the services layer.</p>
+<p>I’ve deferred to my friend on some of this because I feel like I have too much emotional investment in MVC these days (as you can tell by my tendency to erroneously drop the ASP.NET part of the name). Suffice it to say he’s led development on some major league websites that have more traffic in an hour than I have cycles in my family tree. So I feel confident in his evaluation skillz. He has a more rounded view of the world, partially because of his experience with these websites and partially because he hasn’t been drinking the kool-aid as much as I have for some of this stuff.</p>
+<p>One of those areas where he isn’t tightly coupled is with JavaScript libraries. Me, I’m a jQuery guy. Not because I like it better than the other libraries but because it’s the only library I’ve ever used and it hasn’t caused me any pain. He has only a passing knowledge of a few of them and attacked the problem of which one to choose more objectively.</p>
+<p>To that end, we’ve settled on <a href="http://mootools.net">MooTools</a>, at least for the time being. The main technical reason for this is because jQuery is getting too popular and we don’t want to be perceived as jumping on the bandwagon. We feel that if it’s good enough for Microsoft to throw its support behind, then we need to look at something else.</p>
+<p>I jest, of course. In fact, our research shows it to be faster than jQuery and I have it on pretty good authority it is well-suited if you plan to have a somewhat complicated object model on the client. During my spike, I did find it to be more verbose than jQuery but not prohibitively so.</p>
+<p>Another JavaScript library we’re playing with is <a href="http://embeddedjs.com/">Embedded JavaScript</a>, which is a view engine for JavaScript. With it, you can define views like so:</p>
+<pre name="code">&lt;h2&gt;&lt;%= petNameForRack %&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;% for( var i = 0; i &lt; guns.length; i++ ) { %&gt;
+    &lt;li&gt;&lt;%= guns[i] %&gt;&lt;/li&gt;
+&lt;% } %&gt;
+&lt;/ul&gt;</pre>
+<p>This would be stored in an external file and you render it with some JavaScript like so:</p>
+<pre name="code">function renderListOfLovers( )
+{
+    var jsonRequest = new Request.JSON( {
+        url: &quot;http://localhost/Services.Web/Lovers&quot;,
+        method: &quot;get&quot;,
+        onSuccess: function( gunRackList ) {
+            gunRackList.Racks.each( buildItem );
+        } ).send( );
+}
+
+function buildItem( item )
+{
+    target = $(&quot;destinationDiv&quot;); 
+    var div = new Element( &quot;div&quot; );
+    var view = &quot;views/MyListOLovers.ejs&quot;;  // Contains the view shown above
+    new EJS( {url: view} ).update(div, item);
+    div.inject(target);
+}</pre>
+<p>That's mostly from memory so don’t be cuttin’ and pastin’ none. In the first function, we call out to our OpenRasta service which is configured to return a list of gun racks as JSON by default. When that call succeeds, it creates a new DIV, renders the view in it, then injects it into into a target container.</p>
+<p>All in all, it’s an interesting way of doing things. It’s nice that JSON has become kind of the de facto standard for passing stuff around with the various frameworks because it would be a pain to have to retrieve the list from OpenRasta in one format, convert it to another to work with MooTools, then another to work with EJS.</p>
+<p>All of this pretty much worked out of the box, too. The spike involved very little actual troubleshooting. It was mostly getting used to the syntax (e.g. I would have thought the MooTools inject function would act on the target rather than the item being injected).</p>
+<p>I also discovered you can throw an instance of a custom MooTools class into a view as well with no further changes required. Maybe that’s obvious if you are intimately aware of how JavaScript handles classes but my own experience has been limited to: new ActiveXObject(“MSXML2.XMLHttp”);</p>
+<p>On the EJS side of things, it also comes with a bunch of view helpers which are analogous to the dumping ground that is HTML extension methods with ASP.NET MVC.</p>
+<p>One roadblock I’ve hit is that while you have the power of a full-fledged library at your disposal with MooTools, in the EJS views, you are limited to only what it supports between the angle brackets. But as <a href="http://weblogs.asp.net/dotjosh/default.aspx">a wise man</a> said: in the end, it’s just JavaScript so you can make it do what you want anyway.</p>
+<p>How this will end up playing out when things get hairy is still anyone’s guess. But the pain-free spike has been pretty encouraging so far.</p>
+<p>Kyle the Scriptified</p>

@@ -1,0 +1,29 @@
+---
+layout: post
+title: NCover hanging in NAnt task
+date: 2007-04-11 17:01:06.000000000 -04:00
+categories: []
+tags:
+- Tools
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1041'
+  dsq_thread_id: '378363323'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The Coding Hillbilly loves typing as you can tell from the fact that he types out "The Coding Hillbilly" rather than using the short form, "I". But that's neither here nor there, whatever that means.</p>
+<p>Part of my recent PD has been going more in-depth with various N-based tools than I have in the past. The one I'm going to discuss is NCover because that's the one that has caused a problem interesting enough to talk about.</p>
+<p>The problem occurred when trying to run NCover from a NAnt script. It&nbsp;would reach&nbsp;the end of the unit tests, then hang for approximately 120.58 seconds before failing. The issue was documented in a forum somewhere and the recommended fix was to add registerProfiler="false" to the &lt;<a href="http://www.kiwidude.com/dotnet/DownloadPage.html" target="_blank">ncover</a>&gt; task (which I prefer solely due to its aesthetics). I did that and lo!</p>
+<p>Then I went on vacation, took a different computer, and did a download and build. Same problem. Eventually, I ended up switching to the &lt;exec&gt; task which worked. Until today. Now both versions are hanging, seemingly on the profiler.</p>
+<p>The odd thing was that NCoverExplorer worked fine with the same profiler. So I used it to generate my &lt;exec&gt; task and lo!</p>
+<p>The difference 'twixt the NCoverExplorer generated task and my task: The NCoverExplorer one referenced ncover.console.exe in C:program files, mine referenced it in toolsncover. The version in the former was 1.5.7.0, in the latter 1.5.4.0. Copy the newer version to toolsncover and lo!</p>
+<p>Know not why this is an issue and, as is my policy, I don't care much. This falls under the realm of infrastructure, which isn't my strong suit. All that matters is that the problem is solved and documented so that I may find the solution again in the future when it happens again and I inevitably forget the solution and have to find it on Google.</p>

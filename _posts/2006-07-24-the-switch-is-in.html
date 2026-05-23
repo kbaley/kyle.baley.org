@@ -1,0 +1,30 @@
+---
+layout: post
+title: The Switch is In
+date: 2006-07-24 01:00:38.000000000 -04:00
+categories:
+- dasBlog
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '704'
+  dsq_thread_id: '362994288'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Sweet Jayzus, how is it possible to migrate from .Text to DasBlog so quickly, so easily, so effortlessly? I had been putting this off for many moons on the basis that it would be a week-long project but here I am a mere four hours later with a fully migrated site. And that includes a break in the middle to watch <a href="http://www.imdb.com/title/tt0033870/">The Maltese Falcon</a> in its entirety. (Screw Walt Disney. The man I most want to see revitalized from a cryogenic sleep is Humphrey Bogart.) So instead of an ordeal that I should be ranting about in a series of posts over the span of a month, now I'm stuck with this little pit stop of&nbsp;an article&nbsp;that forces me to think of something new to write about.</p>
+<p>There were two, count 'em, two minor hiccups during the installation. Firstly, I originally installed the source code locally and used Visual Studio's Copy Project to copy it to my server. Not all the theme files are included as content (nor are all the themes included in the project) so I got an error that took longer to find than it should have. Solution: Copy the entire themes folder (ditto for the images folder).</p>
+<p>Secondly, I had to create the content and logs folder in the web's root. I believe the documentation said something to that effect but I only scanned it.</p>
+<p>That's it. If you're starting a new blog, there is nothing else to the installation. Just configuration. It was mind-boggling in its simplicity.</p>
+<p>Looking through the code was a good experience for me, too. Easy to follow. Some stuff I might have done differently (and in many cases, wrongly). Lack of comments. And the ones that exist are little notes akin to the ones I might write for myself to ignore. All in all, my main thought while scanning it was, "Hanselman *is* mortal after all".</p>
+<p>Migrating from .Text took much longer than it should have and here's why: Don't waste your time looking for someone else's solution. I kept running into dead links from posts claiming to have done it already. Even found something on SourceForge that I discovered, upon downloading, is missing a key file that prevents it from compiling.</p>
+<p>Instead, these are the only two links you need to know: <a href="http://www.hanselman.com/blog/MigratingContentFromRandomBlogsToDasBlog.aspx">migrating posts and comments</a> and <a href="http://www.hanselman.com/blog/MaintainingPermaLinksWhenMovingFromTextToDasBlog.aspx">rewriting URLs</a>, both on Scott Hanselman's site. The first is just as easy as he claims it is and second just plain works.</p>
+<p>There is still some work to do with images and local files I've referenced in a couple of posts but the basics are there and ready for indexing by Google. And, of course, this theme is unbefitting a hillbilly of my calibre. Gonna have to downgrade before my audience starts making 'ssumptions about me.</p>

@@ -1,0 +1,60 @@
+---
+layout: post
+title: Lost and found
+date: 2006-04-22 15:55:00.000000000 -04:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '692'
+  dsq_thread_id: '362997419'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>(NOTE: This post has been converted into an <a href="http://kyle.baley.org/articles/378.aspx">article</a>.)</p>
+<p>My history with multi-part topics is spotty but I think I may stick with this one for a while. I'm going to talk about implementing searches in applications and I have no delusions that it will all fit in one post.</p>
+<p>The searches to which I'm referring aren't Internet searches or desktop searches. In many ways, they're much simpler. They're searches many of you have probably implemented in your own coding hillbilly lifetime. They're application specific searches. As in: You have built a web site for a company that lets&nbsp;users add, edit, delete, list, define, and otherwise mangle widgets of some sort. And one of the features you want to implement is a search. I.E. The user selects some search criteria, usually based on your widgets' metadata,&nbsp;and you display the results.</p>
+<p>Sounds simple enough but it isn't really. There are some pretty nifty little problems that many users probably don't even recognize (which, frankly, are the best problems to have but we'll address them anyway).</p>
+<p>I'm going to focus specifically on web sites because they present some interesting challenges over and above Windows applications. I'm going to start off small and define a basic search and some properties you may not have considered.</p>
+<p>And to do this, I'll work with an example.&nbsp;In my sample application, we're going to deal with an object called Moo. The metadata for&nbsp;a Moo&nbsp;includes:</p>
+<ul>
+<li>ID
+</li>
+<li>Name
+</li>
+<li>Description
+</li>
+<li>Order date
+</li>
+<li>Client
+</li>
+<li>Project Type
+</li>
+<li>Office Location
+</li>
+<li>Address</li>
+</ul>
+<p>We have already built the application to add, edit, and delete Moos from our database. Now we want to build a search application that will display a list of Moos based on selected criteria. And our search page will allow the user to filter on any combination of metadata except for the ID. That is, the user could say: Show me all Moos with a name that starts with &#8220;Vending&#8221; for our Headingly office that was ordered in 2005. Not so simple anymore.</p>
+<p>Also, here are a list of options I think all good search engines should have and that we will try to&nbsp;include in our sample:</p>
+<ul>
+<li>Ability to page
+</li>
+<li>Ability&nbsp;to sort by an arbitrary field
+</li>
+<li>Ability&nbsp;to select the number of results per page
+</li>
+<li>Ability to expand results to show more information
+</li>
+<li>Ability to bookmark any page at any time</li>
+</ul>
+<p>That last two are going to be the wrinkles. ASP.NET can handle the first two almost entirely with built-in functionality. But they do it with postbacks. We can also add a control to the pager to let users change the number of results per page but again, that will require a postback. Same with expanding results.</p>
+<p>But what good is a search engine if it's a one time thing? Especially in a business application where users are more likely to perform the same searches over and over again as the data changes. Besides which, there's nothing stopping someone from bookmarking a page anyway whether it works or not and they'll be mighty ticked when they go back to it and find out it's useless.</p>
+<p>So in the coming posts, we'll see if we can build a search engine that espouses these features but doesn't lead us down the path of hard-coded SQL,&nbsp;querystring management, and complicated javascript. A say &#8220;too far&#8221; because I must confess, I haven't built such a search engine myself in .NET just yet. I'm working on one now so you, my fellow programming hicks, can learn right along with me. I'll post sample code as it becomes available and reserve the right to revise the requirements when I run up against a problem that is too hard.</p>

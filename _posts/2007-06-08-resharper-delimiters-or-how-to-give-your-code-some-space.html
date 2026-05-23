@@ -1,0 +1,43 @@
+---
+layout: post
+title: ReSharper Delimiters, or "How to give your code some space"
+date: 2007-06-08 16:13:54.000000000 -04:00
+categories: []
+tags:
+- ReSharper
+- Tools
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1996'
+  dsq_thread_id: '359271234'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>While I will profess my undying love of ReSharper, I do have a bit of an annoyance with its auto-closing delimiters (as explained <a href="http://www.excastle.com/blog/archive/2007/02/04/13563.aspx" target="_blank">here</a>). I've talked before on my <a href="http://kyle.baley.org/GoodGestalt.aspx">love of white space</a> but it comes with a price. Whenever I type the opening parenthesis of a method, ReSharper helpfully adds the closing one. It's also smart enough to recognize when you type the closing one yourself and won't duplicate it if you do so. If you don't have a space there, that is.</p>
+<p>Here's an example. Let's assume I type the characters: "this.gethashcode(" without the quotes. Here is how it looks right after I type the (:</p>
+<pre class="code"><span style="color: rgb(128,0,0)">this.<span style="color: rgb(128,0,0)">GetHashCode</span>( )</span></pre>
+<p><a href="http://11011.net/software/vspaste"><a href="http://11011.net/software/vspaste"></a></p>
+<p>ReSharper has helpfully added the closing parenthesis and even respected my choice of using white space after opening parentheses and before closing ones. The problem is that the cursor is now situated right after the first parenthesis and I need to&nbsp;Right-Arrow or End my way to type the closing semi-colon. And neither key is situated in an area that lends itself to quick access on my laptop. If I type the closing parenthesis, ReSharper does not recognize that this is the same as the one it just helpfully added (the way it does when there is no whitespace). So I'm left with:</p>
+<pre class="code"><span style="color: rgb(0,0,128)"><span style="background: rgb(255,255,255)">this</span>.<span style="color: rgb(128,0,0)">GetHashCode</span>( ) )</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>(Note: I added the space after the first parenthesis manually. It's a habit I'm hoping I don't have to break.)</p>
+<p>There is a way around this that I haven't quite got into the habit of using. That is to take advantage of ReSharper's advanced IntelliSense. Here's what appears when I start typing GetHashCode:</p>
+<p><a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/5420af456b41_A1D6/image.png" atomicselection="true"><img style="border-right: 0px; border-top: 0px; border-left: 0px; border-bottom: 0px" height="101" alt="image" src="/assets/image_thumb.png" width="642" border="0" /></a> </p>
+<p>At this point, I can press &lt;Tab&gt; and get the following:</p>
+<pre class="code"><span style="color: rgb(0,0,128)"><span style="background: rgb(255,255,255)">this</span>.<span style="color: rgb(128,0,0)">GetHashCode</span>()</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Plus the cursor is sitting helpfully at the end of the line. And no worries about my precious gestalt. I need only type the closing semi-colon and either ReSharper or Visual Studio will format it into the beacon to gestalt I am looking for:</p>
+<pre class="code"><span style="color: rgb(0,0,128)"><span style="background: rgb(255,255,255)">this</span>.<span style="color: rgb(128,0,0)">GetHashCode</span>( );</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>The problem with this method is that it kind of slows me down. I find it much faster just to type "gethashcode(" than to start typing "get", search through the list for the one I want, arrow down if necessary, and press Tab. My way has more keystrokes to be sure, but does not require that I pay attention to the UI.</p>
+<p>The habit I'm trying to get into is: rather than typing "gethashcode(", instead type "gethashcode&lt;tab&gt;". Theoretically, this should be easier...</p>
+<p>Kyle the Habitual</p>
+<p></a></p>

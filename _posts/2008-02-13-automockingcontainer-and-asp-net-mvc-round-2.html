@@ -1,0 +1,55 @@
+---
+layout: post
+title: 'AutoMockingContainer and ASP.NET MVC: Round 2'
+date: 2008-02-13 16:55:36.000000000 -05:00
+categories: []
+tags:
+- ASP.NET MVC
+- Mocking
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1030'
+  dsq_thread_id: '442009118'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Many thanks to honorary hillbilly, <a href="http://blog.eleutian.com/" target="_blank">Aaron Jensen</a> for both nudging me into helping out when I lamented on the <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/01/10/automockingcontainer-and-asp-net-mvc-round-1.aspx" target="_blank">AutoMockingContainer/ASP.NET MVC combination</a> and for helping me through my first official patch submission to an <a href="http://sourceforge.net/projects/rhino-tools/" target="_blank">open source project</a>. He was very gracious with my lapse in matching formatting and spacing standards.</p>
+<p>The end result is that you (and, more importantly, I) can now use the AutoMockingContainer to create controllers in ASP.NET MVC. Whether or not you think <a href="http://tech.groups.yahoo.com/group/altdotnet/message/2299" target="_blank">that's a good thing</a>, I'm feeling mighty proud of myself either way.</p>
+<p>The issue previously was that when the container tried to create the controller, the default behaviour was to create dynamic mocks for any properties it could. Controllers have two properties, ControllerContext and TempData, that can't be mocked without help, primarily because they don't have default constructors.</p>
+<p>The fix was trivial in the way that <a href="http://www.ayende.com/blog" target="_blank">Ayende</a> would say something was trivial. That is, it wasn't trivial for me at all but it sure looks like it was in the finished code.</p>
+<p>By default, Windsor will try to instantiate an object using the <a href="http://www.castleproject.org/container/documentation/v1rc3/manual/mktypedocs/Generated_DefaultComponentActivator.html" target="_blank">DefaultComponentActivator</a>. One of the methods it calls is SetupProperties which, as one might expect, loops through the object's properties and resolves any that it can. And the AutoMockingContainer assumes that it can resolve any and all comers without any outside help.</p>
+<p>The fix was to create a custom component activator that derives from DefaultComponentActivator but that overrides SetupProperties so that it does nothing:</p>
+<pre class="c-sharp" name="code">public class AutoMockingComponentActivator : DefaultComponentActivator
+{
+	public AutoMockingComponentActivator(ComponentModel model, IKernel kernel, ComponentInstanceDelegate onCreation,
+			  ComponentInstanceDelegate onDestruction)
+		: base(model, kernel, onCreation, onDestruction)
+	{
+	}
+
+	protected override void SetUpProperties(object instance, CreationContext context)
+	{
+	}
+}</pre>
+<p>Then, thanks to Castle's extensibility, that activator can be wired into the Kernel in the AutoMockingContainer (bolded code is new):</p>
+<pre class="c-sharp" name="code">public void Initialize()
+{
+	Kernel.AddSubSystem(SubSystemConstants.NamingKey,new AutoMockingNamingSubSystem(this));
+	Kernel.AddFacility(&quot;AutoMockingFacility&quot;, new AutoMockingFacility(this));
+<strong>	Kernel.ComponentModelCreated += Kernel_ComponentModelCreated;
+</strong>}
+
+<strong>void Kernel_ComponentModelCreated(Castle.Core.ComponentModel model)
+{
+	model.CustomComponentActivator = typeof(AutoMockingComponentActivator);
+}</strong></pre>
+<p>Retrofit some tests (oops! I mean I wrote those first) and boom-bada-billy-bing, I'm off to the races. At the expense of about four billable hours.</p>
+<p>Kyle the Activated</p>

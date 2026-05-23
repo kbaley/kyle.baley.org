@@ -1,0 +1,76 @@
+---
+layout: post
+title: Review of the Check-In Dance
+date: 2008-07-07 01:50:54.000000000 -04:00
+categories: []
+tags:
+- Brownfield
+- Conscientious Coding
+- Continuous Integration
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '435577875'
+  hl_twitter_has_auto_tweeted: 'New post: Review of the Check-In Dance, Full text:
+    http://blog.baley.org/?p=127'
+  pvc_views: '1310'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>This started as a promotion for the <a href="http://www.dimecasts.net/Casts/CastDetails/18" target="_blank">dimecast</a> I recently did on the Check-In Dance but I think it's worth reviewing in more detail.</p>
+<p>Don't know if he coined the phrase but I first heard of the Check-In Dance from <a href="http://codebetter.com/blogs/jeremy.miller/archive/2005/07/25/129797.aspx" target="_blank">Jeremy Miller</a>. His post on the subject is still, some three years later, accurate. In it, he describes it in relation to continuous integration but in my screencast, I talk about it in a more general setting. </p>
+<p>But I'm being vague. Here's the problem it solves. In a multi-team environment, it is very easy to check in code that &quot;doesn't work&quot;. Often it works fine on the developer's machine but when it is merged into the main version control repository, which is also being updated by other developers, we end up with a version in the repository that won't compile.</p>
+<p>Here's an example. We have a class Artist:</p>
+<pre class="c-sharp" name="code">public class Artist
+{
+    public int Id { get; set; }
+    public string First { get; set; }
+    public string LastName { get; set; }
+}</pre>
+<p>And here is some code in a user control that uses it:</p>
+<pre class="c-sharp" name="code">protected void Page_Load(object sender, EventArgs e)
+{
+    var artist = new Artist();
+    artist.First = &quot;Frank&quot;;
+    artist.LastName = &quot;Sinatra&quot;;
+    labelFirstName.Text = artist.First;
+    labelLastName.Text = artist.LastName;
+}</pre>
+<p>Now our first developer, we'll call him Huey, is working in the code and decides that First is incorrectly named. It should be FirstName to be consistent with the LastName property. So he changes the name of the property to FirstName and updates the Page_Load code that calls it. The code compiles on his machine and he checks in. All is right with the world.</p>
+<p>Cut to our second developer, Lewis. He's working away on some new code that uses the Artist class. Let's watch!</p>
+<pre class="c-sharp" name="code">public void SaveArtist( int artistId, string firstName, string lastName )
+{
+    var artist = new Artist{ 
+        Id = artistId,
+        First = firstName,
+        LastName = lastName
+    };
+    _repository.Save( artist );
+}</pre>
+<p>Notice that Lewis is using the original implementation of the Artist class because he is oblivious to the changes Huey is making. But when he's done, he compiles and again, it works fine on his machine. He checks in and goes home with the knowledge of a job well done.</p>
+<p>The next day, another developer, Jackson, comes in to work. He's been away on vacation so the first thing he does is get the latest version. And lo! It won't compile. Heckuva a thing to greet a guy after two weeks of R 'n R at the local World's Strongest Man retreat. Now he has to go digging into code he hasn't looked at for weeks to find out what's wrong before he can be productive.</p>
+<p>The culprit here is Lewis (and even Huey though he didn't really make any breaking changes). He contaminated the &quot;one true source&quot; in the version control repository but checking in code that, while it worked locally, does not work in the context of the entire application.</p>
+<p>As Captain Understatement would say, this is bad. At this point, we have an application in version control that no longer compiles. Any developers that get the latest version are not able to work. And the onus to fix it is implicitly on the next developer to get the latest, not on Lewis, who created the problem. In any case, Jackson must either fix the problem or track down who made the error and calmly explain that it would be peachy keen if he fixed it when it tickled his fancy.</p>
+<p>Either way, this situation should be considered tantamount to eating babies or using genetically-modified dandelions as a base for your hooch. Your version control repository is sacred ground. It is not meant to be trod upon by blasphemous developers working in a vacuum. At any point, your client (or anyone) could walk in and ask for the latest version of the code and you should be able to give it to him with confidence.</p>
+<p>What Lewis <em>should</em> have done was the check-in dance:</p>
+<ol>
+<li>Make his changes to the First property</li>
+<li>Compile them locally and test to make sure they work</li>
+<li>Get the latest version of the code from version control and merge them into his local copy</li>
+<li>Compile again and test to make sure his changes still work</li>
+<li>Check-in</li>
+</ol>
+<p>The third and fourth steps are the important ones and the ones Lewis skipped. They are the ones that give you the requisite confidence you need in your version control repository.</p>
+<p>Like I said earlier, this version of the check-in dance differs slightly from Jeremy's. He was talking in the context of a continuous integration environment. This is something you should strive toward but if you don't have it yet, this version will help you get into the mindset. And even if you aren't interested in CI, the check-in dance is still a necessity to keep your repository as pristine as &lt;editor's note: this metaphor has been removed to ensure CodeBetter does not get blacklisted by corporate web filters&gt;.</p>
+<p>A word on the merge in step 3. There is no doubt that this can be messy. Especially if you aren't checking in often. What can I say? Not much you can do if you want to keep your repository clean. Either check-in often or start cozying up with a merge tool vendor.</p>
+<p>Keep in mind, though, that if you don't encourage a culture of checking-in often, you'll end up with developers that either avoid the check-in dance, or avoid checking-in at all. It's basic conflict-avoidance. If it hurts when I move my arm like that, I'm going to stop moving my arm like that.</p>
+<p>In either case, you are wasting expensive time. If you don't use the check-in dance, you are wasting the time of the developer who has to track down an error in code he didn't write. And if your developers aren't checking in often, they are wasting time doing massive (i.e. more error-prone) code merges.</p>
+<p>At this point in this little odyssey, I probably shouldn't be talking about wasting time. So I'll wrap up. If you want more info, I'm happy to continue this in the comments. Also, I've already linked to Jeremy's post and my dimecast on the subject above. Donald and I also talk about it in our <a href="http://www.dotnetrocks.com/default.aspx?showNum=354" target="_blank">DNR episode</a>.</p>
+<p>Kyle the Versioned</p>

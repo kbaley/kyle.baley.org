@@ -1,0 +1,49 @@
+---
+layout: post
+title: Online Professional Development or, "How to Bring a Flamingo Back to Life"
+date: 2007-05-17 00:28:06.000000000 -04:00
+categories:
+- Flamingo
+tags:
+- Professional Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '762'
+  dsq_thread_id: '1102239812'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The Suvius.Flamingo project is not quite dead although it is, to go with the motif of the National Geograhic show playing behind me, about ninety percent down the python's gullet. But let's see what we can't glean from the carcass.</p>
+<p>I haven't linked to the application because I'm scared to even check to see if it still works. <a href="http://kyle.baley.org/WMP11AndOnlinePlaylists.aspx">Last I checked,</a> Windows Media Player 11 had made the application all but useless so I kind of abandoned it. Now, in a fit of PD, I'm going to see if we can't all learn something from resurrecting the app and re-doing it in a TDD way. So with that, I shall carefully document its development from start to finish. Or at least until something else shiny catches my eye.</p>
+<p>For those that want to play along, I have a Subversion repository and will post the details for it in the near future once I have created a read-only user. If you *really* want to gain my undying gratitude, roll up your sleeves and ping me to become a developer on the project.</p>
+<p>The primary goal is learning. If we end up with a working application at the end, all the better.</p>
+<p>First, the boring part: defining what the application is supposed to do. This will be a moving target but in a good way. Mostly because I'm reserving the right to change the requirements to make development (and blog topics) more interesting.</p>
+<p>At a high level, I'm looking at building a front-end to my online music library. It currently resides at http://radio.baley.org as a directory list of about 300 songs. The other 2500 have yet to be migrated to the new server.</p>
+<p>If I were to free associate some features, they would include:</p>
+<ul>
+<li>Ability to search for music based on one or more criteria, including title, artist, and genre</li>
+<li>Ability to chain search filters together to form a playlist</li>
+<li>Ability to play the playlist in at least one popular media player in a user-friendly way</li>
+<li>Ability to save a playlist</li>
+<li>Ability for an administrator to upload additional songs to the&nbsp;database and glean the metadata from it (as opposed to keying it in manually)</li>
+<li>Ability to update metadata and have it persisted not only in the database but in the underlying file as well</li>
+<li>Ability for users to rate a song</li>
+</ul>
+<p>Woman, I'd better stop there or I'll be here all night. Suffice it to say, there&nbsp;is a lot more I could throw in....ah, what the hell:</p>
+<ul>
+<li>Ability for any user to tag a song with keywords</li>
+<li>Ability to search based on tags</li>
+<li>Ability to apply more than one genre, artist, album, etc to a song. This might be combined with the tagging feature. E.g.&nbsp;Wish You Were Here&nbsp;would be tagged with Pink Floyd, Roger Waters, David Gilmour, Rick Wright, Nick Mason, Wish You Were Here (album), A Collection of Great Dance Songs (album), classic rock, acoustic</li>
+<li>Ability for users to add comments about a song (possibly in a wiki-like fashion)</li>
+<li>Ability to share playlists</li>
+<li>Ability to link songs (i.e. link to other versions of a song). This would also be user-driven</li>
+</ul>
+<p>Let the music begin.</p>

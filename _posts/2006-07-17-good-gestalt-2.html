@@ -1,0 +1,56 @@
+---
+layout: post
+title: Good Gestalt
+date: 2006-07-17 12:54:00.000000000 -04:00
+categories: []
+tags:
+- Conscientious Coding
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '796'
+  dsq_thread_id: '362994502'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Whoa! I did NOT intend to write that little epic on naming conventions. What I originally wanted to do is talk a bit about my own thoughts on the subject then slide into a side topic. This post will be about the side topic: white space</p>
+<p>White space isn't given enough attention in coding standards. Sure you read about whether to place curly braces on a separate line and spaces around operators and the like but usually the bigger picture is overlooked.</p>
+<p>Readability is the ultimate goal of white space, of course. For me, there is also an aesthetic quality to it. When I use white space, it's too make the code “look” good. The consequence of that is that it is more readable. It's kind of hard to explain. I remember when I talked with someone who was my mentor in this regard. I looked at his code and it stood out. It was well laid out and easy to follow individual statements. But more than that, it made me want to write code that looked like it. That, I think, is part of why I still do it. I want someone else to look at it and think that same thing.</p>
+<p>So there are some rules involved. Well, “rules” is a little strong. Guidelines is more accurate. Like the numbers you see on those black and white signs on the highway. I'll list them point form then put some sample code afterward.</p>
+<ul>
+<li>One space before and after operators (+ - * = += *=, etc).
+</li>
+<li>One space before and after the opening parenthesis in if, for and foreach constructs.
+</li>
+<li>One space before the closing parenthesis in if, for and foreach constructs. Carriage return afterward. Always...
+</li>
+<li>...except if the only thing afterward is a return statement. That's my only exception to the above guideline.
+</li>
+<li>One space after the semicolon in a for statement.
+</li>
+<li>Curly braces: one per line.
+</li>
+<li>Curly braces must appear for all i, for and foreach constructs. Except if the only statement is a return. Then it's recommended but I'm not going to be Draconian about it.
+</li>
+<li>Function calls: No space before the opening parenthesis, one space after.&nbsp;Including when there are no parameters.
+</li>
+<li>One space after each comma in a function declaration and a function call. No space before.
+</li>
+<li>Else statements always go in a line by themselves.
+</li>
+<li>No spaces before or after square braces</li>
+</ul>
+<p>I'll stop there. That should be enough for you to get the idea. I should also point out that you can configure Visual Studio 2005 to enforce every one of these rules. Here's the sample code I promised:</p>
+<p><font size="2"></p>
+<p /></font><font face="Courier New"><font color="#0000ff" size="2">private</font><font size="2"> </font><font color="#0000ff" size="2">void</font><font size="2"> returnSomeValue( </font><font color="#0000ff" size="2">int</font><font size="2"> parm1, </font><font color="#0000ff" size="2">string</font></font><font face="Courier New" size="2"> parm2 )<br /></font><font face="Courier New" size="2">{<br /></font><font face="Courier New"><font color="#008000" size="2">&nbsp;&nbsp;&nbsp; // Operators<br /></font><font color="#0000ff" size="2">&nbsp;&nbsp;&nbsp; int</font></font><font face="Courier New" size="2"> i = 1 + 3;<br />&nbsp;&nbsp;&nbsp; i += 1;<br /></font><font color="#008000" size="2"><br /><font face="Courier New">&nbsp;&nbsp;&nbsp; // if, for and foreach<br /></font></font><font face="Courier New" color="#0000ff" size="2">&nbsp;&nbsp;&nbsp; if</font><font face="Courier New" size="2"> ( i == 1 )<br />&nbsp;&nbsp;&nbsp; {<br /></font><font face="Courier New" color="#008000" size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // Do something<br /></font><font face="Courier New" size="2">&nbsp;&nbsp;&nbsp; }<br /></font><font face="Courier New" color="#0000ff" size="2">&nbsp;&nbsp;&nbsp; else<br /></font><font face="Courier New" size="2">&nbsp;&nbsp;&nbsp; {<br /></font><font face="Courier New" color="#008000" size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // Do something else<br /></font><font face="Courier New" size="2">&nbsp;&nbsp;&nbsp; }<br /></font><font color="#0000ff" size="2"><br /><font face="Courier New">&nbsp;&nbsp;&nbsp; for</font></font><font face="Courier New"><font size="2"> ( </font><font color="#0000ff" size="2">int</font></font><font face="Courier New" size="2"> j = 0; j &lt; 100; j++ )<br />&nbsp;&nbsp;&nbsp; {<br /></font><font face="Courier New" color="#008000" size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // Loop<br /></font><font face="Courier New" size="2">&nbsp;&nbsp;&nbsp; }<br /></font><font color="#008000" size="2"><br /><font face="Courier New">&nbsp;&nbsp;&nbsp; // Exception to the guideline<br /></font></font><font face="Courier New"><font color="#0000ff" size="2">&nbsp;&nbsp;&nbsp; if</font><font size="2"> ( i == 100 ) </font><font color="#0000ff" size="2">return</font></font><font face="Courier New" size="2">;</p>
+<p></font><font face="Courier New"><font color="#008000" size="2">&nbsp;&nbsp;&nbsp; // Function calls<br /></font><font color="#0000ff" size="2">&nbsp;&nbsp;&nbsp; string</font></font><font face="Courier New" size="2"> theValue = i.ToString( );<br />&nbsp;&nbsp;&nbsp; theValue = String.Format( "The value is {0}", i );<br /></font><font color="#008000" size="2"><br /><font face="Courier New">&nbsp;&nbsp;&nbsp; // Casting<br /></font></font><font face="Courier New"><font size="2">&nbsp;&nbsp;&nbsp; TextBox textbox = (TextBox)Page.FindControl( "textBox1" );<br /></font><font color="#0000ff" size="2">&nbsp;&nbsp;&nbsp; string</font></font><font face="Courier New" size="2"> text = ( (TextBox)Page.FindControl( "textBox1" ) ).Text;</p>
+<p></font><font face="Courier New"><font color="#008000" size="2">&nbsp;&nbsp;&nbsp; // Square braces<br /></font><font color="#0000ff" size="2">&nbsp;&nbsp;&nbsp; string</font></font><font face="Courier New" size="2">[] myArray = theValue.Split( ',' );<br />&nbsp;&nbsp;&nbsp; myArray[0] = "moo";<br />}</font></p>
+<p>The only real funkiness is the second line in the Casting section where you have some parenthesis with spaces and some without. That took some getting used to...</p>
+<p>If you want justification for any of these rules, just ask and I can make something up that sounds plausible. The point is that I like how this code looks. And when I see code written like this, it tells me that the author cares about his or her code and more importantly, cares about people who may have to look at it in the future. This author is, say it with me,&nbsp;a Conscientious Coder.</p>

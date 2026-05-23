@@ -1,0 +1,43 @@
+---
+layout: post
+title: 'Tools for disparate teams: AgileZen Edition'
+date: 2010-08-18 16:41:21.000000000 -04:00
+categories: []
+tags:
+- Tools
+- Working Remotely
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '359235973'
+  pvc_views: '1290'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Still neck-deep in start-up mode these days. I still don’t feel any different than I did before we started this venture whole hog in January but that might be because I was prepared for it. Since the baby came in November, I was already familiar with the lack of sleep, persistent anxiety, and the constant mood swings between “this is the greatest feeling ever” and “what the &amp;*%$ was I thinking?!?” so it was a smooth segue to entrepreneurship.</p>
+<p>In any case, I’ve <a href="http://kyle.baley.org/CategoryView,category,Working%20Remotely.aspx">waxed somewhat comprehensible</a> on the topic of working remotely fairly often. In most cases, I worked on a team where I was the only remote person. Nowadays, I’m part of a start-up where the entire dev team is scattered. And long-time readers will be horrified to hear that I’m the one in charge.</p>
+<p>It’s been a learning process, to be sure, and continues to be. We’ve adopted procedures that I increasingly refer to as “spry” in that they help us work faster. But I’m scared to call it Agile or Lean because my knowledge of either of those processes is limited to what I read about it in the little-known Bazooka Joe comic series on the subject. So in order to avoid much “tut-tut”-ing from people on Twitter, I just say “this is what we do; if it follows a formal methodology, that’s not my fault.”</p>
+<p>To that end, I’m going to fly directly in the face of the “favour individuals and interaction over processes and tools” part of Agile and post on a few of the tools we’ve been using to keep us organized. Or, more accurately, keep us from becoming too disorganized. In this episode:</p>
+<h3><a href="http://agilezen.com">AgileZen<img style="border-right-width: 0px; margin: 5px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" border="0" align="right" src="/assets/logo.png" /></a></h3>
+<p>When we first started our venture, my partner had everything in <a href="http://basecamphq.com/">BaseCamp</a>. It worked well enough. The Writeboard feature was useful and it delivers on its promise of keeping communication centralized. But we were using a task list to manage the features we wanted to put in and it very quickly became unwieldy for that. Not to knock BaseCamp. It is in the realm of software we want to emulate in that it’s great at what it does and makes no apologies if it doesn’t work outside of those boundaries.</p>
+<p>The two obvious choices in my mind were <a href="http://leankitkanban.com/">LeanKitKanban</a> and AgileZen. We took a look at both tools and decided on AgileZen because of its simplicity. We also took a very brief look at <a href="http://axosoft.com/">AxoSoft</a> but it was deemed overkill for our needs. The <a href="http://axosoft.com/ontime/try_ontime_free">pricing page</a> alone doesn’t exactly inspire confidence in the whole “keep it simple” thing we were trying to strive for.</p>
+<h4><strong>Likes</strong></h4>
+<p>There’s plenty to like about AgileZen. The visual nature of it is well-suited for a remote team for daily stand-ups. Our process is generally to leave the board as-is for most of the day and move things around just at the stand-up. Helps give a sense of progress that was accomplished the previous day.</p>
+<p>AgileZen follows a growing trend with software: less is more. This is an approach espoused by 37Signals and it’s one we’re very much on board with in our own product. So it gives us a nice warm fuzzy feeling to use a product that aligns with our own philosophy.</p>
+<p>The overall user experience shows great attention to detail. It wasn’t until very recently, after having used the product for months, that I noticed the Add Story “form” had no labels. Instead, all the fields have watermarks indicating what to put in the field.</p>
+<p>Because of this, the overall feature set doesn’t really give a decent picture of the application. Yes, you can colour code stories and add tags and, more recently, filter based on search criteria. None of these individually make AgileZen better than competitors. It’s more the way they all seem to work as a cohesive product. </p>
+<h4><strong>Wish List</strong></h4>
+<p>There is but one single feature that I think is the sole major gap in the product: a full API. There is a REST API to query things but nothing to write information back. (At least not yet; the feature is in the works.) This is something that would have *really* come in handy when we migrated all our tasks out of BaseCamp. But even now, stories come from other sources and almost all of the other products we use (e.g. BitBucket, ZenDesk) have an API so it would be pretty trivial to write a little utility to, say, take a ticket from ZenDesk and create a story from it in AgileZen. (And as I noted on Twitter, no prizes for what such a utility would be called.)</p>
+<p>Also, as much as I marvel at the user experience, there are some minor quirks. The drag and drop isn’t infallible. There have been many cases when I just wish there was an arrow icon that I could click to move it to the next column without me having to fight with drag-n-drop, especially on my laptop where I’m forced to use the touchpad.</p>
+<p>Couple of other annoyances are very likely low priority due to the potential number of people it affects. First, I use the Vimium Chrome extension which makes it easy to navigate a page with the keyboard. But some areas of the app aren’t “clickable” with this extension. Second, the fact that it kicks me out after I log in from another computer. I use AgileZen from at least two different virtual machines on any given day so I often have to re-login. This has been alleviated thanks to Vimium and AutoHotkey using a <a href="http://codebetter.com/blogs/kyle.baley/archive/2010/06/23/automating-browser-actions-with-vimium-and-autohotkey.aspx">similar technique</a> I used to migrate the stories out of Basecamp. Now, I just press Win+a to log in to AgileZen.</p>
+<p>I hesitate to mention this possible feature but it’s something that would come in handy for us: threaded discussions attached to a story. The reason I hesitate is because, frankly, if I were on the AgileZen team and someone asked for this, my answer would be a flamboyant “suck it, user!”. It pretty much flies in the face of everything AgileZen is trying to achieve with its feature set. Internally, when we discuss a feature like this that would very obviously make the app overly complicated, we usually say discard the idea and say, “Yeah, there’s no need to Microsoft the app.” That’s how I predict the conversation would go with threaded discussions in AgileZen.</p>
+<p>This list is kind of a double-edged sword because as I mentioned, any new features threatens the “keep it simple” vibe the app has at the moment. That said, Nate and Niki are smart people and I trust they will find a way to give me what I need, even if it’s not exactly what I asked for.</p>
+<h4><strong>Wrap-up</strong></h4>
+<p>Besides using the software, AgileZen has a certain quality that we are actively aspiring to achieve. It has the type of user experience that produces an emotional response. That response is almost universally positive so much so that even though it has a few quirks, I love using it. It’s something we use everyday and coupled with a decent screen-sharing tool (which is coming up next), it’s been a valuable tool for our remote team.</p>

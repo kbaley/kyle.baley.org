@@ -1,0 +1,46 @@
+---
+layout: post
+title: Revisiting “Maintainable for whom?”, or “How to justify your crap”
+date: 2009-12-15 16:57:44.000000000 -05:00
+categories: []
+tags:
+- ASP.NET MVC
+- Conscientious Coding
+- S#arp Architecture
+status: publish
+type: post
+published: true
+meta:
+  hl_twitter_has_auto_tweeted: 'New post: Revisiting &ldquo;Maintainable for whom?&rdquo;,
+    or &ldquo;How to justify your crap&rdquo;, Full text: http://blog.baley.org/?p=52'
+  pvc_views: '1461'
+  dsq_thread_id: '349690131'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><a href="http://codebetter.com/blogs/kyle.baley/archive/2008/04/11/who-s-the-next-guy.aspx">Some time ago,</a> I had a small crisis of conscience as I worked on an app for my dad’s company. At the time, I wondered about the long-term viability of using so-called advanced tools like NHibernate, IoC, and MVC. Specifically, if I drop dead (and it’s starting to get a little morbid the number of times this comes up in conversation, especially with my family), will the next guy they get be able to understand it? More generally, how much do I alter my coding practices to make it more palatable to someone who might be more “learning averse”.</p>
+<p>Cut to a year and a half later and the following has happened:</p>
+<ul>
+<li>NHibernate has become much more well-known and easier to work with. Plus the available documentation has increased immensely. </li>
+<li>MVC is no longer Scott Guthrie’s side project and the only issue now is that the version I used was pre-release. </li>
+<li>The company got sold and they are phasing the application out.
+<div style="border-bottom: #999999 2px solid; border-left: #999999 2px solid; padding-bottom: 1em; background-color: #eeeeee; margin: 1em; padding-left: 1em; width: 200px; padding-right: 1em; float: right; font-size: 8pt; border-top: #999999 2px solid; border-right: #999999 2px solid; padding-top: 1em">Full disclosure, there is one HUGE reason I was able to ramp up quickly on the Sharp project. Rather than send me the code/database or point me to an SVN URL, he shipped me a virtual machine pre-configured. All the projects, dev tools, and configuration was done so there was none o’ this “download the latest ELMAH and stick it in this folder” and “create this IIS app” and such. Just “here’s your VM. Go install VPC”. Granted, I did spend some time converting it to VMWare because the latter is more conducive to the Kinesis keyboard I’m using (which doesn’t have a Right-Alt key). But even that was a painless process.</div>
+</li>
+<li>Most notably, I didn’t die </li>
+</ul>
+<p>All of these add up to a reaffirmation that I did the right thing by sticking to what I do best. I got the application done that much quicker and all the tweaks I made to it over the months (which, admittedly, wasn’t that much) were made much faster than if I had, say, hand-rolled a DAL with stored procedures. At least, I perceive that to be true. And in this industry, of course, perceived performance is better than actual performance.</p>
+<p>That’s not actually the crux of this post but darned if it didn’t make me feel good writin’ it out.</p>
+<p>The Hillbilly has picked up a couple of new contracts and is, once again, employed. Whether or not it’s gainful employment has yet to be determined but for the last couple of months, it has been a mellower experience than my previous contract.</p>
+<p>Part of the reason for the calmer work atmosphere is that one of the contracts is based on <a href="http://www.sharparchitecture.net">Sharp Architecture</a>. In fact, it is with none other than Sharp’s creator and benefactor, <a href="http://devlicio.us/blogs/billy_mccafferty/">Billy McCafferty</a>, who is as gracious a host as one would expect from someone who documents his OSS as well as he does.</p>
+<p>The other contract is similar in that it’s ASP.NET development but it’s web forms, not MVC. It contains a single project and uses Linq to SQL data models for the data access. It’s not spaghetti code, mind you. There’s a healthy dose of copy and paste and the code-behind-thingy file from the .dbml file is constantly being re-written and/or deleted at regular intervals but for the most part, it’s relatively clean and easy to work with once you get the hang of it.</p>
+<p>I started each contract at about the same time and here’s where the title comes in. It took me less time to get up to speed on the Sharp project as it did the other one. Not because I know MVC more than web forms but because I didn’t have to spend a lot of time figuring out the project’s conventions. How does data access work? Where does the business logic go? Where do I store things on the file system? Where do I get all the dependencies?</p>
+<p>So I got to thinkin’ about my unfounded trepidation for the previous contract. Yes, I could have dumbed it down so the next person was able to understand it. But what if the next person already had the skill set and/or the wherewithal to recognize the patterns and how to learn what he or she needed to know? I.e. what if the next person was &lt;shudder&gt; BETTER THAN ME?!? (And at this point, being better than me entails only that he or she recognizes that I should have said “better than I”). Would I not be doing that person a favour by allowing him or her to grow as a developer and possibly to get the work done quicker?</p>
+<p>This is all conjecture and reeks of arguing the happy scenario to prove my point. And I’ll be damned if I’m going to reek based solely on invalid arguments. So I’ll alter my point slightly. Maybe I got lucky in that the application had a short shelf-life and we never got the chance to see who the next person was. Perhaps I acted recklessly by increasing potential long-term costs of the project. Or maybe I did the right thing by not dumbing down the software for some possible future event. There will always be anecdotal evidence to prove either side, methinks. Case in point: at my last contract, where learning new techniques was just below washing one’s hair with a cheese grater on the comfort scale, the rumour mill says all software development has ceased in favour of off-the-shelf solutions. Makes me wonder how much was spent ripping out code that was deemed “too complicated”.</p>
+<p>So for the time being, I believe I’ve justified myself into doing what I want and how I want it, when given the choice.</p>
+<p>Kyle the Justified</p>

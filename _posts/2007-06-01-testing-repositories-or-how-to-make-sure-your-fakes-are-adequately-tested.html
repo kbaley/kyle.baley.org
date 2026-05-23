@@ -1,0 +1,48 @@
+---
+layout: post
+title: Testing Repositories, or "How to make sure your fakes are adequately tested"
+date: 2007-06-01 21:00:40.000000000 -04:00
+categories: []
+tags:
+- BDD/TDD
+- Professional Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1009'
+  dsq_thread_id: '515362252'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Lots of talk on the new Live Writer. I'm just glad I can finally use the Ctrl+RightArrow key combination again the way I'm used to.</p>
+<p>The real topic of the day is repositories. In my <a href="http://kyle.baley.org/ActiveRecordQueriesOrQuotHowToQueryDeepquot.aspx">last post</a>, I raved about ActiveRecord but in that little mini-project, I didn't actually use any repositories. I'll admit that I didn't actually do strict TDD on that project, nor did I even write tests for it. The reason being...actually, I don't need to explain myself to you people. I have my reasons, lame as they may be.</p>
+<p>But that was important because I now understand what <a href="http://www.amazon.com/Applying-Domain-Driven-Design-Patterns-Examples/dp/0321268202/ref=sr_1_1/104-9271804-8595921?ie=UTF8&amp;s=books&amp;qid=1180728270&amp;sr=1-1" target="_blank">Jimmy Nilsson</a> was talking about in his chapter on PI for repositories. I'm back in PD mode implementing tests against my repositories and it now occurs to me: I'm going to need two repositories. A fake one for the tests and a real one that hits the database and wraps my use of ActiveRecord/NHibernate. (Yes, Nilsson talks about this very explicitly. Hillbillies ain't what you might call "book learners".)</p>
+<p>To explain the issue (and thus, to pad my post) here is a sample test:</p>
+<pre class="code"><span style="background: rgb(255,255,255)">    [ <span style="color: rgb(128,0,0)">Test</span> ]
+    <span style="color: rgb(0,0,128)">public</span> <span style="color: rgb(0,0,128)">void</span> <span style="color: rgb(128,0,0)">ShouldBeAbleToRetrieveJobFromRepository</span>( )
+    {
+        <span style="color: rgb(0,0,128)">int</span> <span style="color: rgb(128,0,0)">jobNumber</span> = 42;
+        <span style="color: rgb(128,128,0)">MockRepository</span> <span style="color: rgb(128,0,0)">mockery</span> = <span style="color: rgb(0,0,128)">new</span> <span style="color: rgb(128,128,0)">MockRepository</span>( );
+        <span style="color: rgb(0,0,128)">using</span> ( <span style="color: rgb(128,0,0)">mockery</span>.<span style="color: rgb(128,0,0)">Record</span>( ) )
+        {
+            <span style="color: rgb(128,128,0)">IJob</span> <span style="color: rgb(128,0,0)">fakeJob</span> = <span style="color: rgb(128,0,0)">mockery</span>.<span style="color: rgb(128,0,0)">DynamicMock</span>&lt;<span style="color: rgb(128,128,0)">IJob</span>&gt;( );
+            <span style="color: rgb(128,128,0)">SetupResult</span>.<span style="color: rgb(128,0,0)">For</span>( <span style="color: rgb(128,0,0)">fakeJob</span>.<span style="color: rgb(128,0,0)">JobNumber</span> ).<span style="color: rgb(128,0,0)">Return</span>( <span style="color: rgb(128,0,0)">jobNumber</span> );
+            <span style="color: rgb(128,0,0)">jobRepository</span>.<span style="color: rgb(128,0,0)">AddJob</span>( <span style="color: rgb(128,0,0)">fakeJob</span> );
+        }
+        <span style="color: rgb(128,128,0)">IJob</span> <span style="color: rgb(128,0,0)">job</span> = <span style="color: rgb(128,0,0)">jobRepository</span>.<span style="color: rgb(128,0,0)">GetJob</span>( <span style="color: rgb(128,0,0)">jobNumber</span> );
+        <span style="color: rgb(128,128,0)">Assert</span>.<span style="color: rgb(128,0,0)">AreEqual</span>( <span style="color: rgb(128,0,0)">job</span>.<span style="color: rgb(128,0,0)">JobNumber</span>, <span style="color: rgb(128,0,0)">jobNumber</span> );
+    }
+<font face="Trebuchet MS"></font></span></pre>
+<p>So I implement a basic (read: fake) JobRepository that adds a Job object to List&lt;IJob&gt; and in GetJob, I iterate through the list and find it. In the real repository, it'll use ActiveRecord to pull it from the database.</p>
+<p>But now I have a&nbsp;couple of questions. First, what's the best way to wire in the fake repository for the tests and the real one for production? Is this where something like the Windsor container comes into play (he said without totally knowing what it does)? You reference one repository&nbsp;in your test web.config and another in the production app.config?</p>
+<p>Secondly, and more importantly, do I even need this test? Why am I testing to see if I can pull objects from a fake repository? I don't even think an interaction-based test would work here since the underlying implementation will be different for each repository.</p>
+<p>In the book, Nilsson adds a layer of abstraction so that the repository itself will be the same in both scenarios. That pushes things out of the repository but you still need a fake implementation of something, in this case the abstract layer. In that case, it makes sense to test the repositories since they are always "real" implementations. But then I'm not so sure about testing the abstraction layer.</p>
+<p>So...ummm...help, I guess.</p>
+<p>Kyle the Faked-Out</p>

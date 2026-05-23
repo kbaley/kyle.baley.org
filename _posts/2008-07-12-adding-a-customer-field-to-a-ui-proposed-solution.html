@@ -1,0 +1,40 @@
+---
+layout: post
+title: 'Adding a customer field to a UI: Proposed solution'
+date: 2008-07-12 15:47:06.000000000 -04:00
+categories: []
+tags:
+- Conscientious Coding
+- User Interface
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1207'
+  dsq_thread_id: '349959887'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>In <a href="http://baley.codebetter.com/blogs/kyle.baley/archive/2008/07/11/adding-a-customer-field-to-a-ui.aspx" target="_blank">yesterday's post</a>, I described a UI problem I was thinking about. Namely, how can you add a customer field to a UI. That post contains the criteria I'm looking for which I won't repeat here because this sucker's already longer than I want it to be.</p>
+<p>I was going to let the thing germinate a little first but <a href="http://www.ayende.com/Blog/" target="_blank">Ayende</a> was kind enough to propose the exact solution I am considering in the comments. That is, the customer name field will be an auto-complete textbox, like <a href="http://www.google.com/webhp?complete=1&amp;hl=en" target="_blank">Google Suggest</a>. As the user types, it populates the listbox portion with search results based on what the user has entered. If the user selects one of those values, the other customer info textboxes get populated with the default values. The user is free to change them.</p>
+<p>I'll walk through a couple of scenarios. First, adding a job with an existing customer. We go to the customer name field and start typing. The list of search results pops up and we select one of them. This brings back the default contact info for the customer and populates other contact fields on the form as well as a hidden field with the customer ID. The user is free to change the contact details if the defaults aren't appropriate.</p>
+<p>When the job is saved, we create a link 'twixt the job and the customer based on the customer ID field we stored. But we save the contact data with the job (not with the customer), even if the user didn't change it from the defaults. The reason being: In the future, the default contact person may change but that doesn't change the fact that, for this job at this time, <em>this</em> is the contact person.</p>
+<p>Next scenario: adding a new customer. Again we go to the customer name field on the job page and type a name into the auto-complete textbox. It auto-populates with search values but we don't select any of them. We continue on adding the contact information for this job.</p>
+<p>When the job is saved, it recognizes that we didn't select an existing customer because the customer ID field is blank. So we create a new customer record in the database and provide it with the entered contact info as default values. The remainder of the process is the same as if we selected an existing customer, including copying the &quot;default&quot; values into the job record.</p>
+<p>Another requirement was that we wanted to update the customer with new default information if we so desired. This can be done with a checkbox. If checked, we update the customer record with the user-entered contact info before saving the job. Everything else in the process is the same.</p>
+<p>I can think of a couple of edge cases that may require some tinkering. Firstly, customers with the same name. The business deals with both individuals as well as companies and it's conceivable that they could have a couple of John Smiths (or more likely, given the area, John Kowalchuks) on their mailing list.</p>
+<p>Not sure how I'll deal with that or even if I'll address it. This isn't a customer management app after all. They just want some reports on where most of their business is going. This edge case doesn't sound like one that will skew the results one way or the other.</p>
+<p>Next edge case: The user misspells the customer name and mistakenly adds a new customer when they already exist. This falls under my personal adage of &quot;You can't save everybody&quot; and again, I don't believe this will have a statistical bearing on the results. Besides which, it's nothing an annual data clean-up can't handle.</p>
+<p>Next: What if the user selects a value from the auto-complete list, then decides it isn't appropriate and deletes it, choosing to enter a new customer instead? I won't go into details here mostly because I don't know them yet. Off the top of my head, this will involve some funky AJAX to ensure that the customer ID field is blank when the job is saved.</p>
+<p>Lastly: what if the user entered in the wrong customer, saved the job, then later wants to change it? Do we even allow that on the job entry screen? Or is that something an administrator should do in a separate process?</p>
+<p>Sounds like a question for the client to me but historically, the person entering the data *is* the administrator so my guess is to make it as easy as possible. Which means having the ability to change the customer for a job at any time.</p>
+<p>Final note: I don't intend for this to be the sum total of the customer management capabilities of this application. I still plan to have the ability to update customer information outside of the context of a job.</p>
+<p>But the job entry screen is where they will spend a good chunk of their time and it behooves me to make it flow as effortlessly as possible. Their business isn't in data entry and data capture. It's land surveying. My business is to make sure that this application works as seamlessly as possible so that they can focus on the tasks that actually make money for them (and don't ask me what those are because, despite my genetic leanings, I have little idea what land surveyors actually do).</p>
+<p>In short, I don't want to be the bottleneck in their process.</p>
+<p>Kyle the Averse</p>

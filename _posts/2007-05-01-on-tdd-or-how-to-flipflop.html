@@ -1,0 +1,38 @@
+---
+layout: post
+title: On TDD, or "How To Flipflop"
+date: 2007-05-01 22:32:46.000000000 -04:00
+categories: []
+tags:
+- BDD/TDD
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '845'
+  dsq_thread_id: '397191983'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Holy crap, this TDD thing is one heckuva mindf*%#@!</p>
+<p>The concept, I can dig. Write your tests, get it to compile, then get it to pass. I thought it mapped nicely to my normal coding practice, which is to&nbsp;start writing code making up objects and methods as you go, then fill in the blanks.</p>
+<p>Turns out my method is working against me. I'm in the midst of writing my tests and I can't even get to the end of the test before I start creating my objects. For example, I started writing the following test:</p>
+<p><a href="http://11011.net/software/vspaste"></a>
+<pre class="code"><span style="background: rgb(255,255,255)">        [<span style="color: rgb(128,0,0)">Test</span>]
+        <span style="color: rgb(0,0,128)">public</span> <span style="color: rgb(0,0,128)">void</span> <span style="color: rgb(128,0,0)">CanCreateJob</span>( )
+        {
+            <span style="color: rgb(128,128,0)">Job</span> <span style="color: rgb(128,0,0)">job</span> = <span style="color: rgb(128,128,0)">JobFactory</span>.<span style="color: rgb(128,0,0)">CreateJob</span>( );
+            <span style="color: rgb(128,128,0)">Assert</span>.<span style="color: rgb(128,0,0)">IsNotNull</span>( <span style="color: rgb(128,0,0)">job</span> );
+        }
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>The problem is, as soon as I pressed enter on the first line of code in this method, I went barrelling through the Domain project creating the&nbsp;Job class. Before I even finished writing the test, let alone trying to compile and run it. And I shouldn't even *have* a Domain project yet.</p>
+<p>So everything you've heard is true. It's what people used to call a "paradigm shift" back when the phrase had some meaning. It takes discipline and people will probably <a href="http://kyle.baley.org/ConscientiousCodingIsTheNewTDD.aspx">poo-poo it</a> if it scares them too much (was that really less than a year ago?).</p>
+<p>On that note, after reading more extensively on the subject, I now tend to agree with a friend of mine, a developer-who-doesn't-blog-but-should who is fairly senior but relatively new to TDD,&nbsp;and who said that TDD is at the place OO was ten or fifteen years ago. That is, it's not quite widely accepted but eventually it will be the de facto standard (in one form or another).</p>
+<p>And hopefully by that time, all the little golden nuggets about it will be codified so that I don't have to highlight them in various blog posts/books.</p>

@@ -1,0 +1,68 @@
+---
+type Props = {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+  ogType?: string;
+  noindex?: boolean;
+};
+
+const {
+  title,
+  description,
+  canonicalPath = Astro.url.pathname,
+  ogType = "website",
+  noindex = false
+} = Astro.props;
+
+const siteTitle = "Kyle Baley";
+const fullTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
+const canonical = new URL(canonicalPath, Astro.site ?? "https://kyle.baley.org").toString();
+
+import "../styles/global.css";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content="/assets/architecture-workbench.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <nav class="nav container" aria-label="Main navigation">
+        <a class="brand" href="/">Kyle Baley</a>
+        <div class="nav-links">
+          <a href="/#work">What I Do</a>
+          <a href="/#case-studies">Case Studies</a>
+          <a href="/writing/archive/">Archive</a>
+          <a href="/contact/">Contact</a>
+        </div>
+      </nav>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>Senior .NET engineering, architecture, and fractional technical leadership.</p>
+        <div class="footer-links">
+          <a href="https://www.linkedin.com/in/kylebaley/">LinkedIn</a>
+          <a href="https://github.com/kbaley">GitHub</a>
+          <a href="mailto:kyle@baley.org">Email</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

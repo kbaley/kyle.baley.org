@@ -1,0 +1,91 @@
+---
+layout: post
+title: 'Removing #regions, or "How to keep your code expanded"'
+date: 2007-12-17 13:07:22.000000000 -05:00
+categories: []
+tags:
+- Coding Style
+- ReSharper
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1523'
+  dsq_thread_id: '357456084'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>In a couple of recent posts, I've all but declared war on #regions. I'm not going to <a href="http://kyle.baley.org/RegionsOrQuotHowToDisorganizeYourCodequot.aspx">regurgitate</a> my reasons but for those of you who go into &quot;you won't like me when I'm angry&quot; mode when they see a 800-line class condensed down to five, I submit to you not one, but TWO methods for getting rid of them.</p>
+<p><strong>Method 1: The VBA way</strong></p>
+<p>In this method, I used my newfound knowledge of using regular expressions in Visual Studio's Find and Replace and recorded a macro. Did some clean-up of the code and voila:</p>
+<pre class="code">    <span style="color: rgb(0,0,255)">Sub</span> ClearRegions()
+        DTE.Find.Action = vsFindAction.vsFindActionReplaceAll
+        DTE.Find.FindWhat = <span style="color: rgb(128,0,0)">&quot;^:b*#region.*n&quot;
+</span>        DTE.Find.ReplaceWith = <span style="color: rgb(128,0,0)">&quot;&quot;
+</span>        DTE.Find.Target = vsFindTarget.vsFindTargetCurrentDocument
+        DTE.Find.MatchCase = <span style="color: rgb(0,0,255)">False
+</span>        DTE.Find.MatchWholeWord = <span style="color: rgb(0,0,255)">False
+</span>        DTE.Find.MatchInHiddenText = <span style="color: rgb(0,0,255)">True
+</span>        DTE.Find.PatternSyntax = vsFindPatternSyntax.vsFindPatternSyntaxRegExpr
+        DTE.Find.ResultsLocation = vsFindResultsLocation.vsFindResultsNone
+        DTE.Find.Action = vsFindAction.vsFindActionReplaceAll
+        DTE.Find.Execute()
+
+        DTE.Find.FindWhat = <span style="color: rgb(128,0,0)">&quot;^:b*#endregion.*n&quot;
+</span>        DTE.Find.ReplaceWith = <span style="color: rgb(128,0,0)">&quot;&quot;
+</span>        DTE.Find.Target = vsFindTarget.vsFindTargetCurrentDocument
+        DTE.Find.MatchCase = <span style="color: rgb(0,0,255)">False
+</span>        DTE.Find.MatchWholeWord = <span style="color: rgb(0,0,255)">False
+</span>        DTE.Find.MatchInHiddenText = <span style="color: rgb(0,0,255)">True
+</span>        DTE.Find.PatternSyntax = vsFindPatternSyntax.vsFindPatternSyntaxRegExpr
+        DTE.Find.ResultsLocation = vsFindResultsLocation.vsFindResultsNone
+        DTE.Find.Action = vsFindAction.vsFindActionReplaceAll
+        DTE.Find.Execute()
+    <span style="color: rgb(0,0,255)">End</span> <span style="color: rgb(0,0,255)">Sub
+</span></pre>
+<div style="border-right: #999999 1px solid; padding-right: 0.5em; border-top: #999999 1px solid; padding-left: 0.5em; font-size: 8pt; float: right; padding-bottom: 0.5em; margin: 0.5em; border-left: #999999 1px solid; width: 200px; padding-top: 0.5em; border-bottom: #999999 1px solid; background-color: #dddddd">
+<p>To bind a key combination to a macro</p>
+<ul>
+<li>Click Tools | Options </li>
+<li>Select Keyboard from the Environment tree node </li>
+<li>In the search box, type ClearRegions to find the macro </li>
+<li>Select it from the list </li>
+<li>Click in the &quot;Press shortcut keys&quot; textbox </li>
+<li>You can probably take it from here </li>
+</ul>
+</div>
+<p>So you throw that into a Macro Module, bind it to Ctrl+Shift+3, for example, and henceforth, you can use that shortcut to be free of #regions forever.</p>
+<p>If I wanted to be *really* anal about it, I'd extract the duplicate code into a separate method. That way, I could re-use it for a macro to, say, remove triple-slash comments (regular expression: <span style="color: rgb(128,0,0)"><font face="Courier New">&quot;^:b*///.*n&quot;</font> </span>).</p>
+<p><strong>Method 2: The ReSharper Way</strong></p>
+<p>This method comes courtesy of Wade Grandoni, a non-blogger-who-should from whom I plan to steal blog post ideas until he takes the hint. When we're done here, removing regions becomes part of the ReSharper reformatting process. I.E. Ctrl+Alt+F (or Ctrl+Alt+Shift+F) and your regions are gone. If it isn't obvious yet, this method requires ReSharper</p>
+<p>To achieve this little bit of magic:</p>
+<ul>
+<li>Go to ReSharper | Options </li>
+<li>Under Language Options, expand C#, then Formatting Style </li>
+<li>Select Type Members Layout </li>
+<li>Uncheck &quot;Use Default Patterns&quot; and DO NOT BE ALARMED AT ALL THE TEXT THAT APPEARS </li>
+</ul>
+<p>What you see at this point is, I think, some default patterns that get applied to your classes when you reformat. And the default is to ignore regions for the most part. To change this find default pattern about halfway down. It's the one that looks like this:</p>
+<p><font face="Courier New">&#160;&#160;&#160; &lt;!--Default pattern--&gt;<br />
+    <br />&#160;&#160;&#160; &lt;Pattern&gt; </font></p>
+<p>and change it to this:</p>
+<p><font face="Courier New">&#160;&#160;&#160; &lt;!--Default pattern--&gt;<br />
+  <br />&#160;&#160;&#160; &lt;Pattern RemoveAllRegions=&quot;true&quot;&gt; </font></p>
+<p>Henceforth, whenever you reformat your code, regions will be removed. N.B.: This works only if you have selected the option to &quot;Reorder type members&quot; in the Reformat dialog:</p></p>
+<p>If you select this option (as well as any others) the first time, it will be remembered every time you Ctrl+Alt+F or Ctrl+Alt+Shift+F from then on.</p>
+<p>If you're a little confused as to what the rest of that XML is doing in the default patterns, you could delete the entire thing and replace it with the following:</p>
+<p><font face="Courier New">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;<br />
+    <br />&lt;Patterns xmlns=&quot;urn:shemas-jetbrains-com:member-reordering-patterns&quot;&gt; </p>
+<p>&#160; &lt;Pattern RemoveAllRegions=&quot;true&quot;&gt; </p>
+<p>&#160;&#160;&#160;&#160; &lt;Entry /&gt; </p>
+<p>&#160; &lt;/Pattern&gt; </p>
+<p>&lt;/Patterns&gt;</font></p>
+<p>This is the bare minimum you need to remove regions from your code when you reformat. What the rest of that XML does requires more reading than I'm willing to put in at 6:30 in the morning.</p>
+<p>This method has the advantage of less friction while you're coding in that you don't need to perform any extra steps to remove regions (assuming you reformat before you check-in, which, of course, you do). On the other hand, Method 1 can be adapted to remove other patterns (like triple-slash comments) and, of course, can be used for the ReSharper-less in the crowd. And neither method will allow you to keep any regions that are, in fact, useful.</p>
+<p>Kyle the Regional</p>

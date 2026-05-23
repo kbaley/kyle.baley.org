@@ -1,0 +1,32 @@
+---
+layout: post
+title: Extend this!
+date: 2006-07-09 00:04:00.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '693'
+  dsq_thread_id: '362994702'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Deep breaths....deeeeeeep breaths....</p>
+<p>That's my mantra these days while trying out this extender thing. You can probably tell from the title but I've decided to postpone/abandon my extender for now so that I can get back to the actual application I want to build.</p>
+<p>An <a href="http://www.suvius.com/musicplayer">initial draft</a> of it is up and running. The basics are there but don't expect anything from the advanced search.</p>
+<p>Atlasers will notice that it is entirely ASP.NET driven (except for some of the sample extenders). I decided to add an UpdatePanel to the top GridView (the search results one) and make it dependent on the click event for the search button. The results came back fine and without a postback, as expected. Then I clicked on a column header to sort the list:</p>
+<p><img src="/assets/AtlasErrorFindObject.jpg" /></p>
+<p>You're probably thinking the same thing I did: Line 257646674?!?!?</p>
+<p>Let's put some commas in there: 257,646,674. That's right. There is a javascript error somewhere around the two hundred and fifty-seven THOUSAND line mark in some javascript. When I clicked yes, I got a nice debug version of my ASPX page but not&nbsp;the javascript itself. Which is just as well. I wouldn't know what to do even if I could find the offending line.</p>
+<p>Not sure why Atlas has decided to punish me in so odd a fashion. UpdatePanels I thought were fairly innocuous. You wrap some text around a GridView and everything just magically works. It's identical to how I did it in my demo but I guess something is different somewhere. I don't want to get disillusioned with Atlas but this whole ordeal has been very humbling for one who considered himself at least an above average developer. Guess I'll have to settle for best hooch at last year's Hillbilly Wine Festy-val.</p>
+<p>Anyway, I upgraded to the <a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=81BF1390-7894-4FF7-B591-1006BD770BC0&amp;displaylang=en">June CTP</a> but wasn't expecting much. I did work in a help desk after all and know the benefits of telling someone to upgrade and call you back right before you go to lunch. It helped a bit. Now the error is in line 94,576,125.</p>
+<p>In the meantime, my blog hasn't been very informative or entertaining lately so to remedy that, I give you this <a href="http://kyle.baley.org/images/animateUrl.htm">little number</a> that's fun in a geeky kind of way. Created by someone in my top three list of people whom I wish had a technical blog (not that I don't enjoy your other <a href="http://kilmati.spaces.msn.com/Blog">shenanigans</a>, big guy).</p>

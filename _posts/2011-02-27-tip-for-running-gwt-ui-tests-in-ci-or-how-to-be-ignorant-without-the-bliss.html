@@ -1,0 +1,49 @@
+---
+layout: post
+title: Tip for running GWT UI tests in CI, or “How to be ignorant without the bliss”
+date: 2011-02-27 17:50:05.000000000 -05:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2068'
+  dsq_thread_id: '349702275'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><strong><em>Executive Summary:</em></strong> Wherein the cunning, dapper, and incredibly well-shod hillbilly adeptly and skillfully solves one of the enduring and endearing mysteries of the universe: Why the &amp;*%$ does the first cucumber scenario in the CI build for our GWT app get ignored whenever we run against devmode?</p>
+<p>In my <a href="http://codebetter.com/kylebaley/2011/02/10/running-cucumber-tests-against-gwtappengine-in-teamcity-or-how-to-ci-with-ui/" target="_blank">recent post</a> on configuring UI tests to run against devmode for a GWT/AppEngine app in TeamCity, I left out an annoying annoyance that has been annoying me for an annoyingly long time. (Let me know when that gets annoying.)</p>
+<p>The annoyance: The first scenario would always get ignored.</p>
+<p>What made it annoying:</p>
+<ul>
+<li>Didn’t matter which scenario was first. The first one run would always be ignored </li>
+<li>It only happened when running against devmode. When we configured to run against our deployed server, it worked fine </li>
+<li>We couldn’t duplicate locally or even when we logged into the TeamCity server </li>
+</ul>
+<p>My initial theory was that it was running the tests too soon and that devmode hadn’t had time to spin up yet. But adding a delay did nossing, Lebowski. NOSSING!</p>
+<p>Next step was to create a work-around: a dummy scenario. Ran into an issue in that any ignored steps cause the build to fail, even if all other steps succeed. No matter, we could just make the scenario empty. No steps means none ignored. Except that the build still failed:</p>
+<p><a href="http://kyle.baley.org/content/binary/Windows-Live-Writer/66d171b716ab_A63B/image_2.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="/assets/image_thumb.png" width="336" height="170" /></a></p>
+<p>So this weekend was declared “No more ignorance*” weekend.</p>
+<h2>The culprit</h2>
+<p>This line of code in our capybara.rb set up:</p>
+<pre>Capybara.register_driver :selenium do |app|
+
+    Capybara::Driver::Selenium.new(app, 
+        {:browser =&gt; :firefox, :profile =&gt; 'selenium' } )
+
+end if Capybara.app_host.include? &quot;127.0.0.1&quot;</pre>
+<p>Which looks obvious in retrospect.</p>
+<p>We have a separate profile created in Firefox to run our UI tests. This is because we don't necessarily want things like auto-updates to interfere. Can't take credit for this idea. It comes from <a href="http://code.google.com/webtoolkit/doc/latest/DevGuideTestingRemoteTesting.html#Firefox_Profile">Google's page on the subject</a>.</p>
+<p>The fix should have been easy: set up a &quot;selenium&quot; profile on the server. But the build agent for our UI tests is running under the local system account. This is not recommended but if I put it under another account, I lose the &quot;desktop interactivity&quot; aspect. That is, I can physically see what's going on while the tests are running if the agent runs under local system account with the appropriate checkbox checked.</p>
+<p>It ain't a quick jaunt setting up a Firefox profile for the local system account. You need to be able to <a href="http://johnnycoder.com/blog/2008/11/10/run-cmdexe-as-local-system-account/">Run As... the system account</a> first which involves a separate tool. You also need to realize that you can't launch the Firefox ProfileManager while Firefox is actually running. If you do, you'll just get another instance of Firefox.</p>
+<p>Once you do have the appropriate profile created, no more ignored tests to deal with! Just failing ones...</p>
+<p>Kyle the Elevated</p>
+<p><font size="1">*Lack of ignorance not guaranteed. The Coding Hillbilly will not be held responsible for any lingering ignorance experienced by you and/or the ignoramuses you call friends.</font></p>

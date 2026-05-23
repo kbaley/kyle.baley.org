@@ -1,0 +1,32 @@
+---
+layout: post
+title: XtraGrid Tips
+date: 2006-11-30 15:02:41.000000000 -05:00
+categories: []
+tags:
+- ".NET"
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '940'
+  dsq_thread_id: '363177399'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Given my recent activities, I've decided to adopt the Native American name, Travels with XTraGrid. And on that note, a couple of little tidbits about the grid which, like me, is powerful but quirky.</p>
+<p>On the whole, it is very easy to bind collections of objects to the grid. There are two things I discovered about it that I believe apply to both the XtraGrid and the regular Windows DataGrid/GridView:</p>
+<ul>
+<li>In order to be able to add or remove items, your collection must implement IBindingList. This is in the documentation and there is sample code to do this so I won't dwell on it.</li>
+<li>You CAN bind to a collection of primitives (ints, doubles, strings (yes, yes, I know, work with me here)). But <a href="https://www.devexpress.com/Support/Center/ViewIssue.aspx?issueid=DQ43336&amp;searchtext=stringcollection&amp;pgid=ecb3be56-c75a-4166-aa68-cb462cd2dd2b&amp;pid=382e0f17-f133-4866-aa3f-aeb2f50b59b7" target="_blank">as far as I can tell</a>, you can't do it so that you can add to or remove from the collection nor can you make existing ones editable. You need to use a collection of objects.</li>
+</ul>
+<p>Your options for getting around the last point are: a) create a MyDouble or MyString class with a Value parameter and bind the grid to a collection of those, or b) Use an unbound grid and update your collection manually using the grid's various events.</p>
+<p>Neither solution is very clean in that you eventually have to write code that the next developer is going to look at and say, "What the hell was he thinking?" and proceed to re-write using something that is likely equally cumbersome.</p>
+<p>While I'm on the topic of DevExpress control idiosyncracies, keep an eye on your NavControls. I've found that they don't clean up nicely if you add/remove items to them or try cutting and pasting between two or more of them. You'll find a lot of leftover NavBarItems and NavBarGroup items left over in your Designer.cs file that you have to remove manually.</p>
+<p>My way of countering: make sure you change the name of all of the controls, including the groups and items. Much easier to zero in on navBarItem3 when the rest of your controls aren't named navBarGroup1, navBarItem5, etc.</p>

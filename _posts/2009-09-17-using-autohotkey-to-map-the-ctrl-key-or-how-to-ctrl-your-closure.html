@@ -1,0 +1,43 @@
+---
+layout: post
+title: Using AutoHotKey to map the Ctrl key, or “How to Ctrl your closure”
+date: 2009-09-17 21:21:35.000000000 -04:00
+categories: []
+tags:
+- Utilities
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '364534962'
+  pvc_views: '1513'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Quick productivity blorg today. Because if hillbillies are known for anything, it’s their efficacy. And their ability to use words they don’t quite know the meaning of but can fake in context. (I’m referring, of course, to “efficacy”. I know full well what a “blorg” is so I don’t need you telling me in the comments.)</p>
+<p>Alt-F4 is not the most natural keystroke on the <a href="http://www.kinesis-ergo.com/images/kb_adv-pro_met720x471.jpg">Kinesis keyboard</a>. Or even on a regular keyboard. Yet I use it pretty often. Especially recently while testing out Lucene on my document repository. Word and PDF docs abound very quickly while I’m opening them and verifying results. So I was looking for a faster way of closing them quickly.</p>
+<p>My chosen method: Press Ctrl three times in rapid succession to close the active window.</p>
+<p>The implementation: <a href="http://www.autohotkey.com/">AutoHotKey</a>. Here is <a href="http://pastie.org/612336">the script</a> that does it:</p>
+<pre name="code">~Ctrl::
+CloseOnThird()
+return
+
+CloseOnThird() {
+
+   Static Count
+   key := RegExReplace(A_ThisHotKey,&quot;[*~$#+!^( UP)]&quot;)
+   If ( A_ThisHotKey = A_PriorHotKey and A_TimeSincePriorHotkey &lt; 400 )
+        Count += Count &lt; 3 ? 1 : 0
+   Else Count = 1
+   KeyWait %key%, DT0.4
+   If (ErrorLevel and Count = 3)
+      WinClose,A
+}</pre>
+<p>The end result: at the end of a strenuous day, I can mash the Ctrl key over and over again until the computer shuts down. Tres satisfying.</p>
+<p>Kyle the Ctrl’d</p>

@@ -1,0 +1,47 @@
+---
+layout: post
+title: New properties on the RoundedCornersExtender
+date: 2006-10-06 12:38:31.000000000 -04:00
+categories:
+- dasBlog
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '7607'
+  dsq_thread_id: '351260130'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<div style="BORDER-RIGHT: #cccccc 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #cccccc 1px solid; PADDING-LEFT: 0.5em; FONT-SIZE: 8pt; FLOAT: right; PADDING-BOTTOM: 0.5em; MARGIN: 0.5em; BORDER-LEFT: #cccccc 1px solid; WIDTH: 200px; PADDING-TOP: 0.5em; BORDER-BOTTOM: #cccccc 1px solid; TEXT-ALIGN: center"><a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/NewpropertiesontheRoundedCornersExtender_7981/OldUglySearchBox%5B8%5D.jpg" target="_new" atomicselection="true"><img style="BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px" height="240" alt="Click for larger image" src="/assets/OldUglySearchBox_thumb%5B4%5D.jpg" width="220" border="0" /></a>&nbsp;<br />Old, ugly search box reminiscent of the Teletubbies</div>
+<p>I think I should have stuck with the junk-mail-subjects-as-post-titles theme. "oprah used it to lose weight" would have been pure gold... </p>
+<p>Anyway, Jayzus only knows why I spend my time on this stuff but for whatever reason, the bubbly looking search box on my blog annoyed me enough that I extended an extender. The <a href="http://atlas.asp.net/atlastoolkit/RoundedCorners/RoundedCorners.aspx">RoundedCornersExtender</a> to be specific. </p>
+<p>I added four properties to it: TopLeftCornerStyle, BottomLeftCornerStyle, TopRightCornerStyle, and BottomRightCornerStyle. The value of each of these can be one of: Inward (default), Outward, or None. </p>
+<p>If you leave these properties off, you'll notice absolutely nothing different in the control which was my intent. But you can now change any of the individual corner styles to either Outward or None. Outward means that the corner will curve outward and None means no curving will occur at all. </p>
+<p>To illustrate, here are the settings for the new search box you see above (and in the graphic below):</p>
+<ul>
+<li>TopLeftCornerStyle: Inward
+</li>
+<li>TopRightCornerStyle: None
+</li>
+<li>BottomLeftCornerStyle: Outward
+</li>
+<li>BottomRightCornerStyle: None </li>
+</ul>
+<p>It is left as an exercise to the reader to determine what the settings are for the RSS section above the search box. </p>
+<div style="BORDER-RIGHT: #cccccc 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #cccccc 1px solid; PADDING-LEFT: 0.5em; FONT-SIZE: 8pt; FLOAT: left; PADDING-BOTTOM: 0.5em; MARGIN: 0.5em; BORDER-LEFT: #cccccc 1px solid; WIDTH: 200px; PADDING-TOP: 0.5em; BORDER-BOTTOM: #cccccc 1px solid; TEXT-ALIGN: center"><a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/NewpropertiesontheRoundedCornersExtender_7981/SvelteNewSearchBox%5B1%5D.jpg" target="_new" atomicselection="true"><img style="BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px" height="240" src="/assets/SvelteNewSearchBox.jpg" width="220" border="0" /></a>&nbsp;&nbsp;<br />Svelte, new search box oozing class</div>
+<p>The revised extender is attached. Note that I kept the same name for the control so it can't really co-exist with the existing RoundedCornersExtender. There's no real reason for them to co-exist. This is kind of a superset of the original one. Plus I wasn't really thinking that far ahead when I started. </p>
+<p>I'll forego the detailed explanation mostly because by throwing it out there so cavalierly,&nbsp;I can make it sound like&nbsp;I whipped it up in a very short time (which I didn't) rather than spending several hours&nbsp;on it at the expense of my family (which I did). Plus I'm lazy. </p>
+<p>I updated the <a href="http://kyle.baley.org/ct.ashx?id=d7693727-87d9-41d6-ad4e-8cfa2339054e&amp;url=http%3a%2f%2fkyle.baley.org%2fcontent%2fbinary%2fCodingHillbilly.zip">CodingHillbilly theme</a>&nbsp;if you want to see how it's done client-side. I also updated the other Atlas Control scripts because of changes made to the latest release version of Atlas (namely that it seems the AtlasControlExtender.js script has been renamed BaseScripts.js and there is now a Common.js script). </p>
+<p>Side note on dasBlog: Does anyone know a way of developing themes in version 1.9 that doesn't require me to have to clear my temporary internet files every time I want to see my changes? No suggestions about the IE setting to get the latest version every time you load the page, please. </p>
+<p>And lastly, when the &amp;*$% are the Atlas people going to fix that typo/spelling mistake/abomination in the CollaspablePanelBehavior (sic)?</p>
+<p><a href="http://kyle.baley.org/content/binary/RoundedCorners.zip">RoundedCorners.zip (4.96 KB)</a></p>
+<p><strong>** UPDATE ** </strong><a href="http://www.codeplex.com/AtlasControlToolkit"><strong>Latest version of the toolkit</strong></a><strong> now has this functionality built-in and implemented better than mine. Download mine at your own peril.</strong></p></p></p></p></p>

@@ -1,0 +1,77 @@
+---
+layout: post
+title: CI and Google App Engine, or “How to force your way in”
+date: 2010-02-15 17:20:30.000000000 -05:00
+categories: []
+tags:
+- Continuous Integration
+- Google App Engine
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '351260705'
+  pvc_views: '1463'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>If you’re the type that skips titles, we’re using <a href="http://code.google.com/appengine/">Google App Engine</a> in our project, mostly because it’s there.</p>
+<p>I jest. We’re using it because it’s scalable and high performance and reliable and whatever other reason you can think of that will keep me from having a boring debate on the difference between Google and Amazon and Microsoft.</p>
+<p>Along with Google App Engine, we’re also using <a href="http://jetbrains.com/teamcity">TeamCity</a> for our continuous integration server. And generally speaking, these are two very disparate topics. I.e. I’m not finding App Engine to be very CI-friendly.</p>
+<p>Deploying to App Engine from Eclipse or IntelliJ is dead simple. There are plug-ins that manage it and all you do is provide credentials. Doing it from the command line is not <em>too </em>bad. There’s a console utility, appcfg, that lets you upload to App Engine.</p>
+<p>So on the surface, it appears CI and App Engine play nicely. But there are a couple of quirks that don’t sit well. We’ll start with the Ant tasks I’m using from the CI server:</p>
+<pre class="xml" name="code">      &lt;target name=&quot;setAppEngineVersionToDayOfWeek&quot;&gt;
+          &lt;tstamp&gt;
+              &lt;format property=&quot;day.of.week&quot; pattern=&quot;E&quot; /&gt;
+          &lt;/tstamp&gt;
+            &lt;stringutil string=&quot;${day.of.week}&quot; property=&quot;day.of.week&quot;&gt;
+                &lt;lowercase/&gt;
+            &lt;/stringutil&gt;
+          &lt;replaceregexp file=&quot;war/web-inf/appengine-web.xml&quot;
+              match=&quot;&amp;lt;version&amp;gt;(.*)&amp;lt;/version&amp;gt;&quot;
+              replace=&quot;&amp;lt;version&amp;gt;${day.of.week}&amp;lt;/version&amp;gt;&quot;
+              byline=&quot;true&quot; /&gt;
+        &lt;/target&gt;</pre>
+<pre class="xml" name="code">        &lt;target name=&quot;setAppEngineVersionToCurrentDate&quot;&gt;
+          &lt;tstamp&gt;
+              &lt;format property=&quot;current.date&quot; pattern=&quot;yyyy-MM-dd&quot; /&gt;
+          &lt;/tstamp&gt;
+          &lt;replaceregexp file=&quot;war/web-inf/appengine-web.xml&quot;
+              match=&quot;&amp;lt;version&amp;gt;(.*)&amp;lt;/version&amp;gt;&quot;
+              replace=&quot;&amp;lt;version&amp;gt;${current.date}&amp;lt;/version&amp;gt;&quot;
+              byline=&quot;true&quot; /&gt;
+        &lt;/target&gt;</pre>
+<pre class="xml" name="code">        &lt;target name=&quot;update&quot;
+            description=&quot;Uploads the application to App Engine.&quot;&gt;
+          &lt;java classname=&quot;com.google.appengine.tools.admin.AppCfg&quot;
+  inputstring=&quot;s1sterW1f3&quot;&gt;
+                  &lt;sysproperty key=&quot;appengine.sdk.root&quot; 
+  value=&quot;${appengine.folder}&quot; /&gt;
+                  &lt;classpath&gt;
+                          &lt;fileset dir=&quot;${appengine.folder}/lib&quot; 
+  includes=&quot;**/*.jar&quot; /&gt;
+                  &lt;/classpath&gt;
+                  &lt;arg value=&quot;--email=betty.lou@plaidWorld.com&quot; /&gt;
+                  &lt;arg value=&quot;--passin&quot; /&gt;
+                  &lt;arg value=&quot;update&quot; /&gt;
+                  &lt;arg value=&quot;war&quot; /&gt;
+          &lt;/java&gt;
+        &lt;/target&gt;</pre>
+<p>The first two targets are nearly identical. In App Engine projects, there is an XML file that contains the config</p>
+<p style="padding-bottom: 0.5em; background-color: #dddddd; margin: 0.5em; padding-left: 0.5em; width: 200px; padding-right: 0.5em; float: right; font-size: 8pt; padding-top: 0.5em">Side note: Versions in App Engine either can’t start with a capital or can’t contain capital letters altogether. This was one of my more aggravating annoyances because it ain’t ‘zactly trivial to make a string lowercase in Ant. I had to import a whole new Ant add-on, <a href="http://antelope.tigris.org/">Antelope</a>, to do it. Hence the &lt;stringutil&gt; task in setAppEngineVersionToDayOfWeek.</p>
+<p>uration for uploading to App Engine. One of the tags is &lt;version /&gt; which is the name of the version in App Engine. These two targets will configure the version name to be the name of the day of the week, and the current date (in yyyy-MM-dd format) respectively.</p>
+<p>The update target does the actual work of executing appcfg to upload to App Engine. In TeamCity, I have two build configurations. One executes nightly and calls the setAppEngineVersionToDayOfWeek target followed by the update target. The second configuration executes weekly and calls setAppEngineVersionToCurrentDate, then update.</p>
+<p>The first crack in the veneer appears in the update target. App Engine comes with an Ant task, &lt;appcfg&gt;. But it requires you to be logged in and as far as I can tell, you can’t pass in that info to the &lt;appcfg&gt; task. So the target calls AppCfg using the &lt;java&gt; task and with a hard-coded email and password.</p>
+<p>There’s an alternative. You can log into the CI server, run appcfg from the command line, and provide your email and password. This will be cached for 24 hours. As long as you hit App Engine at least once in 24 hours, your credentials will remain cached.</p>
+<p>Problem with that is that you have to provide the credentials while logged in with the user account that runs the TeamCity agent, which in our case is the local system account. The other problem is that it’s a nightly build. Which means it runs <em>roughly</em> every 24 hours. Didn’t take long for the credentials to get evicted from the cache. So we created a special account so that we could hard-code the credentials into the build file (because, y’know, no one wanted their e-mail addresses and passwords stored in the version control system).</p>
+<p>Other suggestions are included <a href="http://groups.google.com/group/google-appengine-java/browse_thread/thread/580a0b750d2f12e3/f8b5d70a025e96f1?lnk=raot">here</a>. I went with the least resistance approach because frankly, a nighly build on a team of two in a start-up company shouldn’t require a custom Ant task.</p>
+<p>The next issue we hit is that App Engine has a limit of ten versions per application. Put your fingers down, I’ll do the math for you. It means that after one week of nightly builds, that leaves three slots available for weekly builds. With none left over for others.</p>
+<p>Ideally, I’d like to keep maybe only the last three nightly builds and possibly the last three weekly builds. But as far as I can tell, there’s no automated way to delete versions from App Engine. So this has forced us to examine exactly what we want to accomplish with our automated builds in App Engine.</p>
+<p>Finally, if anyone knows how to secure versions of the app from prying eyes, I’d love to see that feature implemented as well. You need to log in to administer the application on App Engine along with all the versions. But as far as I’ve been able to figure out, if you know the URL to a version of the app, it’s available to the public. Which has stepped up the priority of our “Customer should be able to log in” story.</p>
+<p>Kyle the Engineered</p>

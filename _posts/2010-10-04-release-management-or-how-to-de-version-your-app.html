@@ -1,0 +1,41 @@
+---
+layout: post
+title: Release management, or “How to de-version your app”
+date: 2010-10-04 21:17:54.000000000 -04:00
+categories: []
+tags:
+- BookedIN
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1331'
+  dsq_thread_id: '349709235'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><strong>Executive Summary: </strong>Through the use of anecdotes and a heavy dose of quotation marks, we analyze the traditional “beta/version 1” release cycle of our application and conclude that “version 1” doesn’t make much sense.</p>
+<p>We had an interesting conversation the other day at <a href="http://bookedin.net/">BookedIN</a> on releases. A few weeks ago, we “released” a beta version of the application. But if you check the website now, there will be no mention of the word “beta”.</p>
+<p>One of the things we have always tried to be cognizant of is our target user. We look to many companies and products for inspiration, such as 37 Signals and AgileZen. But they have a very different target market than we do. Users of Basecamp and AgileZen, we assume, are somewhat technically savvy.</p>
+<p>We are targeting small business users, many of whom may not be familiar with the technical jargon that we’ve become accustomed to. It was for this reason that we did away with the word “beta” in our message in favour of “limited free trial” which, while not <em>exactly</em> the same thing, is more universally understood.</p>
+<p>Now with the free trial released, our attention turns to “<strong><em>VERSION ONE</em></strong>”. That is, we decide which features we want to include in the ultimate premiere release of the product. Then we go away and try to get them all in before our mythical “release date”. Which is stupid and we considered this model for all of about 78 seconds.</p>
+<p>The “go away” part was the first thing to get thrown out. This being a web application, there’s no reason to keep the current incarnation of the app as it is until version one is released. Very quickly, we decided that “beta” isn’t in fact a one-time release. It’s a period of time in which you are constantly fixing things and adding features. Once we finish a useful feature, we release it. Once we have all the features we want for version one, it’s ready to “leave beta”.</p>
+<p>More recently, my friend and I had a discussion about timelines. We are highly motivated to have “version one” ready by year’s end for various reasons. So we set that as our deadline and made plans to discuss which features absolutely <em>had</em> to be included in that release.</p>
+<p>Now, we are both very familiar with the Iron Triangle/Pewter Scale but all the same, we were both kind of surprised at how easy it was to fall into the common managerial trap: We HAVE to release by year’s end. All of these features HAVE to be included. And we can’t increase our budget or add people. Nor do we want to skimp on quality seeing as one reason for this venture was specifically so we won’t have to deal with the types of apps that are the result of, shall we say, a particular brand of hillbilly relationship.</p>
+<p>After we realized the trap we were about to step into, the conversation changed slightly. What exactly was fixed? The budget, certainly. And, to our mind, the time frame. That is, we placed a high priority on releasing a paid version of the app by year’s end at the latest. Also, quality is not negotiable.</p>
+<p>Which leaves, of course, scope as our sole source of flexibility. Once that was decided, we had a whole different notion of “version one” and versioning in particular. What <em>is</em> version one anyway? It’s the collection of features included in the first release of the product. And if that’s flexible, then why decide which ones have to be included in the first release?</p>
+<p>Better yet, if the features to be included in version one are flexible, then maybe we can play with the release date a little. For example, instead of saying “we release on December 31, 2010”, why don’t we evaluate the app at regular intervals? So at the end of October, we look at what we have and decide “does this have value?” If not, we keep plugging away and in a couple of weeks, we’ll ask the question again. Once we get to the point where it *does* have value, we “release”. That is, we make it available to the public and start charging.</p>
+<p>During this discussion, you’ll notice there’s no mention of the word “version”. There’s no “coming up in version 2”. Instead, we sort the stories we have by priority and start at the top. As they are completed, they are “released”. (Within reason, of course. From a marketing perspective, releasing a new feature every two weeks can be just as detrimental as not releasing any for three years.)</p>
+<p>I don’t mind admitting this discussion got me a little giddy, not least because it means a potentially earlier release date than we had planned. It’s pretty liberating in some respects. There’s no looming deadline and it puts less pressure on the developers, neither of whom need this kind of pressure to prove their mettle. Instead, it puts more planning on my friend and I to plan things properly and make sure the important stuff is done first and not left until the last minute.</p>
+<p><a href="http://orthocoders.com/">Amir Barylko</a> is a senior developer who is helping us maintain quality in our code. In his projects, he likes to always be in “release” mode. Which means we should always be working as if the application will be released at the end of the iteration. I hope I’m not twisting his meaning when I claim that this is what I think he means.</p>
+<p>I’m not sure something like this would work in every situation. Our development team is already tearing through stories at a good clip even without fabricated pressure, so there’s no need to hold them to a deadline. I can’t imagine how we could make them work any better than they already are so all it would do is add stress and potentially mess up their feng shui.</p>
+<p>Besides which, this is a web application with a monthly subscription. The whole notion of version releases seems steeped in the pre-package software world where distribution and marketing come into play. (“New in version 2! Ten percent more features for 25% more money!”) Since there are virtually no distribution costs, there’s no need to saddle ourselves with the corresponding release strategy.</p>
+<p>The fact that it’s a monthly subscription model is also a contributing factor. It means we can charge based on the value of the features that are currently in the app. So initially, we may charge less than we originally expected because there aren’t as many features. As we add features, there is potential for adjusting the price accordingly. Of course, we won’t jack the price up every time we change the colour scheme but it’s a fair (and hopefully accurate) bet that most customers will recognize an increase in value when the time comes to re-evaluate.</p>
+<p>Time, and our marketing department, will tell, I suppose.</p>
+<p>Kyle the Pre-released</p>

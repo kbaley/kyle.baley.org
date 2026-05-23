@@ -1,0 +1,85 @@
+---
+layout: post
+title: Overview and review of S#arp Architecture
+date: 2008-11-11 18:13:28.000000000 -05:00
+categories: []
+tags:
+- ASP.NET MVC
+- S#arp Architecture
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '349695768'
+  hl_twitter_has_auto_tweeted: 'New post: Overview and review of S#arp Architecture,
+    Full text: http://blog.baley.org/?p=101'
+  pvc_views: '1502'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>This has been germinatin' for a while until I could: a) take a look at the project in adequate detail, and b) I could talk to the project's founder, the gallantly-clad and adequately-shod <a href="http://devlicio.us/blogs/billy_mccafferty/" target="_blank">Billy McCafferty</a>, to answer some questions and address my concerns.</p>
+<p><a href="http://code.google.com/p/sharp-architecture/" target="_blank">S#arp Architecture</a> is, and let me see if I can put this into my own words, a solid architectural foundation for rapidly building maintainable web applications leveraging the ASP.NET MVC framework with NHibernate. There, now, that sounds hillbilly-ish and all marketable.</p>
+<p>Ok, I stole that from the project's home page. Which I say because I would word it a little differently. Specifically, I'd take out the word &quot;rapidly&quot; because as much as the framework will help, if you're building an MVC app that requires NHibernate, I'm not so sure you *should* be doing it rapidly. At least not using the same definition of &quot;rapidly&quot; that Microsoft does in its demos.</p>
+<p>But enough semantics. You are all clearly awaiting my opinion of the framework otherwise you wouldn't still be reading this far (which is why I bury all the meat of my posts behind pre-amble: to weed out the people with more common sense).</p>
+<p>At the time of writing, the framework is geared more toward the NHibernate part of the equation than the MVC part. There is little in there that is specific to MVC apps save for an auto-binder class and a TransactionAttribte, which I hope I'll get to in a bit. Other than that, the framework deals more with data access management.</p>
+<p>Which is a good thing given the amount of boilerplate code involved with data access. There are a couple of pieces I'll highlight here that I like.</p>
+<p><strong>NHibernate Session Management</strong></p>
+<p>This was the first thing I noticed that got me all hot and bothered. NHibernate session management was always something I had only a peripheral grasp of at best. I think best practice is to put it in an HTTP module and register it in the web.config. But the way I've actually done it is to wait until the first request for a session, then add it to the HTTP Context, a practice I'm not quite sure I like anymore.</p>
+<p>With S#arp Architecture, session management is reduced to the following code in your global.asax.cs Init method:</p>
+<pre class="c-sharp" name="code">NHibernateSession.Init(new WebSessionStorage(this), null);</pre>
+<p>That's it, kiddies. Instant NHibernate Session management. Of course, you still need the NHibernate config section somewhere. In the code above, the null indicates that it's in the web.config. If you have it in an external file, you can provide the name of it instead.</p>
+<p>What I like about this is that it puts NHibernate initialization where all the rest of my initialization code goes. Container configuration, route registration, NHibernate...ummm...'Nitialization, all from the comfort of global.asax.</p>
+<p>What could be improved:</p>
+<ul>
+<li>Add an overload that *doesn't* require a config file instead of relying on null to indicate the web.config </li>
+<li>Change the name. Yes, we're programmers and like our abbrev's but I'm what you might refer to as somewhat of a slightly verbose guy. Initialize is clearer. Or InitializeWith if you want to start an argument with fluent interface pundits. </li>
+</ul>
+<p><strong>GenericDao&lt;T&gt;</strong></p>
+<p>Those of you who programmed before the days of classic ADO probably threw up a little in your mouths reading that but fear not! It's not DAO. It's what some (including myself) often call RepositoryBase&lt;T&gt;. A base class that provides the basics for dealing with repositories: Get, Save, Delete, etc, etc, and so on and so forth.</p>
+<p>Likes: I am *always* cutting and pasting RepositoryBase&lt;T&gt; from one project to the next, regardless of MVC-ness. Never took the time to framework-ize it so this saves me the trouble. This one also comes with added support for non-integer IDs, while still defaulting to integers.</p>
+<p>What could be improved:</p>
+<ul>
+<li>At the moment, it comes with a lot more than Get, Save, and Delete. The interface also includes Update, SaveOrUpdate, Evict, GetByExample, and two Load methods. All in all, I think it requires much too much knowledge of NHibernate to use all of these. It's more of a way to expose NHibernate functionality than to design an interface that people would use most. But I was encouraged in my conversation with Billy that this will be trimmed down to the very basics. </li>
+<li>Possibly include some basic Find functionality. Billy and I talked somewhat randomly about this and I have trouble crystallizing any thoughts on an implementation without actually playing with it. The idea would be to balance not requiring a crazy intense knowledge of NHibernate criteria with something flexible enough to handle 80% of the use cases. </li>
+<li>The name. Personal preference, I know. But if the project espouses Domain Driven Design as it says on the home page, I'd like to see it use the terminology and call this GenericRepository or RepositoryBase or TheRepositoryFromWhichYouShouldInherit or something. </li>
+</ul>
+<p>These two things represent probably the biggest time-saver in my world, particularly if the GenericDao interfaces is cleaned up. There is also a handful of other features.</p>
+<p><strong>PersistentObject&lt;T&gt;</strong></p>
+<p>This is a base class that does a couple of things. It includes an ID property (the &lt;T&gt; part defines the type) and has a property that will tell you if it has been persisted yet, which it determines by checking the ID.</p>
+<p>It also gives you a mechanism to compare domain objects. By decorating certain properties on your object with a [DomainSignature] attribute, you are telling the framework that those properties are used to compare two objects for equality.</p>
+<p>What could be improved:</p>
+<ul>
+<li>The names. PersistentObject seems to imply it has something to do with how the object is saved when in fact, the class is geared more toward making it easier to compare two domain objects. </li>
+<li>No interface. I would like to see an IPersistentObject interface that you could implement on your own and bypass the base class. I think this is coming based on our conversation. </li>
+</ul>
+<p><strong>ControllersAutoBindModule</strong></p>
+<p>This is probably the area of the project that gives me most pause. It is pretty tightly bound to NInject. This class provides auto-registration of controllers specifically for NInject. I'm not familiar with NInject but for Windsor, this is pretty easy to do on your own. Here is the code for it:</p>
+<pre class="c-sharp" name="code">_container.Register(
+    AllTypes.Of<icontroller>( )
+        .FromAssembly( Assembly.GetExecutingAssembly( ) )
+        .Configure( c =&gt; c.LifeStyle.Transient.Named( c.Implementation.Name.ToLower( ) ) )
+    );</icontroller></pre>
+<div style="padding-right: 0.5em; padding-left: 0.5em; font-size: 8pt; float: right; padding-bottom: 0.5em; margin: 0.5em; width: 200px; padding-top: 0.5em; background-color: #dddddd">The issue with containers is that there are at least three good ones to choose from. I would not hesitate to use Windsor or StructureMap on any project, and would consider NInject based solely on its reputation. It's one thing to tie a project like this to NHibernate, which is a fairly safe decision. It's another to throw your weight behind one particular IoC container.</div>
+<p>I think there is still some work to do in this area. My understanding is that the project is moving toward the Common Service Locator for this so that you can use whatever container you like but at the moment, this class is something I'd simply ignore.</p>
+<p><strong>Design By Contract</strong></p>
+<p>At the moment, there is some basic support for Design By Contract. It is based almost entirely on this <a href="http://www.codeproject.com/KB/cs/designbycontract.aspx" target="_blank">Code Project article</a>.</p>
+<p>It could be I don't understand DbC but this appears to be more of a validation class. That is, in various places, you put code like Check.Require( x &lt; 10 ) and Check.Ensure( y != null ).</p>
+<p>I've included this for completeness. Hillbillies aren't really turned on by validation engines.</p>
+<p><strong>A note on base classes</strong></p>
+<p>I've touched on the fact that you have to inherit from these classes in our own repositories/domain objects. When I first looked at the framework, this raised some red flags. But after comparing it to my projects and getting a sense of the goal of S#arp Architecture, I no longer think it's a bad thing.</p>
+<p>The reason is: Both classes do pretty much everything I would do in my own base classes anyway. The only difference is that I no longer have control over its implementation. But as long as I trust the direction of the framework, and as long as they are kept fairly lean and don't follow the path of your average third-party grid control, I have no issue handing off these responsibilities to someone else. As I mentioned, the GenericDao implementation is a little chatty for my tastes but I believe we'll see some improvement in that area pretty soon.</p>
+<p>Really, I shouldn't be calling this a framework. It's more of a scaffolding for NHibernate/MVC projects, an idea reinforced by Billy who has plans to include a project template and possibly some item templates. Once that became clearer to me, the benefits of these classes shone through a little more.</p>
+<p><strong>The Testing Story</strong></p>
+<p>The project is almost completely covered by tests, which doesn't really matter if you are using it. But it adds to my confidence that the project is going to work as advertised.</p>
+<p>The sample application also includes tests for its Dao/Repository objects. These are, for all intents and purposes, integration tests because they are testing actual database connections and whether you can get and save data from a database. It seems to me that there should be an easy way to create boilerplate tests like this based on your Dao objects. The tests are necessary to have but mechanical to create.</p>
+<p>In fact, since it's so close to Christmas and we have wish lists on our minds, it would be fantastic if, when you create a S#arp project, it also set up a project or folder for these tests and set up the boilerplate code for connecting to a SQLLite database.</p>
+<p><strong>Wrap-up</strong></p>
+<p>I did get a sneak peek of some of the new stuff which includes some MVC niceties. Billy has a pretty clear picture of how it should look and I'm encouraged by the philosophy and <a href="http://groups.google.com/group/sharp-architecture" target="_blank">community</a> behind it.</p>
+<p>In the end, I'll say the same thing I told Billy: I'd use the framework on a new project and would even move toward it on an existing one. It gets my plumbing 80% of the way there that much faster. It won't handle business logic or even some of the funkier data access edge cases, nor should it. But it does wrap a good chunk of the infrastructure I do in MVC applications in a nice neat package.</p>
+<p>Kyle the Sharpened</p>

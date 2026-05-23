@@ -1,0 +1,25 @@
+---
+layout: post
+title: Nested Master Pages and Intellisense
+date: 2007-03-30 17:12:25.000000000 -04:00
+categories: []
+tags:
+- ".NET"
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1289'
+  dsq_thread_id: '405112923'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Despite my strict mantra, "I don't do websites", here I am working on a plain old website. But thanks to <a href="http://www.templatemonster.com">www.templatemonster.com</a> and ASP.NET master pages, it's going pretty quickly.</p>
+<p>But here's an odd thing with master pages. I have nested master pages and when I get to a content page (or another master page) that's two levels deep or higher, VS2005 no longer recognizes the &lt;asp&gt; controls in my HTML. They work just fine but the IDE marks them as errors ("not a known element") and they don't show up in intellisense...</p>
+<p>...unless I open the master page(s) in the IDE (doesn't matter if it's design mode or source mode). In which case, all is right with the world again.</p>

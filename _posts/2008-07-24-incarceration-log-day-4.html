@@ -1,0 +1,49 @@
+---
+layout: post
+title: Incarceration Log - Day 4
+date: 2008-07-24 16:52:42.000000000 -04:00
+categories:
+- Featured
+tags:
+- ASP.NET MVC
+- Miscellaneous
+- Presenting
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '3622'
+  _edit_last: '1'
+  dsq_thread_id: '529895950'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>It has been only four days since my self-imposed, month-long incarceration in the prison known as Corporate Calgary, but already the three walls of my cell close in around me. My oppressors continue their assault on my psyche with inhuman tortures such as &quot;Death by 1000 Quick Questions&quot; and &quot;Let's Talk About Weather&quot; and &quot;We Meet Because We Can&quot;.</p>
+<p>My jailors mock me with bizarre acronyms and epic tales of projects past. Yesterday, I nearly screamed in terror when I caught myself chuckling knowingly at one such anecdote. During a meeting to review progress of a system I didn't know existed, let alone used, no less. I fear I may be going insane.</p>
+<p>Two things keep me alive. One is the presentation I give next week on <a href="http://www.asp.net/mvc/">ASP.NET MVC</a> to the <a href="http://www.calgaryug.net">Calgary .NET User Group</a> on the 29th and the <a href="http://www.edmug.net">Edmonton .NET User Group</a> on the 31st. During status meetings, I surreptitiously pull up my VM and review my code and notes, ignoring the sidelong glances at my insolent giggles. These presentations are my one tenuous grip on reality and I shall protect them with, well, not *my* life but probably the life of someone close to me.</p>
+<p>The second is the one ray of light in my task list: a throwaway application I pull up when I need an extra dose of lucidity. Just this morning, I discovered an error that made me nearly leap for joy for the mere mental exercise, slight as it was:</p>
+<pre class="c-sharp" name="code">private void ConvertFile( string converterName, string sourceFile, string destinationFile )
+{
+    IConverter converter = FindConverter( converterName );
+    converter.ItemProcessed += converter_ItemProcessed;
+    int recordsProcessed = converter.processFile( sourceFile, destinationFile);
+}</pre>
+<p>This (much simplified) piece of code contained an error. The first time it was called, it ran fine. Each subsequent call appeared to process the file multiple times. I.e. the second time it ran, the file was processed twice, the third time, thrice, the fourth, ummm...quadrice. And so on and so forth.</p>
+<p>Alas, the solution presented itself all too quickly. The file was not actually being processed multiple times. Rather, a brand new ItemProcessed event was being appended to the event handler each time through. So the second time the file was processed, the ItemProcessed event was called twice each time an item was processed. The third time, thrice. Etc, etc.</p>
+<p>Unfortunately, the fix was trivial:</p>
+<pre class="c-sharp" name="code">private void ConvertFile( string converterName, string sourceFile, string destinationFile )
+{
+    IConverter converter = FindConverter( converterName );
+    converter.ItemProcessed += converter_ItemProcessed;
+    int recordsProcessed = converter.processFile( sourceFile, destinationFile);
+    <strong>converter.ItemProcessed -= converter_ItemProcessed;</strong>
+}</pre>
+<p>And now I am left to ponder my decision to work onsite for the next month in this soulless place. Left to wonder why I left my safe haven. To toil between a woman whose radio is always slightly off-station and a man with a cruel tendency to squeeze his squeaky, rubber duck at inopportune moments.</p>
+<p>Pray for me, readers. Pray. For hope.</p>
+<p>Kyle the Indentured</p>

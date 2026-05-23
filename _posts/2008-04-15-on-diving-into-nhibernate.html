@@ -1,0 +1,62 @@
+---
+layout: post
+title: On diving into NHibernate
+date: 2008-04-15 23:23:37.000000000 -04:00
+categories: []
+tags:
+- NHibernate
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '390193231'
+  pvc_views: '1788'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Here's the thing with NHibernate: It's hard. I'm mildly, bordering on moderately familiar with it and while it's a powerful product, it's a complicated one. This is due in no small part to the fragmented nature of the documentation. Some is on the <a href="http://www.hibernate.org/365.html" target="_blank">official site</a>, some in <a href="http://groups.google.com/group/nhusers?hl=en" target="_blank">discussion groups</a>, some in <a href="http://blogs.hibernatingrhinos.com/nhibernate/Default.aspx" target="_blank">FAQs</a>, and some in <a href="http://www.manning.com/kuate/" target="_blank">books</a>. It's getting better but it is still a very daunting and frustrating task to do seemingly simple things when you aren't a master.</p>
+<p>We'll look at the example that you knew was coming: Select all Jobs that have at least one Location with a Section = 15. Here is the SQL:</p>
+<pre>SELECT		*
+FROM		Job
+WHERE 		JobID IN
+	( SELECT 	JobID
+	  FROM		Location
+	  WHERE 	Section = 15 )</pre>
+<p>Not too bad thanks to years of SQL that have been ingrained at the expense of remembering vital statistics and, on occasion, basic motor skills.</p>
+<p>Now before I post a solution, I should point out that one of the reasons NHibernate is hard to figure out is that the domain does not lend itself well to Google. Take this example. I want to convert this SQL to ICriteria format. Searches for various combinations of NHibernate, Subqueries, Collections, and Children do not make one reach for the &quot;I'm feeling lucky&quot; link. I did find this <a href="http://www.nablasoft.com/Alkampfer/?p=152" target="_blank">somewhat helpful link</a> until I discovered that the whole thing could be replaced with an Expression.IsNotEmpty criteria.</p>
+<p>I'll show *a* solution to my problem:</p>
+<pre class="c-sharp" name="code">    var subquery = DetachedCriteria.For&lt;job&gt;( );
+    subquery
+        .SetProjection( Projections.Property( &quot;Id&quot; ) )
+        .CreateCriteria( &quot;Locations&quot; )
+            .Add( Property.ForName( &quot;Section&quot; ).Eq( &quot;15&quot; ) );
+
+    var query = DetachedCriteria.For&lt;Job&gt;<job>( );
+    query
+        .Add( Subqueries.PropertyIn( &quot;Id&quot;, subquery ) );</job></pre>
+<p>I'm going to venture an opinion that this is *not* an intuitive piece of code when, in the back of your mind, you're trying to map this to what you know of SQL.</p>
+<p>Here is what is going on as I see it. The subquery is equivalent to the following:</p>
+<pre>SELECT      JobID
+FROM        Job j
+INNER JOIN  Location l
+ON          j.JobID = l.JobID
+WHERE       l.Section = 15</pre>
+<p>This is different than the subquery above and there is a reason for that, which I think I'll get to. But first, here are some specific areas of confusion:</p>
+<ul>
+<li>SetProjection is essentially saying &quot;what fields do you want to return?&quot; If you ignore it, it will return whatever object the query is for (in this case, a list of Jobs). </li>
+<li>CreateCriteria( &quot;Locations&quot; ) is used for the INNER JOIN on Job. The Add will create a criteria for the Location (which is why I indented it further).</li>
+</ul>
+<p>The reason for my confusion is the disconnect between the terms when mapping them to what I know of SQL. Could be my cursory knowledge of the underlying theory. Could be that it's just hard coming up with names for these things.</p>
+<p>Now we get to the reason why the subquery is on Job and not Location. In my domain model, Job contains a collection of Location objects. The Location objects do not have a reference back to the parent, nor do they have a JobId property. There is a JobId column for the table in the database but that's used only by NHibernate to populate the collection of Locations for a particular Job.</p>
+<p>If I were to create the subquery on Location, I have nothing to return in the Projection. There is no JobID property on the Location. And NHibernate deals with objects in its queries (mostly), not database schema. So I needed to create an INNER JOIN subquery solely so that I could return the ID property on a Job object.</p>
+<p>Once that is finished, we create the main query, again on Job. The sole point of confusion I had here was that I saw In in the list of methods on Subqueries and tried to use that instead of PropertyIn.</p>
+<p>It took an inordinate amount of time to get to this point compared to how much time I spend with other tools. Like I said, maybe it's the problem domain. Maybe it's the way my brain is wired for this type of problem.</p>
+<p>The underlying point is...well, I'm not all too sure actually. Not sure what the recommendation is here. I'm not knocking NHibernate because the fact is, it does make my life easier for the 90% of the time I'm not doing stuff like this. The point isn't really to stick with it either, though again, I think you should if you've tried it and dismissed it for being too complicated. Guess I just wanted to say I worked really hard today.</p>
+<p>Concluding note: I'm aware of the existence of HQL. I'm building a search screen and the prospect of converting an arbitrary number of search parameters into HQL didn't appeal to me.</p>
+<p>Kyle the Unrelenting</p>

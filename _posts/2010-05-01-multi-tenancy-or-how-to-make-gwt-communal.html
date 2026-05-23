@@ -1,0 +1,65 @@
+---
+layout: post
+title: Multi-tenancy, or “How to make GWT communal”
+date: 2010-05-01 02:48:31.000000000 -04:00
+categories: []
+tags:
+- GWT
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '365751963'
+  pvc_views: '1682'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Before I get started, I should point out I may have a shaky definition of the term “multitenancy”. I haven’t exactly studied up on it but I’ve skimmed some blog posts and I hope it means what I think it means.</p>
+<p>In our Google Web Toolkit application, we’re going to have multiple clients but only a single instance of the app and only a single data store. Multiple instances of the application and the data store aren’t feasible as we are deploying to Google App Engine. That makes it sound like Google App Engine dictated the solution but it was more of an “icing on the cake” thing. Even if we were doing it in SQL, we were going to do it in one database. I think one reason was to make it easier to aggregate data but I hope there were more reasons because that one is kind of lame. After all, we could aggregate all the data we want into a separate database for reporting purposes.</p>
+<p>We’d like decent URLs as well, like http://wholesaleroadkill.com/store/clients/crittersnstuff and http://wholesaleroadkill.com/store/clients/macysHairSalon. This isn’t as easy as it sounds in GWT because the default behaviour is to load the app and manage all transitions as AJAX calls. If you need to bookmark something, it’s done with a hash tag. Some examples:</p>
+<ul>
+<li>http://wholesaleroadkill.com/#clientList </li>
+<li>http://wholesaleroadkill.com/#inventory </li>
+<li>http://wholesaleroadkill.com/#category;mammal </li>
+</ul>
+<p>I like to compare the type of applications you build in GWT to GMail. Once you hit the home page, you stay there. There isn’t really the concept of navigating to a new page, just refreshing sections of the existing page.</p>
+<p>Furthermore, GMail supports multi-tenancy to some degree. If you use Google Apps For Your Domain, your home email URL is http://mail.google.com/a/wholesaleroadkill.com. After that, navigation is done the traditional way (e.g. #sent, #drafts/123123123, #inbox, etc.)</p>
+<p>Problem is, as far as I know, GMail <em>isn’t</em> a GWT app. And even if it is, it’s not open source so how they configure it to be a multi-tenant application is for me to find out.</p>
+<p>I’m told that multi-tenancy is <a href="http://groups.google.com/group/google-web-toolkit/browse_thread/thread/6a6b4576fe3aedf6/f6aba2de7a1ccf8d">on the radar</a> for GWT but the radar sounds pretty big so I’m not holding out hope. So I did find out *a* way to achieve what I want, through modifications to the web.xml config file. </p>
+<p>By default, the home page for your GWT application is &lt;appName&gt;.html. It’s a physical HTML file located in the war folder. It contains everything needed to load the JavaScript that powers the app. In ordered to set up the URLs, I modified web.xml to redirect requests to this file, like so:</p>
+<pre class="xml" name="code">&lt;web-app&gt;
+
+  &lt;!-- other stuff --&gt;  
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;Multitenant&lt;/servlet-name&gt;
+		&lt;jsp-file&gt;/myapp.jsp&lt;/jsp-file&gt;
+	&lt;/servlet&gt;
+	
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;Multitenant&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;/myapp/customer/*&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;</pre>
+<p>With this in place, I can navigate to /myapp/customer/freddystaxidermy and /myapp/customer/thelmasgunemporium and have it serve up myapp.jsp. MyApp.jsp is almost an exact duplicate of MyApp.htm with one change I’ll get to later.</p>
+<div style="border-bottom: black 1px solid; border-left: black 1px solid; padding-bottom: 0.5em; background-color: #dddddd; margin: 0.5em; padding-left: 0.5em; width: 200px; padding-right: 0.5em; float: right; font-size: 9pt; border-top: black 1px solid; border-right: black 1px solid; padding-top: 0.5em">Don’t let the use of session scare you. Done the right way (and they make it very hard *not* to do it the right way), it’s actually using the Google App Engine data store to manage the session. From what I can gather, it’s actually the recommended way of managing state in a Google App Engine application because of the speed and scalability of App Engine.</div>
+<p>There are some considerations to this approach that I don’t know I’ve thought through completely. The big one is security. Every call needs to be qualified somehow to indicate which customer is making it. I.e. which URL launched the request. For the moment, I’m doing that by making a call in the main page that sets a session variable based on the URL. This kinda reeks of being very open to allowing someone smarter than I am to make a call with a fake URL and impersonating someone else. At the moment, that’s still a pending todo.</p>
+<p>Back to the change I made to MyApp.jsp. We had a relative reference to our CSS stylesheet:</p>
+<pre class="xml" name="code">&lt;link type=&quot;text/css&quot; 
+   rel=&quot;stylesheet&quot; 
+   href=&quot;myApp.css&quot;&gt;</pre>
+<p>This doesn’t work because it’s now looking for myApp.css in the wrong place so I changed this line to:</p>
+<pre class="xml" name="code">&lt;link type=&quot;text/css&quot; 
+   rel=&quot;stylesheet&quot; 
+   href=&quot;&lt;%=request.getContextPath( ) 
+   %&gt;/myApp.css&quot;&gt;</pre>
+<p>Now it properly references myApp.css at the proper level of the application.</p>
+<p>This brings up an interesting aspect to this set up. There are still certain things, like myApp.css, that are accessed globally. We are using gwt-platform, which uses a modified version of gwt-dispatch for server-communication. All requests are routed through http://wholesaleroadkill.com/myapp/dispatch regardless of where it originated. I’m sure it can be configured so that requests are routed through http://wholesaleroadkill.com/myapp/customer/freddystaxidermy/dispatch but that hasn’t crept high enough on our priority list yet.</p>
+<p>Note: I’ve had this post ready to go for a few weeks now. Typing it out made it sound more hacky than it did when I figured it out in the first place. So consider this an appeal for alternatives or tweaks.</p>
+<p>Kyle the Let</p>

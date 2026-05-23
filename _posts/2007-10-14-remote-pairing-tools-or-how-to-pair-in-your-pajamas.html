@@ -1,0 +1,42 @@
+---
+layout: post
+title: Remote pairing tools, or "How to pair in your pajamas"
+date: 2007-10-14 13:44:01.000000000 -04:00
+categories: []
+tags:
+- Software
+- Working Remotely
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2069'
+  dsq_thread_id: '354619218'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Some great discussions going on in the <a href="http://tech.groups.yahoo.com/group/altnetconf/" target="_blank">ALT.NET user group</a>. Topics&nbsp;such as&nbsp;BDD, ReSharper/CodeRush on large projects, and one that hits close to home: Remote Pairing.</p>
+<p>I felt some trepidation&nbsp;when I left Calgary to come work remotely from home. There is a *lot* of interaction 'twixt developers, including daily stand-ups, lunch 'n learns, design sessions, afternoon kickboxing, sprint reviews, and, of course, pairing. Ditto for the client who shows up every morning for our daily stand-ups and every sprint review and sprint planning session (no, seriously).</p>
+<p>So I was somewhat apprehensive about making it work remotely. But three weeks in, I'm having some reasonable success with Office Communicator and a Vonage account. Office Communicator for the&nbsp;application sharing&nbsp;and Vonage so I don't have to keep switching back and forth to the IM window. (Side note: I've noticed Vonage has been a lot more reliable in recent weeks than when I first got the account.)</p>
+<p>I say "reasonable" success because there are a couple of issues. Firstly, the last time I paired (two days ago), the connection dropped several times. As in at least half a dozen until we gave up entirely and my&nbsp;partner&nbsp;went off to pair with someone a little less virtual. This is the only time it's happened and I'm not sure what caused it as I didn't lose the internet connection.</p>
+<p>Issue number two: Apparently, Application Sharing <a href="http://www.mcse.ms/message2348255.html" target="_blank">doesn't work</a> if you are connected via Remote Desktop or Citrix. Which means it sure as heckfire ain't working if you connect via <a href="http://kyle.baley.org/ChroniclesOfARemoteDeveloperOrHowToFindTheGrayCloudUnderTheSilverLining.aspx" target="_blank">Remote Desktop through Citrix</a>. It works if someone on the other end shares Visual Studio with me but I can't do it myself.</p>
+<p>But those glitches aside, remote pairing isn't much different than local pairing. One of us would write the test, the other would make it pass and it isn't all that from removed from actually being there. In fact, it helped reduce the "here, let me drive for a sec" factor.</p>
+<p>The next tool on my list to try out is Microsoft SharedView Beta. <a href="http://www.connect.microsoft.com/site/sitehome.aspx?SiteID=94" target="_blank">Here</a> is the link where I got it but it's also listed in a couple of <a href="http://get.live.com/en-us/betas/sharedview_betas" target="_blank">other places</a> that look valid (as well as <a href="http://get.live.com/betas/sharedview_betas" target="_blank">one other place</a> where the links don't work at all). No idea whether it will solve my issues but it was recommended to me by someone at Microsoft and I don't do nothin' until the Mother Ship tells me to.</p>
+<p>To tie this back to the ALT.NET discussion, here are some other combinations along with the people who talked about (but didn't necessarily recommend) them:</p>
+<ul>
+<li><a href="http://www.skype.com" target="_blank">Skype</a> &amp; <a href="http://www.uvnc.com/" target="_blank">UltraVNC</a> (Kevin Miller): Note that he's "feeling a bit of pain" with VNC</li>
+<li><a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=26c9da7c-f778-4422-a6f4-efb8abba021e&amp;displaylang=en" target="_blank">NetMeeting</a> (<a href="http://www.chadmyers.com/blog/" target="_blank">Chad Myers</a>): Worked well enough a few years ago. He also mentioned SharedView which I think is basically the next version of NetMeeting</li>
+<li><a href="http://www.famatech.com/" target="_blank">RAdmin</a> (<a href="http://www.opgenorth.net" target="_blank">Tom Opgenorth</a>)</li>
+<li><a href="http://messenger.yahoo.com" target="_blank">Yahoo IM</a> and <a href="http://www.tightvnc.com/" target="_blank">TightVNC</a> (<a href="http://donie.endofinternet.org/" target="_blank">Steve Donie</a>): Steve also recommended the <a href="http://www.amazon.com/MV100-MiniVox-USB-Speakerphone/dp/B0007W2E64/ref=pd_bbs_sr_1/105-4213027-4725243?ie=UTF8&amp;s=electronics&amp;qid=1192110279&amp;sr=8-1" target="_blank">mVox MV100 USB audio device</a></li>
+<li>Skype &amp; <a href="http://www.yugma.com/yugmaskype/" target="_blank">Yugma Skype</a> (<a href="http://www.lostechies.com/blogs/jason_meridth/default.aspx" target="_blank">Jason Meredith</a>): Jason also <a href="http://www.lostechies.com/blogs/jason_meridth/archive/2007/09/17/skype-yugma-logitech-premium-usb-headset-350-remote-pair-programming.aspx" target="_blank">blogged</a> about his experience and also mentioned <a href="http://www.elluminate.com/vroom/" target="_blank">Elluminate</a>.</li>
+<li><a href="http://www.crossloop.com/" target="_blank">CrossLoop</a>&nbsp;(Matthew Clendening)</li>
+<li><a href="http://www.realvnc.com" target="_blank">RealVNC</a> &amp; Skype (<a href="http://www.lukemelia.com/" target="_blank">Luke Melia</a>): No major problems but inadequate for communication 'twixt a PC and Mac. In that case, he recommended Apple Remote Desktop (Mac) and TightVNC (PC). He also recommended a separate laptop with a camera to better approximate a live pairing session</li>
+</ul>
+<p>So there is no shortage of options although only the Skype/Yugma option came back with a glowing review. Everything else was "pretty well" or "well enough".</p>
+<p>Kyle the Re-paired</p>

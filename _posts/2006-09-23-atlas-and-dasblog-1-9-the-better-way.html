@@ -1,0 +1,51 @@
+---
+layout: post
+title: 'Atlas and dasBlog 1.9: The better way'
+date: 2006-09-23 22:15:33.000000000 -04:00
+categories:
+- dasBlog
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '921'
+  dsq_thread_id: '593394766'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Evenin' Hillbillies. Got somethin' t'say on my upgrade to <a href="http://www.dasblog.info/">dasBlog 1.9</a>&nbsp;so iffen you'll turn your attention from your squirrel skinnin', I'd be much obliged.</p>
+<p>The reason for my upgrade is solely to support FlareItems, something I could have done earlier with one of the intermediate codebases but I don't do nuttin' until <a href="http://www.hanselman.com/blog/DasBlog19Released.aspx">Scott Hanselman</a> tells me to.</p>
+<p>It wasn't something I was looking forward to because I had bastardized my existing version to wedge Atlas controls into it. As it turns out, though, I was able to learn from my <a href="http://kyle.baley.org/CreatingAtlasControlExtendersClientside.aspx">recent trials</a> and tribulations and get the new version of dasBlog working with Atlas controls without having to embed the controls into the codebase itself. So what you see on this har site are the following AtlasControlToolkit controls in action with very minimal changes to the core code:</p>
+<ul>
+<li><a href="http://atlas.asp.net/atlastoolkit/TextBoxWatermark/TextBoxWatermark.aspx">TextBoxWatermark</a> (in the search box)</li>
+<li><a href="http://atlas.asp.net/atlastoolkit/PanelExtenders/CollapsiblePanel.aspx">CollapsiblePanel</a></li>
+<li><a href="http://atlas.asp.net/atlastoolkit/RoundedCorners/RoundedCorners.aspx">RoundedCorners</a></li>
+</ul>
+<p>In the previous version, I had embedded these controls server-side into the individual pieces, SideBarList, CategoryList, and so on and so forth. Which means these controls were useful in my theme and nowhere else. The brown rounded corners did not really lend themselves to...well...any other theme in the world.</p>
+<p>Forthwith, a list of non-theme changes I made to&nbsp;dasBlog to support the inclusion of Atlas and the Atlas Control Toolkit:</p>
+<ul>
+<li>Upgrade the project to VS2005. Follow the <a href="http://dasblog.info/CategoryView,category,Development%2cVS2005.aspx">instructions</a>. They work.</li>
+<li>Add a reference to the Microsoft.Web.Atlas assembly in both the newtelligence.DasBlog.Web and newtelligence.DasBlog.Web.Core projects</li>
+<li>Add a reference to the AtlasControlToolkit assembly in the newtelligence.DasBlog.Web project. I'm not entirely certain this is necessary. It could be enough that you include the assembly in the bin folder because all the functionality is handled client-side. I.E. There are no actual server-side AtlasControlToolkit controls created.</li>
+<li>Modify the web.config to accommodate Atlas. This and the previous step are detailed <a href="http://atlas.asp.net/docs/overview/install.aspx">here</a>.</li>
+<li>Added the following code to the top of the Page_Load event in newtelligence.DasBlog.Web.Core.SharedBasePage:</li>
+</ul>
+<blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+<blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+<p><span style="FONT-SIZE: 11px; COLOR: black; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">Microsoft.Web.UI.ScriptManager manager <span style="FONT-SIZE: 11px; COLOR: red; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">=</span> <span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">new</span> Microsoft.Web.UI.ScriptManager( );<br /><span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">this</span>.Controls.Add( manager );<br /></span></p>
+</blockquote>
+</blockquote>
+<ul>
+<li>Re-compile</li>
+</ul>
+<p>The second last step I think might be considered a little dicey. The rest of it is essentially what you would do to any application to Atlas-ize it. But I needed a place to put the ScriptManager and this seemed the logical choice. Unfortunately, it means you're getting a ScriptManager whether you want one or not.</p>
+<p>The other option is to include script references to all of the Atlas javascript files in your template which I'm not too comfortable with because those seem to be dependent on the order in which they are loaded.</p>
+<p>Anyway, that's it really. Now you can start using Atlas features in dasBlog. You might need to play around with the settings on the ScriptManager depending on what you're doing. The next entry, which I will post shortly, will detail what I did to include toolkit controls into my theme.</p>

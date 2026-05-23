@@ -1,0 +1,27 @@
+---
+layout: post
+title: VisualSVN and Office 2007, or "How to crash an IDE"
+date: 2007-06-04 12:20:01.000000000 -04:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1278'
+  dsq_thread_id: '352791043'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>A couple of days ago, I started having problems with VisualSVN (and thanks to honorary hillbilly, <a href="http://www.opgenorth.net/" target="_blank">Tom Opgenorth</a>, for putting me on to it). VS2005 would crash whenever I tried to Commit or Update or do anything that required dimming the IDE to open TortoiseSVN. Here's the error I was getting in my Application Event Log:</p>
+<p>EventType clr20r3, P1 devenv.exe, P2 8.0.50727.42, P3 4333e699, P4 mscorlib, P5 2.0.0.0, P6 4333ab80, P7 25e, P8 123, P9 system.formatexception, P10 NIL.</p>
+<p>Not particularly clear but hopefully it'll help someone Googling the same problem. It's also pretty much identical to what is described <a href="http://groups.google.com/group/visualsvn/browse_thread/thread/11e4088bc4c8a295/fb3296cc9bdb3cd3#fb3296cc9bdb3cd3" target="_blank">here</a>.</p>
+<p>After a couple of back and forth e-mails with VisualSVN's support team (on the weekend no less!), they zeroed in on the problem pretty quickly. Last week, I installed (and quickly afterward, uninstalled) <a href="http://kyle.baley.org/OfficeAndZuneSidebar.aspx">Office 2007</a>&nbsp;and it seems that the installation unregisters actxprxy.dll in C:windowssystem32. Re-registering that DLL has fixed the issue for me. I make no claim as to whether this affects Office 2007 but the VisualSVN support desk pointed me to <a href="http://groups.google.com/group/microsoft.public.vsnet.ide/browse_frm/thread/d50b512761ec96c1/" target="_blank">this link</a>&nbsp;so make your own judgement.</p>
+<p>So hopefully, I've saved some poor soul from having to contact VisualSVN's help desk. Which is not to discourage anyone from doing so because they were very responsive and very helpful. More so than I was when describing the problem anyway.</p>
+<p>Kyle the Supported</p>

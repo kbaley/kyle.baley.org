@@ -1,0 +1,29 @@
+---
+layout: post
+title: Cron and AppEngine
+date: 2012-04-28 11:45:26.000000000 -04:00
+categories: []
+tags:
+- cron
+- Google App Engine
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '4882'
+  dsq_thread_id: '667805174'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Quick PSA on using cron jobs with <a href="https://developers.google.com/appengine/docs/java/config/cron" target="_blank">Google App Engine</a> because it almost wreaked havoc for us.</p>
+<p>App Engine has a lovely feature of having different versions of your app. You can upload a new version but not make it the default until you’re good and ready. We do this all the time for deployment. Deploy to a new version and try it out, then make it the default when we’re ready to unleash it. Often, we deploy to the new version a day or so in advance.</p>
+<p>Cron jobs, it seems, are handled outside this versioning mechanism. If you upload a new cron.xml file, it’s active. Right now. Doesn’t matter if the version it was deployed in is the default or not. As soon as it’s uploaded, it’s the new cron-ness.</p>
+<p>Where this almost bit us is that we added a new cron job in our most recent release (deployed yesterday but not active) to use a <a href="https://developers.google.com/appengine/docs/java/backends/" target="_blank">dynamic backend</a>. As soon as the cron job got uploaded, it started running. I didn’t notice until this morning when our backend usage reflected the new cron job. Some <a href="http://www.mail-archive.com/google-appengine@googlegroups.com/msg34752.html" target="_blank">quick research</a> and here we are.</p>
+<p>What this means long term is that cron.xml is no longer going to be deployed as part of our application anymore. It now becomes an entirely separate process. I’m a little annoyed that we have to wait until we pull the trigger on the new version before we can upload the new cron.xml but it’s a quick step.</p>
+<p>Kyle the Mis-scheduled</p>

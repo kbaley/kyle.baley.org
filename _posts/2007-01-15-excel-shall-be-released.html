@@ -1,0 +1,35 @@
+---
+layout: post
+title: Excel *shall* be released
+date: 2007-01-15 17:20:11.000000000 -05:00
+categories: []
+tags:
+- Office Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1210'
+  dsq_thread_id: '456181512'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Here's one that ranks pretty high on the weird scale.</p>
+<p>This is my .NET application that does a whole lot of mucking with Excel. Recently, I became acutely aware that I wasn't cleaning up after myself very well when Excel would regularly freeze up after working with my app for a while.</p>
+<p>This became more obvious after pulling up Task Manager and noticing that the Excel process would remain in the list after doing some work. So in one place, I went through with a fine-toothed comb and made sure every single object I referenced was cleaned up with FinalReleaseComObject.</p>
+<p>By the way, this includes indirect references to Excel objects. Example: I had a range object called cells referring to the entire Cells collection of a sheet. In one function call, I passed in cells[i + 1, j] as a parameter. That was a problem. Instead, I had to create another Range variable, set its value to cells[i + 1, j], pass it as a parameter, then call FinalReleaseComObject on the temporary variable. But I digress.</p>
+<p>In another more complicated procedure, I was also getting problems with the Excel process remaining open. I say complicated but in reality, there was only one Excel object being used. No other objects, direct or indirect, to be found. And it was being cleaned up. Even getting a 0 back from the FinalReleaseComObject call. And yet, the Excel process still remained open afterward.</p>
+<p>My high-tech debugging technique that has served me well for nigh on ten years: comment everything out until the problem goes away, then start uncommenting until it comes back.</p>
+<p>Using this clandestine method, I narrowed it down to the very end of the procedure where I had declared&nbsp;some local variables for the purpose of reporting back to the user on the progress of the procedure. I comment these out and the Excel process goes away when its done.</p>
+<p>If you're still with me, here's where it gets weird. These variables do nothing but some basic arithmetic and date calculations. Nothing at all to do with Excel. But I comment them out and all is well.</p>
+<p>Then&nbsp;I comment them out and in their place add the line: <font face="Courier New" size="2">int i;</font>&nbsp;&nbsp; That's it. I declare an uninitialized variable. The problem comes back. I comment out the offending variable declaration and it goes away.</p>
+<p>In my head is swirling a myriad of thoughts, all variations on: WTF?!?! So I uncomment the variable declaration, verify that the problem has come back, then comment out one of my other variables earlier in the function (substituting a hard-coded value whenever it is used). Execute and again, the problem is gone!</p>
+<p>So in essence, here's what appears to be happening: there is a limit on the number of actual variables I can declare. Not just variables holding COM objects, total variables including .NET ones. If I have too many variables declared, the Excel process doesn't get released, even if I release all the objects. I tried moving some variables higher up in the food chain and making them module-level but no dice.</p>
+<p>I can't even begin to explain why this is and I'm fairly positive my explanation isn't exactly valid (because I haven't been able to duplicate it outside of this procedure). Something to&nbsp;do with the call stack&nbsp;or some other boring low-level aspect of the framework, I suppose.&nbsp;But here is how I solved it: Luckily, the variables I needed at the end could be&nbsp;refactored into a separate function. I did so and problem gone.</p>
+<p>Well, postponed, anyway.</p>

@@ -1,0 +1,48 @@
+---
+layout: post
+title: Hiding code from ReSharper
+date: 2008-01-07 18:12:05.000000000 -05:00
+categories: []
+tags:
+- Coding Style
+- ReSharper
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1466'
+  dsq_thread_id: '365003503'
+  _edit_last: '1'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>ReSharper 3.1 is out, which you already knew. I put it off until this morning when I read <a href="http://blog.phatboyg.com/2008/01/06/resharper-31-solution-wide-analysis/" target="_blank">Chris Patterson's account</a> of the solution-wide analysis and thought about how funny that might be to run against my <a href="http://codebetter.com/blogs/kyle.baley/archive/2007/12/13/guerrilla-refactoring-or-quot-how-to-bring-down-a-totalitarian-regime-quot.aspx">current project</a>.</p>
+<p>I didn't get too far but I was able to finally reformat (Ctrl+Shift+Alt+F) a class that had thus far been resistant to change, as it were. Oddly, the class went from 9,344 lines of code to 10,255 but damn, does it every look pretty.</p>
+<p>Anyway, that's not what I wanted to talk about today.</p>
+<p>While perusing over this shrine to monoliths, I noticed that it had apparently been ported over from .NET 1.1 because all the auto-generated code was still in it. Sensing an opportunity to do good, I decided to create the designer class old-school.</p>
+<p>It wasn't all that difficult to muddle through. You create the class with the same name as the form but named appropriately. E.g. if the form is named Estimate, create a new class called Estimate.Designer.cs and either Visual Studio or ReSharper will wire it up for you. If it doesn't, you'll need to modify the project file manually by examining how another form does its nesting.</p>
+<p>Once the class is created, mark it and the original form as partial. Then move the <font face="Courier New">components</font> variable, the <font face="Courier New">Dispose</font> method, and the <font face="Courier New">InitializeComponents</font> method into it along with all the form element variables.</p>
+<p>But again, that's not really what I came here to talk about.</p>
+<p>It was during this migration from form class to designer class, that I discovered what appears to be an undocumented feature of ReSharper. When I copied <font face="Courier New">InitializeComponents</font> over, I got the expected yellow strip of inadequacy along the right indicating that there were things that could be cleaned up.</p>
+<p>Now this being auto-generated code as well as somewhat volatile, I had no intention of cleaning it up. But it occurred to me that I'd never seen this in other designer classes. So popping open another designer class for comparison, the only different was that <font face="Courier New">InitializeComponents</font> was wrapped in a region:</p>
+<p>#region Windows Form Designer generated code</p>
+<p>So I got to thinkin', what if I wrapped the entirety of my Estimate form class in a region of this name? And lo! All my inadequacy is gone! No more yellow hints and suggestions on how to make the code better. As far as ReSharper is concerned, my code could not get any better.</p>
+<p>I kid, of course. I'm not advocating wrapping your code in cryptically named regions just to avoid seeing the ReSharper suggestions.</p>
+<p>But here's the other thing: You can define your own region text that, when wrapped around a piece of code, will also render its inefficiencies hidden from ReSharper. Here is one way to do it, and I dearly hope there's an easier way:</p>
+<ol>
+<li>Click ReSharper | Options </li>
+<li>Select &quot;Code Style Sharing&quot; from Languages | Common </li>
+<li>Export your current settings </li>
+<li>Open the exported file in your favorite <a href="http://kyle.baley.org/TabbedInterfacesOrQuotHowToPreachToTheMassesquot.aspx" target="_blank">non-tab-based text editor</a> and scroll to the bottom </li>
+<li>Notice the element, SkipRegions. You should be able to take it from here. You define another child element with the text you want to use (e.g. <font face="Courier New">Ignore this code, Resharper</font>) and remember to increment the length variable (JetBrains doesn't the childNodes.length property, I guess). </li>
+<li>Go back to &quot;Code Style Sharing&quot; and Import your new xml file </li>
+</ol>
+<p>Now you can decorate code with <font face="Courier New">#region Ignore this code, ReSharper</font> and it won't display any suggestions for improvement. Note that errors will still be marked in red so it isn't technically ignored completely.</p>
+<p>So there you have it. #regions aren't pure evil after all. Just ornery.</p>
+<p>Kyle the Recanted</p>

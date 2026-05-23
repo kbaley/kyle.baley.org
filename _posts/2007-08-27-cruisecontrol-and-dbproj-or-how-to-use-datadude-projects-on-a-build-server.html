@@ -1,0 +1,33 @@
+---
+layout: post
+title: CruiseControl and DBProj, or "How to use DataDude projects on a build server"
+date: 2007-08-27 19:42:04.000000000 -04:00
+categories: []
+tags:
+- Development
+- Visual Studio
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2547'
+  dsq_thread_id: '354812583'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>How's this for obscure? Our solution contains a .dbproj file, which for those not in the know (including me up until about three days ago), is a type of project that is added when you install Visual Studio Team System for Database Professionals (pka DataDude after the legendary surfer that built it). We also use Cruise Control on a build server which does *not* have Visual Studio Team System for Database Professionals installed.</p>
+<p>The issue was that the build would fail on the build server because of some reference to VSDBPro in the dbproj. Specifically:<br /><font color="#ff0000" size="1">D:ccnetprojectsCritterClassifierSourceDatabaseEHTDB.dbproj(75,11): error MSB4019: The imported<br />project "C:Program FilesMSBuildMicrosoftVisualStudiov8.0TeamDataMicrosoft.VisualStudio.TeamSystem.<br />Data.Tasks.targets" was not found. Confirm that the path in the &lt;Import&gt; declaration is correct, and <br />that the file exists on disk.</font></p>
+<p>No problem, says you, why not simply ignore the project in the configuration that the build server uses? Well, says I, don't be actin' all high 'n mighty 'til you gone done tried it yerself! If you do, you'll discover that the error still occurs, although it doesn't actually cause the build to fail. (Yeah, it sounds whacky but I ain't elaboratin' so you'll have to try it to see it in action.)</p>
+<p>The error doesn't actually occur when the project is compiled, mostly because the project isn't compiled during the build. It happens when the .dbproj file is loaded. (NOTE: We're using msbuild against the .sln file.) Opening the .dbproj file in a text editor, you'll see:</p>
+<p><font face="Courier New">&nbsp;&lt;Import </font><font face="Courier New">Project="$(MSBuildExtensionsPath)MicrosoftVisualStudiov8.0TeamData<br />Microsoft.VisualStudio.TeamSystem.Data.Tasks.targets" /&gt;</font></p>
+<p>My fix: add a Conditional attribute to the &lt;Import&gt; element:</p>
+<p><font face="Courier New">&nbsp;&lt;Import Project="$(MSBuildExtensionsPath)MicrosoftVisualStudiov8.0TeamData<br />Microsoft.VisualStudio.TeamSystem.Data.Tasks.targets" Condition="Exists('$(MSBuildExtensionsPath)MicrosoftVisualStudiov8.0TeamData<br />Microsoft.VisualStudio.TeamSystem.Data.Tasks.targets')" /&gt;</font></p>
+<p>This tells whomever is parsing this sucker not to import the project if the file doesn't exist. Of course, you won't be able to compile the project in this case but the build server doesn't need to know that...</p>
+<p>Kyle the Finagled</p>
+<p>P.S. Another potential fix is to compile the projects with NAnt instead of MSBuild, which I think is preferable if you can get away with it.</p>

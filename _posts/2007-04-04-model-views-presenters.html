@@ -1,0 +1,36 @@
+---
+layout: post
+title: Model View(s) Presenter(s)?
+date: 2007-04-04 20:43:15.000000000 -04:00
+categories: []
+tags:
+- Patterns
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1549'
+  dsq_thread_id: '405108520'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>OK, dear reader(s), I haven't had much luck engaging you in the past but let's see how I fare in 2007.</p>
+<p>I'm implementing my very first Model-View-Presenter. She's a bonny WinForms application that, at its core, takes an Excel spreadsheet and converts it into another format. It uses a plug-in architecture so that you (as in I) can create other "converters" and&nbsp;drop them into the plug-in directory without having to recompile.</p>
+<p>That has nothing to do with my question but I've typed it and I don't want to delete it.</p>
+<p>I've seen <a href="http://www.jpboodhoo.com/blog/WorkingSourceCodeForMSDNModelViewPresenterArticle.aspx" target="_blank">many</a>, <a href="http://msdn.microsoft.com/msdnmag/issues/06/08/DesignPatterns/default.aspx" target="_blank">many</a>, <a href="http://www.codeproject.com/useritems/ModelViewPresenter.asp" target="_blank">many</a>, <a href="http://codebetter.com/blogs/jeffrey.palermo/archive/2005/03/28/128592.aspx" target="_blank">many</a>&nbsp;examples of Model-View-Presenter, most of them very clear and easy to follow but all suffering from a problem I am just now encountering: My form does more than display a list of employees.</p>
+<p>So my question is, how do you implement a page that, for example, displays two lists, then allows the user to select one item from each and click a button that will do something with the two selections?</p>
+<p>Sub-questions:</p>
+<ul>
+<li>Do you encapsulate each list in a user control, each implementing their own view and presenter?</li>
+<li>Do you create a view/presenter for each section and have the main form implement each view and create each presenter?</li>
+<li>Do you treat the whole form as one view with one presenter?</li>
+<li>Do you use multiple views (one for each "section") with one presenter to control them all?</li>
+<li>Do you use one view but register it with multiple presenters? (I threw that in for completeness; it sounds kind of wacky to me.)</li>
+</ul>
+<p>The first person that responds with "It depends" will be shot on sight.</p>

@@ -1,0 +1,40 @@
+---
+layout: post
+title: Launchy, or "How to always get what you want (if you try sometimes)"
+date: 2007-08-28 12:46:51.000000000 -04:00
+categories: []
+tags:
+- Tools
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2069'
+  dsq_thread_id: '372201422'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Who says you can't teach an old hillbilly new tricks? Have finally made <a href="http://www.launchy.net">Launchy</a> ubiquitous (or as we say in the Ozarks, you-bet-we-duz) to the point where I'm looking for a way to get rid of the Start button on my task bar and free up some real estate.</p>
+<p>But chances are, you all know and love Launchy already. And you probably are aware of the plug-ins, Weby and Runny. The first tells Launchy to open the browser of your choice when you type in <a href="http://www.welovesquirrels.com/">http://www.welovesquirrels.com/</a>. The second lets you create shortcuts to applications that typically take arguments.</p>
+<p style="BORDER-RIGHT: #cccccc 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #cccccc 1px solid; PADDING-LEFT: 0.5em; FONT-SIZE: 8pt; FLOAT: right; PADDING-BOTTOM: 0.5em; MARGIN: 0.5em; BORDER-LEFT: #cccccc 1px solid; WIDTH: 200px; PADDING-TOP: 0.5em; BORDER-BOTTOM: #cccccc 1px solid; back-color: #dddddd">Side note on Runny. It's possible to use it to launch apps that *don't* take arguments but you have to press Tab then Enter to launch the app. The developers recognize this as being a little quirky but can't really do anything about it. It is because of this (and the funky way you need to specify paths in Explory) that I still use SlickRun for some things.</p>
+<p>What I aim to edify y'all about is that there have been recent updates to both <a href="http://launchy.jiqnet.com/?pgload=downloads">Weby and Runny</a>. Weby has the most interesting one as it now allows you to create shortcuts to parameterized URLs. And by default, you get parameterized shortcuts to almost everything you'd need, like Google, MSDN, Wikipedia, and IMDb. You even get an e-mail shortcut: mailto:$1 which opens a blank message to a specified e-mail address.</p>
+<p>I've made a couple of tweaks to their default list:</p>
+<ul>
+<li>Shortened the Google shortcut to just "g"
+</li>
+<li>Added "?subject=$2" to the e-mail shortcut so you can specify both a recipient and a subject
+</li>
+<li>Added a shortcut to http://www.$1.com/ (using "w" as the shortcut). This lets you type: w, &lt;Tab&gt;, firefox &lt;Enter&gt; to go <a href="http://www.firefox.com/">http://www.firefox.com/</a>. I'll leave it as an exercise to create your own shortcuts to .net and/or .org addresses.</li>
+</ul>
+<p>If I have one complaint about Weby, it's that it doesn't handle URLs that don't start with www very well. You always have to type in http:// at the beginning. Luckily, that's where Runny comes in. I've bound the following application to "i":</p>
+<ul>
+<li>%PROGRAMFILES%Firefoxfirefox.exe $1</li>
+</ul>
+<p>The result is I can get to my own blog easily by typing: i,&lt;Tab&gt;,kyle.baley.org,&lt;Enter&gt;. At work, which is a little more draconian in their blocking rules, I have something similar set up for IE. Note that you'll need to use quotes in that case: "%PROGRAMFILES%Internet Exploreriexplore" $1</p>
+<p>Kyle the Aborted</p>

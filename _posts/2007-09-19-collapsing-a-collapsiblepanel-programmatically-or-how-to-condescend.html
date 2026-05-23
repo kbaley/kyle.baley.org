@@ -1,0 +1,39 @@
+---
+layout: post
+title: Collapsing a CollapsiblePanel programmatically, or "How to condescend"
+date: 2007-09-19 01:56:44.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '3909'
+  dsq_thread_id: '349827564'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Today's post brought to you by honorary Hillbilly, Kevin Hemeon, who sent the following e-mail:</p>
+<blockquote><p><em>Dear Coding,</em></p>
+<p><em>I realize you're a big mucky-muck who is too busy for the likes of the </em><a href="http://graysmatter.codivation.com" target="_blank"><em>little people</em></a><em> but my job, my life, indeed my very *soul* depends on being able to collapse an ASP.NET AJAX Toolkit </em><a href="http://asp.net/AJAX/Control-Toolkit/Live/CollapsiblePanel/CollapsiblePanel.aspx" target="_blank"><em>CollapsiblePanel</em></a><em> programmatically in a postback event, such as a button click. I've tried using myCollapsiblePanel.Collapsed = true but it doesn't work.</em></p>
+</blockquote>
+<p>And I, being a blogger mindful of his readership, replied:</p>
+<blockquote><p><em>Kind and noble Kevin,</em></p>
+</blockquote>
+<blockquote><p><em>The solution to this problem is mere child's play and it certainly did *not* take me a good couple of hours wondering "WTF" while I stared in disbelief at what should be an obvious piece of code. You see, the CollapsiblePanel is "postback-aware" in that it will save its state during a postback and re-create it. This is very handy when you are submitting a form and you don't want to startle people who are easily offended by things such as UI elements that look different when a web page refreshes. That's the sort of behaviour that tends to lead to warnings on coffee cups, if you catch my meaning.</em></p>
+</blockquote>
+<blockquote><p><em>Unfortunately, this doesn't bode well if, in the postback, you want to alter its appearance manually. In this case, another line of code is necessary:</em></p>
+</blockquote>
+<blockquote><p><em>&nbsp;&nbsp; myCollapsiblePanel.ClientState = "true";<br />&nbsp;&nbsp; myCollapsiblePanel.Collapsed = true;</em></p>
+</blockquote>
+<blockquote><p><em>So you see, a simple solution for a simple problem (i.e. not a problem that appears simple but keeps you up all &amp;*%$ night). Until next time, code strong and&nbsp;AJAX well.</em></p>
+</blockquote>
+<blockquote><p><em>Kyle the (De)Mentor</em></p>
+</blockquote>

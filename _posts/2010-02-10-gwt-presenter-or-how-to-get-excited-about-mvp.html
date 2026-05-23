@@ -1,0 +1,46 @@
+---
+layout: post
+title: gwt-presenter, or “How to get excited about MVP”
+date: 2010-02-10 03:59:34.000000000 -05:00
+categories: []
+tags:
+- GWT
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '968'
+  dsq_thread_id: '349693178'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I’m in week four of my <a href="http://kyle.baley.org/LifeOutsideNETOrLdquoHowToCheckOutYourNeighboursrdquo.aspx">Google Web Toolkit adventure</a> and things are heating up nicely. I’ve already switched to IntelliJ and back to Eclipse at least once (not really counting the two times I switched in my head while I was laying in bed; let it not be said that being spoiled for choice is always a good thing).</p>
+<p>Reason I’m currently sticking with Eclipse: it seems better suited for GWT development. As an editor, IntelliJ rocks for .NET/ReSharper developers. All the shortcuts are familiar and things seem more organized and intuitive. Generally speaking, Eclipse feels like an IDE developed by committee, which it kinda was from what I’ve read. But the GWT and Google AppEngine plug-ins for Eclipse are pretty solid and there’s no confusing terminology around libraries and facets and artifacts and modules like there is with IntelliJ. After all, I’m just a <a href="http://en.wikipedia.org/wiki/Unfrozen_Caveman_Lawyer">.NET developer</a>.</p>
+<p>The <a href="http://code.google.com/p/gwt-presenter/">gwt-presenter</a> library has been a godsend in the short time I’ve been on the project. Its implementation of MVP is cleaner than my kids’ hides after they’ve had a good whoopin’. Unlike the ASP.NET version of MVP I’ve used over the years, this one has a very decoupled link ‘twixt presenters and views. Communication is managed through dependency injection to wire up view interfaces to their implementations and through an event bus, which comes standard with the gwt-presenter lib<a href="http://kyle.baley.org/content/binary/WindowsLiveWriter/gwtpresenterorHowtogetexcitedaboutMVP_14321/mockup_2.png"><img style="border-bottom: 0px; border-left: 0px; margin: 5px; display: inline; border-top: 0px; border-right: 0px" title="mockup" border="0" alt="mockup" align="right" src="/assets/mockup_thumb.png" width="244" height="160" /></a>rary.</p>
+<p>Say you have a link in a left sidebar that users click to launch the Settings page in the main content window. With gwt-presenter, the workflow to wire this up is as follows:</p>
+<ul>
+<li>In the left sidebar’s presenter, attach a click handler to the Settings link exposed as a method on the Display interface, which the view implements. (gwt-presenter appears to use a <a href="http://martinfowler.com/eaaDev/PassiveScreen.html">Passive View</a> approach to MVP.)</li>
+<li>In the click handler, raise a ShowSettingsWindow event on the event bus.</li>
+<li>Elsewhere (for example, in the main AppPresenter), we register a handler on the event bus to listen for this event and swap out whatever is being displayed in the content window with the SettingsPresenter.</li>
+</ul>
+<p>Here’s where it gets even better. I don’t even <em>need</em> to create a ShowSettingsWindow event. gwt-presenter has history management built-in. This means that in order to navigate to a new “place” in the app, all I need to do is raise a PlaceRequestEvent. Furthermore, I also don’t need to handle the event anywhere. The PlaceRequestEvent includes a parameter indicating the name of the place you want to navigate to. (I believe I’m simplifying but then, I’m a simple person.) As long as that’s mapped to the SettingsPresenter (typically, exposed as a property on the presenter itself), gwt-presenter handles all that for you <em>including adding it to the browser’s history</em>.</p>
+<p>So to sum up, out of the box, gwt-presenter gives you:</p>
+<ul>
+<li>A view and presenter decoupled thanks to dependency injection and a built-in event bus</li>
+<li>navigation between views</li>
+<li>browser history management and bookmarking</li>
+</ul>
+<p>What makes this all the more amazing to me is something to which I alluded in the previous post: it’s nearly impossible <em>not</em> to use all of this in a GWT application. Yes, gwt-presenter is optional but it’s not optional the way ASP.NET MVC is optional to WebForms developers. The <a href="http://code.google.com/webtoolkit/doc/latest/tutorial/mvp-architecture.html#events">GWT documentation</a> itself encourages the use of it as well as an event bus.</p>
+<p>Note that I’m being sparse with implementation details. That’s because there’s no point. The absolute definitive guide for this is already underway over at <a href="http://borglin.net/gwt-project/">Andreas Borglin’s pad</a>. As much as I love <a href="http://turbomanage.wordpress.com">David Chandler’s articles</a> (and believe me, they’re golden), Andreas’s step-by-step guide to the various pieces, along with detailed source code for each step, is the type of teaching guide I can only aspire to. The purpose for this post is two-fold:</p>
+<ul>
+<li>Get people over to Andreas’s site to join in the awesomeness</li>
+<li>To help clarify my own thoughts on how this all works together.</li>
+</ul>
+<p>As always, if any of this is helpful or interesting to you, that’s not my fault.</p>
+<p>Kyle the Presented</p>

@@ -1,0 +1,47 @@
+---
+layout: post
+title: Commands in GWT, or “How to dispatch your async to the handler and register
+  a callback”
+date: 2010-05-26 14:56:36.000000000 -04:00
+categories: []
+tags:
+- GWT
+- Patterns
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '350613947'
+  pvc_views: '3115'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>We’ve hired two new developers to our team, effectively tripling our development staff. So I’m celebrating the alleviation on my workload with some posts that are essentially going to be documentation for the junior developer. I hope she has a sense of humour when it comes to sample code as she reads this…</p>
+<p>I’ve long forgotten what the traditional method is for making RPC requests between the client and server in GWT applications. In a traditional web application, that’s what XMLHTTPRequest was for until jQuery et al came out and was nice enough to make it readable. For GWT applications, the calls are called RPC requests which I think is just a fancy name for “our proprietary JSON format” based on what I’m seeing in Firebug*. I have a vague recollection of having to register URLs for every single type of request you wanted to make to the server.</p>
+<p>In our case, we’re using <a href="http://code.google.com/p/gwt-platform/">gwt-platform</a> which contains a built-in dispatcher for managing calls to the server, all filtered through a single URL. The implementation is based heavily on gwt-dispatch with some minor tweaks. (Side note: Not only are we using gwt-platform, we’ve hired the guy who built it. In his spare time, he builds <a href="http://code.google.com/p/cartwheel-3d/">3D physics-based animation frameworks</a>.)</p>
+<p>How it works is like so:</p>
+<ul>
+<li>Client code gets an instance of a DispatchAsync object (almost always using dependency injection) </li>
+<li>Client executes a command on the dispatcher, registering a callback function </li>
+<li>Server receives the command, processes it with a handler, then returns a result </li>
+<li>Callback function executes using the result from the server </li>
+</ul>
+<p>That’s all well and good and the description satisfies my “why use regular language when developer-speak will do?” gland. Now let’s try again a little less like I’m trying to compensate for something:</p>
+<ol>
+<li>Even though they are in the same project, you still need to think of the application in three pieces: a client, a server, and objects that travel back and forth between them </li>
+<li>When you’re working in the client, you’ll need to communicate to the server to do one of two things: get data to display, or process data for storing. </li>
+<li>When you do need to communicate with the server, you instantiate an object called a command or action. This can be confusing at first because it’s an object that doesn’t really represent a “thing”. Rather it represents a verb (aka. an action). Examples: GetClientList, SaveOrder, FindSuitableMate. These actions contain all the data the server will need to process it. For example, FindSuitableMateFromFamilyTree may contain properties for the various search criteria, like HairColour and MinimumAge and NumberOfUndisputedSharedRelatives. </li>
+<li>This action instance is sent to the server through an object called a dispatcher (think: Danny Devito’s character on Taxi, but more pleasant). Because the call is made asynchronously, we need to tell the dispatcher what to do when the server responds. So we give it a function to call when it’s done. The function will take a parameter that is provided by the server. It is typically named the same as the action with Result appended to it. E.g. GetClientListResult, SaveOrderResult, FindSuitableMateResult. </li>
+<li>On the server, we have a handler for each action that we could potentially receive. A handler is an object that does all the heavy lifting for a particular action. For example, FindSuitableMateHandler would react to a FindSuitableMate action. It would examine the command and perform a search of the database based on the criteria provided in the FindSuitableMate object it received. </li>
+<li>After the handler executes, it creates an appropriate result object. In our above example, FindSuitableMateHandler would create a FindSuitableMateResult object and set one of its properties, e.g. SearchResults, to the list of found items from the database. </li>
+<li>The callback function we created in step 4 gets executed using the result object created by the server. Typically, this will do client-y type stuff like update a list of items on a page or display a message to the user. </li>
+</ol>
+<p>That’s the crux of the RPC mechanism in GWT as I see it. I’ve skimmed over much of the details, like how handlers are registered. But this post is about two weeks overdue as it is.</p>
+<p>Kyle the Commanded</p>
+<p><font size="1">* By “Firebug” I actually mean Chrome developer extensions but despite the fact that I’ve moved off Firefox, Firebug just sounds cooler.</font></p>

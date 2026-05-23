@@ -1,0 +1,48 @@
+---
+layout: post
+title: Quick Cyclomatic Complexity Question
+date: 2009-03-12 14:38:20.000000000 -04:00
+categories: []
+tags:
+- Metrics
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '417307249'
+  pvc_views: '995'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Should’ve known better to ask this question on <a href="http://twitter.com/kbaley">Twitter</a>. Let it not be said that there are no downsides to always poking fun our tendency to take things too seriously.</p>
+<p>Here’s some code:</p>
+<pre class="c-sharp" name="code">function void Process( Job job )
+{
+    for ( var i = 0; i &lt; 5; i++ )
+    {
+        switch ( job.status )
+        {
+            case ( JOB_STATUS.NEW ):
+                ProcessNewJob( job );
+                break;
+            case ( Job_STATUS.CANCELLED ):
+                CancelJob( job );
+                break;
+            default:
+                UpdateJob( job );
+                break;
+        }
+    }
+}</pre>
+<p>The question is: What is the cyclomatic complexity of this code?</p>
+<p><a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity">Cyclomatic complexity</a> is a measure of the number of paths through your code. So my first intuition was that the answer is 15. One for each case statement, plus the default, and multiplied by 5 for each time through the loop.</p>
+<p>Then it was pointed out to me by someone who has actually used it in practice that the for loop counts as 1 regardless of what’s inside it. This is confirmed <a href="http://www.rkcole.com/articles/other/CodeMetrics-CCN.html">here</a>. Which would make the answer 4. This actually does make some sense to some degree because even though we are looping through five times, we aren’t actually adding any new paths through the code. I think. Maybe.</p>
+<p>A quick Twitter poll seemed to lean toward 4 as well (after discounting answers that amounted to “it depends”). But I’d like to get some more thoughts on it before calling the matter closed.</p>
+<p>Having said that, the most accurate answer was provided by my <a href="http://twitter.com/JocelynCrow/statuses/1316134544">dear and loving cousin</a>, who I can always count on to put things in perspective: I think the answer is you need to up your medication. That question didn’t even make sense on the metaphysical level.</p>
+<p>Kyle the Ontological</p>

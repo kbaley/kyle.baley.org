@@ -1,0 +1,41 @@
+---
+layout: post
+title: Sharing code styles in ReSharper
+date: 2008-10-13 19:31:23.000000000 -04:00
+categories: []
+tags:
+- Coding Style
+- ReSharper
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '349695984'
+  pvc_views: '1670'
+  hl_twitter_has_auto_tweeted: 'New post: Sharing code styles in ReSharper, Full text:
+    http://blog.baley.org/?p=106'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Have just started a new project and my first task is some Silverlight thingamajig that I'm sure I'll go on about ad nauseum in the coming weeks. But first, let's talk about some ReSharper settings.</p>
+<p>My very first check-in in the code base was a ReSharper code style settings file. This is a way of allowing everyone on the team uses the same settings. The documentation for this feature is <a href="http://www.jetbrains.com/resharper/documentation/help20/Options/codeStyle.html" target="_blank">here</a> though it's a little out of date. To the right is a screenshot from version 4.1.</p>
+<p>This is somewhat important for me because I have some different <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/05/08/good-gestalt.aspx" target="_blank">ideas about whitespace</a> than most people. And I don't want to impose my will on someone else. (At least not so crudely.) Nor do I want to alter my own personal projects just because everyone else likes to have all their code scrunched up together so that parentheses and curly braces essentially take the place of spaces and you need a &amp;*%$ Little Orphan Annie Decoder Ring to parse out the actual meaning of these god-forsa--...</p>
+<p>Ummm...let's just say I'm a little set in my ways and move on...</p>
+<p>By default, your ReSharper settings are global across all projects. The two other settings are: a) Shared across the team, per solution, and b) Not shared, per solution, stored in a file.</p>
+<p>Both are very useful in teams where developers work on more than one project, such is the case here. The other obvious example is open-source projects. Here's a quick run-down of each.</p>
+<p><strong>Shared across the team, per solution</strong></p>
+<p>Here, the code style settings are stored in a .resharper file in the same folder as the .sln file. This is ideal for a non-intrusive way to enforce coding standards on a project. Developers download the source and go. They may not even know it's using a shared code style.</p>
+<p>MvcContrib uses this mechanism to enforce standards. I'm not on the new project because I've added .resharper files to my global SVN ignore list and I'm too lazy to change it. Plus, I'm not quite sure how it works between ReSharper 4.0 and ReSharper 4.1. I.e. is it able to manage users that use 4.0 and others that use 4.1? And what happens when one user changes the settings inadvertently? As an example, I just updated to the latest MvcContrib, opened it up, and now I have MvcContrib.4.1.resharper checked out for some reason.</p>
+<p>So instead, we're using the next option.</p>
+<p><strong>Not shared, per solution, stored in a file</strong></p>
+<p>With this option, you explicitly tell ReSharper where the settings are stored. It requires a little more work to set up. Unlike the previous option, the developer needs to go into the ReSharper settings and physically select this option and navigate to the file. It takes an absolute path, not a relative one.</p>
+<p>I'm guessing that this is because the settings to tell ReSharper which option to use are stored in the .resharper file, which as I've mentioned, we're not including in source control.</p>
+<p>Both options give you the ability to set standards like naming conventions, spacing, and, theoretically, how to re-order methods, fields, and properties within your class. I say theoretically because this particular one (under Type Members Layout) seems a little eccentric. I had to import the settings from the code style file, then shut down and restart the solution for them to take. And when I make changes to this section, they aren't always reflected in the settings file.</p>
+<p>None of this guarantees that your code will be consistent. After all, not everyone may have ReSharper. Also, I'm pretty sure the settings to auto-format are machine specific so someone could turn them off and then you have to rely on them to do an explicit auto-format before they check in. Furthermore, it appears that formatting profiles are also machine-specific, so even if you create one that runs through all your rules, re-orders things, and otherwise cleans up when you press Ctrl+Shift+Alt+F, that won't get propagated to anyone else's machine.</p>
+<p>Kyle the Styled</p>

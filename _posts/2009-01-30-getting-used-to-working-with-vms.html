@@ -1,0 +1,31 @@
+---
+layout: post
+title: Getting used to working with VMs
+date: 2009-01-30 23:07:15.000000000 -05:00
+categories: []
+tags:
+- Environment
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '614024954'
+  pvc_views: '1636'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Since getting his new desktop a couple o’ weeks ago, the hillbilly’s gone all virtual. I’ve been playing with virtual machines as my primary destination, leaving the host as dumb as I can possible make it. And to be quite honest, it is difficult to make something dumb, which is surprising considering some of the comments from past clients.</p>
+<p>One of the things I had hoped to do was keep all my data on the host machine and access it via a shared drive from my VMs. It’s basically the 21st century version of creating an Apps partition and a Data partition. Then I’d use <a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=E0FC1154-C975-4814-9649-CCE41AF06EB7&amp;displaylang=en">SyncToy</a> to keep that folder up-to-date on an external hard drive as well as the virtual machines themselves. (On a side note: I dearly hope the promise of virtual machines holds true because setting up a new workstation is more mind-numbing than the stuff I have brewing in the still in the basement.)</p>
+<p>I’ve run into a couple of issues with this set up. First was a time-sucking annoyance where I wasn’t able to copy documents in the same folder. I.e. Select the document, press Ctrl-C, then Ctrl-V. Kept getting permission errors. I was able to create new documents just fine. It’s one of those annoyances that goes away if you ignore it long enough apparently because I’m no longer able to duplicate it.</p>
+<p>The second problem was trying to attach a database to SQL Server from a shared drive. Perhaps it’s possible with a SQL statement but from the GUI, it doesn’t even list network drives.</p>
+<p>Problem three: IIS seems to have trouble with web apps using a network drive as well. It had trouble reading the web.config file until I moved the thing locally.</p>
+<p>Problem four actually pre-dated problem three. I didn’t actually have IIS installed when I started this odyssey. After I did, it took a while to figure out that I had installed IIS <em>after</em> I had installed .NET 3.0. Hence, none of my WCF services would register. That was solved by running servicemodelreg.exe –r from C:WindowsMicrosoft.NETFrameworkv3.0Windows Communication Foundation. It appears to be analogous to aspnet_regiis.</p>
+<p>So all in all, it’s been a configuriffic afternoon. I’m still trying to get the hang of booting to various virtual machines. I do NOT like the fact that I can’t change my primary monitor in a VM with VMWorkstation.</p>
+<p>This is also my first foray into the 64-bit world and I’m discovering the idiosyncrasies that brings. For example, UltraMon still has some work to do to make it work on Vista 64-bit. The smart taskbar is kinda flaky and the two extra window icons (move to other monitor, maximize across both monitors) don’t appear, though you can click in the general area and get the same effect.</p>
+<p>Kyle the Virtual</p>

@@ -1,0 +1,32 @@
+---
+layout: post
+title: And you are...?
+date: 2006-03-22 23:04:00.000000000 -05:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '706'
+  dsq_thread_id: '349716505'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>All right, I'm tired of spewing knowledge (or whatever it is I spew). I've heard rumours of a feature in SQL 2005 that might interest me and I'm in no mood to look up the details.</p>
+<p>I was recently involved in a discussion where someone wanted to connect to a database from a web service. In it, he wanted to use impersonation (for obvious reasons) but also connection pooling (for obvious reasons). Essentially, the requirement was to use the user's credentials for everything within the web service except database actions where he would switch to a single user to allow for connection pooling. Yes, it's possible with a SQL user but we don't want to do it the easy way, do we? We've always been told SQL Authentication is bad (even though we use it anyway for demos and prototypes and never get around to changing it in production).</p>
+<p>Anyway, I don't care about the solution to this problem. We drilled the use of the LogOnUser API. We talked about trade-offs 'twixt connection pooling and security measures. We discussed scaling in more detail than a Head &amp; Shoulders commercial. In short, I don't care if you have a clever solution.</p>
+<p>What I <strong>am</strong> interested in is this new-fangled (and, to me, unconfirmed) feature thingy in SQL 2005. Apparently, there is a way to use the following scenario:</p>
+<ol>
+<li>User authenticates to web application/service</li>
+<li>Web app/service connects to SQL using a single pre-defined Windows account</li>
+<li>Web app/service passes user's security context to SQL</li>
+<li>SQL impersonates authenticated user for all database actions</li>
+</ol>
+<p>This is some kind of wackiness, it is. So, my loyal and, I pray, giving readers. Is this possible? The Coding Hillbilly wishes enlightenment.</p>

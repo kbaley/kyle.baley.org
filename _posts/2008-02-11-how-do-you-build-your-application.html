@@ -1,0 +1,41 @@
+---
+layout: post
+title: How do you build your application?
+date: 2008-02-11 15:00:42.000000000 -05:00
+categories: []
+tags:
+- Coding Style
+- NAnt
+status: publish
+type: post
+published: true
+meta:
+  hl_twitter_has_auto_tweeted: 'New post: How do you build your application?, Full
+    text: http://blog.baley.org/?p=178'
+  pvc_views: '1900'
+  dsq_thread_id: '349731769'
+  _edit_last: '1'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p> The Hillbilly asks: How do you compile your application in your NAnt script for releases?</p>
+<p>There are many options, you see, even though the <a href="http://nant.sourceforge.net/release/0.85-rc1/help/tasks/solution.html">&lt;solution&gt;</a> task is no longer one of them. You could use the <a href="http://nantcontrib.sourceforge.net/release/0.85-rc4/help/tasks/msbuild.html">&lt;msbuild&gt;</a> task to build the solution as it is built in VS (I think; the documentation is a little sketchy on this task if you don't know the inner workings of msbuild). Or you could use the <a href="http://nant.sourceforge.net/nightly/latest/help/tasks/csc.html">&lt;csc&gt;</a> or <a href="http://nant.sourceforge.net/nightly/latest/help/tasks/vbc.html">&lt;vbc&gt;</a> tasks to compile a group of code files into an assembly (similar to a .csproj or .vbproj file). Or, for the ultimate control, you could use the <a href="http://nant.sourceforge.net/nightly/latest/help/tasks/exec.html">&lt;exec&gt;</a> task to call out to msbuild.exe, csc.exe, or vbc.exe directly though I couldn't tell you personally what that offers you that the corresponding tasks don't. Future-proofing maybe.</p>
+<p>Usually, for testing purposes at least, this entails using &lt;csc&gt; (or &lt;exec&gt; with csc.exe) to compile all the application code into a single assembly that I can run tests against. It's a practice I learned from <a href="http://codebetter.com/blogs/jean-paul_boodhoo/default.aspx">JP Boodhoo</a> and I've been happy with the results in the absence of anything better.</p>
+<p>But I don't care much about the unit tests. I'm more interested in your releases. Assuming you've automated them in a NAnt script, how do you build the application in preparation for them?</p>
+<p>Historically, I've usually used the &lt;msbuild&gt;/msbuild.exe scenario mostly because I couldn't wrap my head around writing a bunch of &lt;csc&gt; tasks to compile the code into the same structure I see in Visual Studio. For example, if your solution has a Domain project, a DataAccess project, and a UI project, I would need three &lt;csc&gt; tasks to create the individual assemblies. Or one &lt;msbuild&gt; task running against the solution. My reasoning was that it was the easiest way to build the application the same way I did in Visual Studio, which I assumed was how I wanted to deploy it.</p>
+<p>Then I talked to <a href="http://www.igloocoder.com/">Donald Belcham</a>.</p>
+<p>Conversations with Donald Belcham are always eye-opening (and I won't expand on that comment this time; happy belated <a href="http://geekswithblogs.net/dlussier/archive/2008/02/06/119331.aspx">birthday</a>, dude). And during our chat, he admitted to using &lt;csc&gt; to create his releases. I expressed my surprise: &quot;But Iggy, what if your solution has a dozen projects in it? I don't want to deal with the pain of a dozen &lt;csc&gt; tasks in the right order&quot;. To which he replied: &quot;Dude, you don't need to deploy the same way you build. The Visual Studio solution is a file management mechanism, not a deployment mechanism.&quot; And my mind awakened like it did during my last visit to Brian Head.</p>
+<p>The basic idea Donald described was thus: Just because you build your application one way in Visual Studio during development, doesn't mean you need to build your releases the same way. Especially if you are using NAnt to create your releases because then you can do it however you like.</p>
+<p>And as if my mind wasn't expanded enough, he typically shoots for one assembly per physical location. Not one assembly for the domain, one for the data layer, one for the common utilities, and so on and so forth. One. Total. If I were building a WinForms application with no other physical layers, I'd have one file: MyApp.exe. If it were a WinForms app calling a web service, there would be two assemblies. One for the client and one for the web service (plus corresponding .asmx files). </p>
+<p>This is the extreme position of course and there are caveats. If the application depends on third-party libraries, naturally we won't bundle those up into the assembly. And if you're using an internal client library that is common to more than one project, you'd treat that as you would any other third-party library and keep them separate. But if your application-specific domain code and data access code sits on the same server, that all gets munged into one assembly regardless of how it is organized in the .sln file. NAnt gives us that flexibility.</p>
+<p>I'm kind of putting Donald out there for potential ridicule so I'll expose myself ever so slightly and admit that I really like this idea. Why *do* we feel we have to ship a dozen assemblies for our application? If something changes in our domain, what difference does it make if we re-deploy MyCompany.MyApp.Domain.dll or MyCompand.MyApp.exe? And in speaking with Donald, he points out that even though we have the flexibility to deploy only parts of an application, rarely do we exercise it. In a typical scenario, new versions and hot fixes are deployed as an &quot;all or nothing&quot; in each physical layer anyway. This matches my experience. Even if nothing changed in certain assemblies, I typically re-deploy everything during an upgrade just to be safe.</p>
+<p>Now, we still need to be practical about it. If the resulting executable is 300Mb, then ISDN line or not, you'll want to break that into something more manageable. But for the average application, one assembly should function just as easily as five, yesno?</p>
+<p>Looking forward to hearing the counter-arguments because I haven't quite thought this through too much except from a maintenance point of view. In particular, are there performance differences with loading several smaller assemblies vs. one &quot;larger&quot; (but still manageable) one? What about issues with unloading an assembly from an application pool in IIS?</p>
+<p>Enquiring minds want to know!</p>
+<p>Kyle the Inquisitive</p>

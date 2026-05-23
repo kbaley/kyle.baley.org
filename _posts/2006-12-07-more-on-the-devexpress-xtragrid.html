@@ -1,0 +1,29 @@
+---
+layout: post
+title: More on the DevExpress XtraGrid
+date: 2006-12-07 14:11:03.000000000 -05:00
+categories: []
+tags:
+- ".NET"
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1093'
+  dsq_thread_id: '370902557'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I'm loving the Feature Browser. It's a feature in their designer where, rather than scrolling through a daunting list of properties for the grids, views, columns, etc., they give you a functional list, such as Editting, Grouping, Sorting, etc.</p>
+<p>So if you want to allow grouping, say, you select the Grouping node and it gives you a list of properties related to Grouping. Basically&nbsp;a filtered view of the properties that is <em>much</em> more manageable and even comes with context-sensitive help as well as a preview window of how your setting will affect your grid. It's my main view now and I'm hip to its jive.</p>
+<p>The other thing is a little idiosyncracy. In one of my grids, there was a + next to each item even though I had explicitly disabled grouping. The grid was read only and nothing happened when you clicked the +. Was kind of frustrating trying to get rid of it.</p>
+<p>Turns out, XtraGrid recognized that one of the properties on the objects I was binding to was itself a collection and it added the + thinking I may want to show this collection of objects.</p>
+<p>I didn't and the solution was to turn off the EnableMasterViewMode setting (conveniently located in the Master-Detail section of the Feature Browser).</p>
+<p>Anyway, after pretty heavy use of the thing over the last couple of weeks, I'll give it four possum-skins outta five. Well worth the price, even if I did shell out extra for source code I'll never, ever look at.</p>
+<p>moo</p>

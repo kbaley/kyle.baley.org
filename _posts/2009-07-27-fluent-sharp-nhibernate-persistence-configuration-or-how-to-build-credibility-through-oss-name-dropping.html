@@ -1,0 +1,81 @@
+---
+layout: post
+title: Fluent Sharp NHibernate Persistence Configuration, or “How to build credibility
+  through OSS name dropping”
+date: 2009-07-27 18:58:43.000000000 -04:00
+categories: []
+tags:
+- ASP.NET MVC
+- NHibernate
+- S#arp Architecture
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '352171423'
+  pvc_views: '1414'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><em>For those of you skimming your RSS reader, I'll help you filter because I suspect my target audience is narrow with this one. This post deals with using the Fluent NHibernate IPersistenceConfigurer with Sharp Architecture.</em></p>
+<p>The hillbilly is a-codin’ agin! And back with Sharp Architecture which I had all but abandoned in favour of Repeaters and ItemCommands and various other monsters used to frighten young ASP.NET developers. (“Eat all your vegetables, Johnny, or tonight, when you’re fast asleep, THE VIEWSTATE OGRE WILL EXPAND INSIDE YOUR CLOSET UNTIL IT BLOWS UP ALL YOUR BROWSERS!!!”). Ah, it’s good to back in the realm of geek jokes that will surely embarrass my children at some future date…</p>
+<p>Much has happened in the Sharp Architecture world since I last visited. And to Fluent NHibernate, of which Sharp takes much advantage. It is now possible to work with NHibernate entirely without XML through the magic of fluent interfaces. Something that appeals to me aesthetically though it’s not a position I’ll defend to the death, or even to the slightly bruised.</p>
+<p>Typically, NHibernate can be configured as follows:</p>
+<pre class="c-sharp" name="code">var config = new Configuration( );
+config.Configure( pathToNHConfigFile );
+var sessionFactory = config.BuildSessionFactory();</pre>
+<p>Note that the parameter to Configure is optional. It appears that if one isn’t provided, it will default to looking for a file called NHibernate.config.xml. Though judging by how quickly things are changing, that may not be true by the time I click Publish.</p>
+<p>The alternative with Fluent NHibernate is as follows:</p>
+<pre class="c-sharp" name="code">var config = Fluently.Configure( )
+    .Database( MsSqlConfiguration.MsSql2005
+        .ConnectionString( c =&gt; c.FromConnectionStringWithKey(&quot;mainConnection&quot;) )
+        .ShowSql( )
+        .ProxyFactoryFactory( &quot;NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle&quot; )
+    );
+var sessionFactory = config.BuildSessionFactory( );</pre>
+<p>In this case, you don’t even need an NHibernate Configuration object. Fluent NH looks to be doing all the work behind the scenes. All in all, it’s pretty clean and clear, save for that ProxyFactoryFactory call which may make sense to someone who has been actually following NH development. Personally, it required much BinGoogling to figure out that I even needed it.</p>
+<p>It’s possible to get lost in the options though. Fluently.Configure( ) takes an optional NHibernate Configuration object, which presumably could be configured via a config file. And you can add mappings to the NHibernate Configuration *and* the Fluent NH Configuration. It’s not mind-bogglingly circular but it does add an element of fun when you’re prone to just bang away without putting any thought into it.</p>
+<p>This is where I segue back to SharpArchitecture. Sharp has supported Fluent NH for a while now with the class mappings. It also provides a nice interface for easily configuring NHibernate through some overloaded Init methods. But none of them supported the Fluent NH configuration API, likely because it’s relatively new.</p>
+<p>So at some point, another overload was created that took a Fluent NH IPersistenceConfigurer object, which contains the details about the NH configuration (e.g., the MsSqlConfiguration object above). However, it doesn’t account for situations where you provide an IPersistenceConfigurer but no config file. That is, the config file was still required even though you don’t need it.</p>
+<p>A patch is under evaluation to fix this so that something like the following will soon be possible:</p>
+<pre class="c-sharp" name="code">var configuration = MsSqlConfiguration.MsSql2005
+    .AdoNetBatchSize(500)
+    .ShowSql()
+    .ConnectionString(c =&gt; c.FromConnectionStringWithKey(&quot;main&quot;))
+    .ProxyFactoryFactory(&quot;NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle&quot;);
+NHibernateSession.Init(webSessionStorage,
+    new string[] { Server.MapPath(&quot;~/bin/TingsForSale.Data.dll&quot;) },
+    new AutoPersistenceModelGenerator().Generate(),
+    null, null, null, configuration);</pre>
+<p>Until then, the only way to use the IPersistenceConfigurer aspect of Sharp Architecture is to either: a) provide a dummy config file, or b) mimic the code in NHibernateSession.Init like so: </p>
+<pre class="c-sharp" name="code">var configuration = MsSqlConfiguration.MsSql2005
+    .AdoNetBatchSize(500)
+    .ShowSql()
+    .ConnectionString(c =&gt; c.FromConnectionStringWithKey(&quot;main&quot;))
+    .ProxyFactoryFactory(&quot;NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle&quot;);
+
+var fluentConfiguration = Fluently.Configure()
+    .Database(configuration)
+    .Mappings(m =&gt;
+    {
+        m.AutoMappings.Add(new AutoPersistenceModelGenerator().Generate());
+        m.FluentMappings.AddFromAssemblyOf<autopersistencemodelgenerator>();
+        m.HbmMappings.AddFromAssemblyOf<autopersistencemodelgenerator>();
+    });
+var nhConfiguration = fluentConfiguration.BuildConfiguration();
+var validationEngine = new ValidatorEngine();
+validationEngine.Configure();
+ValidatorInitializer.Initialize(nhConfiguration, validationEngine);
+var sessionFactory = nhConfiguration.BuildSessionFactory();
+NHibernateSession.SessionFactories.Add(
+    webSessionStorage.FactoryKey,
+    sessionFactory);
+NHibernateSession.Storages.Add(webSessionStorage.FactoryKey, webSessionStorage);</autopersistencemodelgenerator></autopersistencemodelgenerator></pre>
+<p>I'm hoping we can clean up the NHibernateSession.Init method somewhat because calling it with all those nulls looks mighty sketchy. But since Sharp Architecture recently came out with an official 1.0 version, I'm hesitant to start mucking with public interfaces.</p>
+<p>Kyle the Private</p>

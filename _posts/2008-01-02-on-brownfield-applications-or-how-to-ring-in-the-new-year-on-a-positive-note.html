@@ -1,0 +1,37 @@
+---
+layout: post
+title: On Brownfield applications, or "How to ring in the new year on a positive note"
+date: 2008-01-02 02:01:51.000000000 -05:00
+categories:
+- Featured
+tags:
+- Brownfield
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '3348'
+  dsq_thread_id: '559282555'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Caution: This post has very little technical content but may contain traces of inspiration and could induce vomiting. Do not read if you have heart problems or a healthy streak of cynicism. As you can imagine, hillbillies are optimists by nature.</p>
+<p>Happy New Year to all! And this being Day One of Ought-Eight, I thought I'd take some time to reflect back on the past year and consider my goals for the next... </p>
+<p>...ok, now that I've done that, let's move on to something interesting. </p>
+<p><a href="http://www.igloocoder.com" target="_blank">The Igloo Coder</a>, Donald Belcham, writes on <a href="http://www.igloocoder.com/archive/2007/12/23/what-is-brownfield.aspx" target="_blank">Brownfield applications</a>. It's a term that has been applied to land reclamation and is likely a term you haven't heard before, at least as applied to software development. But I bet you already know what it means. And it ties in nicely to my initial posts here at CodeBetter, most of which have focused on what is pretty much the textbook definition of the term.</p>
+<p>As luck would have it, I've also started work on another Brownfield application. It was last developed upon in January 2007 and is filled with the most heinous practices imaginable. Another hand-rolled data layer with a series of classes exposing static methods returning DataSets in some cases, domain objects in another. Again, all logic in the forms. No tests to be found. No patterns applied anywhere. No CI process. In fact, it's not even in a source control repository. It had one developer who clearly had no clue what he was doing. </p>
+<p>And if that seems uncharacteristically harsh, that's because the developer was me.</p>
+<p>I'll save you re-reading the last paragraph and remind you that it was last worked on in January 2007, less than one year ago. That's right, kiddies, the hillbilly has risked destroying the gargantuan backlog of credibility he has built up by admitting he was once a young, inexperienced coder who had lost his way. And it wasn't that long ago.</p>
+<p>OK, I'm saying that a little tongue-in-cheek which I'm feeling more and more compelled to point out now that people who don't know me read this thing. The part I'm jesting about is where I make it sound like I'm on the one true path and everyone else is lost. And that I'm no longer inexperienced. Let me throw out a blanket statement that that will never be true and move on.</p>
+<p>To shift focus back to the part that isn't going to solicit a bunch of comments that I'm elitist, the point is that for all the talk I do on patterns and NHibernate and IoC and all the other...ummm...alt.net tools and techniques, it was a *very* short time ago that I practiced precious few of these techniques and used even fewer of the associated tools, if any. </p>
+<p>The app I'm lambasting here uses the *original* Enterprise Library data access block. The one with the static SQLHelper class. And I actively chose to use it over the new one. In November 2006. It was my decision to use stored procedures for all aspects of data access because I simply didn't know NHibernate existed. It's very likely, given the circumstances around this particular app, I would have looked at it and decided I didn't have time to learn it, but the fact remains it was not even an option in my mind at the time. </p>
+<p>Now here I am about a year later and, like many developers, I shake my head at my naivete. But here's the cool part. At the time, I was doing things so much differently than I was the year before that and loving the way the new techniques made things easier. This year, the same thing applies. I now know the magic behind an IoC container and can use it to make my code that much more testable. I can take out my data access layer completely and replace it (for the most part) with some config files. And TDD, for all my <a href="http://kyle.baley.org/ConscientiousCodingIsTheNewTDD.aspx">initial misunderstandings</a>, has made software development more fun than it has been in years. </p>
+<p>In short, software development remains today just as fun as it did a year ago. </p>
+<p>And I have no reason to doubt I'll be thinking the same thing next year when I look back at this application once more. Like Alec Baldwin says in <a href="http://www.imdb.com/title/tt0104348/" target="_blank">Glengarry Glen Ross</a>: Always Be Closing. </p>
+<p>Kyle the Resolute</p>

@@ -1,0 +1,55 @@
+---
+layout: post
+title: Trying out Linq for NHibernate
+date: 2008-04-07 20:20:08.000000000 -04:00
+categories: []
+tags:
+- NHibernate
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '394426501'
+  pvc_views: '1283'
+  _edit_last: '1'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The hillbilly loves to be humbled. It's why he refers to himself in the third person. It's a liberating feeling knowing there are people out there who are smarter, faster, and know more lyrics to Air Supply songs than you. And I always like to give people that smug feeling of being better than someone, even if it's just me.</p>
+<p>Such was the feeling I've ended up at after a foray into <a href="http://www.hookedonlinq.com/LINQToNHibernate.ashx" target="_blank">Linq to NHibernate</a>. But before we get to the part where I felt stupid, the path that led me to Linq to NHibernate is interesting in a &quot;let's pad this out&quot; kinda way.</p>
+<p>I'm building a search screen for an application for land surveyors. In it, you enter a bunch of criteria for various fields, click Search and moan about how it was easier when everything was on paper while you wait for the results to appear.</p>
+<p>My initial plan to implement this was to have a search DTO in the client that would collect all the criteria up. That DTO would be converted to a collection of SearchCriteria domain objects which would be passed to the data layer. The data layer would then convert it once more into NHibernate expressions for use with the query. Nice and encapsulated, albeit a little conversion-heavy.</p>
+<p>Then I got to thinking about Linq for NHibernate and decided to give it a test drive. The end result was a slightly different approach. Namely, I convert the DTO into a collection of Linq Expressions and pass *that* to the data layer, which could then iterate through each of them and append them to a preset Linq query.</p>
+<p>Here's an example of the code to execute the query in the repository.</p>
+<pre class="c-sharp" name="code">    public IList&lt;T&gt; FindAll&lt;T&gt;( IList&lt;Expression&lt;Func&lt;T, bool&gt;&gt;&gt; criteria )
+    {
+        var query = from item in CurrentSession.Linq&lt;T&gt;( )
+                    select item;
+        foreach ( var criterion in criteria )
+        {
+            query.Where( criterion );
+        }
+        return query.ToList( );
+    }</pre>
+<p>A little different from the traditional <font face="Courier New">from x in y select x where moo</font> examples mostly because I don't know what the <font face="Courier New">where</font> clause is going to be at design time. The type for the criteria looks a little intimidating but because of it, I can add criteria to the list in an aesthetically pleasing way. To wit:</p>
+<pre class="c-sharp" name="code">    searchCriteria.Add( job =&gt; job.JobNumber.Contains( suppliedJobNumber ) );
+    searchCriteria.Add( job =&gt; suppliedOffices.Contains( job.Office.Id ) );
+    searchCriteria.Add( job =&gt; job.OrderedData &gt; suppliedData ) );</pre>
+<p>Here's where things start to go awry. Linq to NHibernate is still very much experimental. For example, the second criteria above doesn't actually work. It assumes that Contains will be called only on strings, not lists. And during my travels, I discovered two other examples that won't work:</p>
+<pre class="c-sharp" name="code">    searchCriteria.Add( job =&gt; &quot;Name1Name2Name3&quot;.Contains( job.Name ) );
+    searchCriteria.Add( job =&gt; job.Id == idList[0] ) );</pre>
+<p>That is, it won't allow an expression to be evaluated as the argument for a Contains call on a string. And you can't use an array index in your comparisons either.</p>
+<p>But I did get the code from a branch called &quot;experiments&quot; after all. So rather than complaining, and since I've got the time, why not try to actually implement these? So I started with the one I actually had an immediate need for: getting Contains working on a List.</p>
+<p>I started to feel a little nervous about this early on what with the advanced Reflection/Linq concepts involved, not to mention my tenuous grasp of the <a href="http://en.wikipedia.org/wiki/Visitor_pattern" target="_blank">Visitor pattern</a>. Eventually, I ended up at the line of code that was failing:</p>
+<pre class="c-sharp" name="code">return Expression.Lambda(typeof(Func&lt;&gt;).MakeGenericType(expression.Type), expression)
+    .Compile().DynamicInvoke();</pre>
+<p>I don't doubt that this kind of code is necessary. We are, after all, dealing with a Linq provider that needs to build and parse an expression tree. And I'm pretty sure that with some initial guidance, I'd be reasonably productive in implementing this. (To be fair, looking more closely at that line of code, it's only the MakeGenericType call that baffles me completely. And at the time of writing, I was still too lazy to look it up.) </p>
+<p>To put Linq to NHibernate back into context, the reason I like it is because I can essentially do what I originally intended (build a list of criteria and pass it to the data layer) without having to write a bunch of conversion code and without having to create NHibernate expressions in my service layer. As a result, it holds great promise for me but the next couple of days will tell if it's a time/productivity trade-off I can make right now. So if you have some <a href="http://www.lostechies.com/blogs/chad_myers/archive/2008/04/06/if-you-suddenly-had-a-week-of-free-time.aspx" target="_blank">time on your hands</a>, I'll respectfully add my vote for taking a look at Linq to NHibernate.</p>
+<p>But don't let it interfere with your banjo lessons...</p>
+<p>Kyle the Time-slotted</p>

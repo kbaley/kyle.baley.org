@@ -1,0 +1,46 @@
+---
+layout: post
+title: TeamCity and CodeBetter update, or “How to move past the honeymoon phase”
+date: 2009-09-24 02:04:26.000000000 -04:00
+categories: []
+tags:
+- Continuous Integration
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '376146926'
+  pvc_views: '1385'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The one year anniversary of when the <a href="http://teamcity.codebetter.com">TeamCity/CodeBetter collaboration</a> was brought online. The reason I know this is because the product has a helpful feature whereby it warns you quite clearly at the top of the page when your license is about to expire. Several others noticed this and Jayzus bless Twitter for keeping those kind reminders out of my inbox.</p>
+<p>At last count, we had 49 projects with 77 build configurations. I always like browsing through each one’s website to see what people are working on. Three that caught my fancy that I hadn’t heard of previously are HORN, UppercuT, and crap4n. By the way, I really do mean “last count” because as far as I can tell, there is no way to export a list of projects and/or configurations (see my wish list later in this post).</p>
+<p>There have been some growing pains of course but for the most part, things are running smoothly now. Over the last year, we’ve added two more agents, Silverlight support, and Git support (through a community plug-in; official version is slated for November). We’re in the process of installing a version of NCover that doesn’t require an administrator to run (thanks to Stephen, Daniel, Joe, and Peter at NCover for their work on this).</p>
+<p>A couple of projects haven’t made it up yet because of edge-case requirements. XNA support still eludes us as that requires more hoops than any of us have had time. I’m also looking through the list and noticed one that got me excited which is hopefully going to go up soon.</p>
+<p>After working with TeamCity for a large number of projects, I’m generally very happy with it. It was clearly not designed to manage a public portal of OSS projects like this but it’s held up well to the challenge. That said, I do have a wish list of features for an “OSS Portal” edition of the product:</p>
+<ul>
+<li>Ability to sort projects by name on the main page. </li>
+<li>Ability to collapse projects in the admin page. </li>
+<li>A proper URL field so I don’t have to embed it in the project’s description. A spot for a logo would be nice too. </li>
+<li>Quick navigation to a project/configuration. Maybe some shortcut keys or a filter box at the top. The dropdown list under the Projects tab has one. Be nice if the page itself did too. </li>
+<li>Easy way to notify all project administrators of upcoming maintenance </li>
+<li>Display project administrators somewhere prominent for each project on the main page and on the admin page </li>
+<li>Configure Visible Projects: C’mon, JetBrains. You’re not Microsoft. Use checkboxes, not that goofy dual ListBox dialog. </li>
+<li>Stats or report page showing a list of projects. Optionally, it would show each build configuration for each project and the last time that configuration was run.
+<ul>
+<li>Alternatively, they could just add a print stylesheet to the main page because all the info I need is there, except the project administrator. It’s just not conducive to inserting into blog posts… </li>
+</ul>
+</li>
+<li>This is a stretch but I’d like to see a custom project template (Note: NOT the “copy project” feature). Something like a “Standard SVN” project template where all it asks for is the project name, the SVN URL, and the project administrator. Then it would create a project and a default build configuration with pre-selected settings and all I’d need to do is put in the build configuration. </li>
+<li>If it hasn’t been fixed yet, a tray notifier that lets you connect to more than one server. (Someone wasn’t doing their homework when they didn’t include this capability from version 1.) </li>
+<li>Easier way to configure notifications. I.e. from the main page, click “Watch this project” or “Watch this configuration” </li>
+</ul>
+<p>Looking forward to next year’s recap.</p>
+<p>Kyle the Wrapped-Up</p>

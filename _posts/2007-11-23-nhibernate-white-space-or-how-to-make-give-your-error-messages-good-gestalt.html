@@ -1,0 +1,42 @@
+---
+layout: post
+title: NHibernate white space, or "How to make give your error messages good gestalt"
+date: 2007-11-23 11:29:32.000000000 -05:00
+categories: []
+tags:
+- Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1410'
+  dsq_thread_id: '393194917'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>NHibernate is senstive to white space. Who'da thunk?</p>
+<p>Here is the .hbm file that was causing problems:</p>
+<pre class="code"><span style="color: rgb(0,0,255)">       &lt;</span><span style="color: rgb(163,21,21)">generator</span><span style="color: rgb(0,0,255)"> </span><span style="color: rgb(255,0,0)">class</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">foreign</span>"<span style="color: rgb(0,0,255)">&gt;
+           &lt;</span><span style="color: rgb(163,21,21)">param</span><span style="color: rgb(0,0,255)"> </span><span style="color: rgb(255,0,0)">name</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">property</span>"<span style="color: rgb(0,0,255)">&gt;
+</span>               _maker
+<span style="color: rgb(0,0,255)">           &lt;/</span><span style="color: rgb(163,21,21)">param</span><span style="color: rgb(0,0,255)">&gt;
+       &lt;/</span><span style="color: rgb(163,21,21)">generator</span><span style="color: rgb(0,0,255)">&gt;
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>And the error message it eventually generated: </p>
+<blockquote>
+<p>An exception of type 'NHibernate.HibernateException' occurred in NHibernate.dll but was not handled in user code<br />Additional information: unmapped property: OzarkInc.BanjoMakinThingy.BanjoFactory.<br />&nbsp;&nbsp;&nbsp;&nbsp; _maker</p>
+</blockquote>
+<p>I say eventually because it didn't actually give us any problems until we started saving new entities. Note that I have not formatted the message. The space 'twixt BanjoFactory and _maker appeared as above in our error messages. Which should have been my first clue as to the problem but it took a fellow hillbilly to find it. And since he's a smart'un and doesn't blog, that gives me a chance to increase my readership at his expense. (And since I know he wanders over here on occasion: Craig, consider this a formal goading to get your blog going.)</p>
+<p>Anyway, back to my problems which is why you're all here. The simple fix:</p>
+<pre class="code"><span style="color: rgb(0,0,255)">        &lt;</span><span style="color: rgb(163,21,21)">generator</span><span style="color: rgb(0,0,255)"> </span><span style="color: rgb(255,0,0)">class</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">foreign</span>"<span style="color: rgb(0,0,255)">&gt;
+            &lt;</span><span style="color: rgb(163,21,21)">param</span><span style="color: rgb(0,0,255)"> </span><span style="color: rgb(255,0,0)">name</span><span style="color: rgb(0,0,255)">=</span>"<span style="color: rgb(0,0,255)">property</span>"<span style="color: rgb(0,0,255)">&gt;</span>_project<span style="color: rgb(0,0,255)">&lt;/</span><span style="color: rgb(163,21,21)">param</span><span style="color: rgb(0,0,255)">&gt;
+        &lt;/</span><span style="color: rgb(163,21,21)">generator</span><span style="color: rgb(0,0,255)">&gt;</span></pre>
+<p>So let that be a warning to you. Press Ctrl+K, Ctrl+D in your XML files at your own risk.</p>
+<p>Kyle the Spatial<a href="http://11011.net/software/vspaste"></a></p>

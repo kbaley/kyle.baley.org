@@ -1,0 +1,44 @@
+---
+layout: post
+title: Why Java?, or “How to describe a decision process”
+date: 2010-07-28 14:32:26.000000000 -04:00
+categories: []
+tags:
+- GWT
+- Java
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1979'
+  dsq_thread_id: '349687753'
+  hl_twitter_has_auto_tweeted: 'New post: Why Java?, or &ldquo;How to describe a decision
+    process&rdquo;, Full text: http://blog.baley.org/?p=26'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><strong>Executive Summary</strong>: With all of our experience in Microsoft technologies, why did we choose Google Web Toolkit over other technologies for our start-up?</p>
+<p>Almost six months ago, I <a href="http://kyle.baley.org/LifeOutsideNETOrLdquoHowToCheckOutYourNeighboursrdquo.aspx">described my initial reaction to Java</a> coming from ten years in the Microsoft world. At the time, I tastefully glossed over the reason we ended up using Java, or more specifically, Google Web Toolkit saving the discussion for a time when all I really wanted to do was make sure there were no gaps in the list of months in my Archive. Plus the original post inspired would-be blog-reviewer, Dinesh Gajjar, to <a href="http://codebetter.com/blogs/kyle.baley/archive/2010/02/02/life-outside-net-or-how-to-check-out-your-neighbours.aspx">comment on the lack of content</a>, a position that leads me to believe he’d only recently started reading my blog. In any case, one of his concerns was that I didn’t explain “why I chose what” which I will assume means “why I chose GWT” (and apologies, Dinesh, if by “what”, you really meant “to waste time that could be spent writing comments on other people’s blogs”).</p>
+<p>When first deciding on how to proceed, our default was .NET, which led to some obvious options. MVC seemed a no-brainer and since I was involved in <a href="http://www.sharparchitecture.net">Sharp Architecture</a>, my first reaction before we even finished the conversation was to run the Sharp project template. “But,” says we, “we’re pragmatic programmers. Why do we automatically reach for .NET? This is *our* project!”</p>
+<p>Thus explains why my resume says I have two days of experience with Ruby. I played with it for (almost) that long before we changed our minds again. As we discussed the nature of the application, we discovered it would rely *very* heavily on JavaScript. So we wanted something that would facilitate that.</p>
+<p>At the time, we were also a little apprehensive about the learning curve with Ruby. Not that we wanted to shy away from it. But this wasn’t some fictitious client’s money we were playing with. It was hours. “Learning on the client’s dime” had a more ominous effect when the client’s dime was my dime.</p>
+<p>So we ventured back to .NET being familiar territory and telling ourselves “it’ll help us get this out the door faster.” We also looked seriously at <a href="http://trac.caffeine-it.com/openrasta">OpenRasta</a> because it seemed to facilitate our view of having the server serve up resources rather than the default view of serving up pages. Our intent was to have a single page and dynamically modify the various pieces view JavaScript. We weren’t looking forward to managing history support for something like that but we felt it offered the best user experience, which is more important than our nagging little technical problems.</p>
+<p>One nagging aspect to this approach was testing the JavaScript, something I had little experience with. I did some smoke tests with WatiN and was encouraged a little but it always felt a little uncomfortable, especially trying to run the tests on a CI server. And both my partner and I (admittedly, he more than I) were concerned about the costs of long-term maintainability and were pretty adamant on making the app testable and following a strong focus on quality while we built it. WatiN didn’t give us that warm fuzzy feeling and I don’t believe we looked at Selenium at the time.</p>
+<p>Around this time, my partner discovered Google Web Toolkit which looked tailor-made for the type of application we wanted to build: A single page with various pieces updated based on user clicks. And you could write it all in Java, which was easily testable. And better yet, it had history support built in.</p>
+<p>So we both did smoke tests and decided it was the way to go. To summarize, it gave us (in order of importance):</p>
+<ul>
+<li>an AJAX application with a good user experience </li>
+<li>history support (also important for user experience) </li>
+<li>easily tested </li>
+<li>strong community and many resources </li>
+</ul>
+<p>In retrospect, it seems there is a fine line between “pragmatic” and “indecisive”. There’s a good chance that not all of our decisions were the right ones, just the ones we made at the time with the information available to us. As I reflect on it, maybe we dismissed Ruby too soon. Or maybe we could have built the app faster in .NET and still made it maintainable. Or maybe or maybe or maybe…</p>
+<p>Truth be told, writing this post is about all the reflecting I’ve done on it. Because I have no regrets using GWT whatsoever. It’s lived up to its promise. Yes, we’ve run into issues but none that have been insurmountable and certainly no more than we would with .NET (can’t speak for Ruby).</p>
+<p>More importantly, it’s because we use Java/GWT that we have the team that we do and, with all due respect to the awesome team I worked with on my first Livelink project a couple of years ago, it is by far the best team I’ve been in in my twelve years of consulting. And this from a guy who gets along with everyone (<a href="http://kyle.baley.org/ADifferentShadeOfRoseOrLdquoHowTohellipactuallyIrsquomNotUpForSubtitlingThisOnerdquo.aspx">almost</a>).</p>
+<p>Kyle the Indefinite</p>

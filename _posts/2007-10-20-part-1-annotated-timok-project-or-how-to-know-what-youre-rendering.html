@@ -1,0 +1,55 @@
+---
+layout: post
+title: 'Part 1: Annotated Timok Project, or "How to know what you''re rendering"'
+date: 2007-10-20 21:48:54.000000000 -04:00
+categories: []
+tags:
+- Patterns
+- Tools
+- Web development
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '414674731'
+  pvc_views: '1176'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>In my latest effort to pad out my posting count, I'm going to take a sample MonoRail application and annotate it. The reason being: I would have liked one myself. Yes, I can download samples and try to grok it by flipping back and forth 'twixt code and the API Reference Manual. But when I'm looking at a sample app, there are a lot of times I ask "why are you doing it this way?". And there are times where I just plain don't feel like slogging through documentation looking for the section that applies to a specific piece of code.</p>
+<p>That's about all I'm going to do by way of explanation because this will probably be a long enough post as it is. The sample app I'm going with is the <a href="http://using.castleproject.org/display/MR/Samples" target="_blank">Timok Portal Project</a>&nbsp;prepared by the Castle folks themselves. I considered also the source code for the <a href="http://code.google.com/p/altnetconf/" target="_blank">ALT.NET conference website</a>&nbsp;(or at least a version of it) but frankly, I'm a little scared to say ALT.NET these days for fear that the Pedantic Police will take me away.</p>
+<p>This little adventure will assume little knowledge of MonoRail other than what it does conceptually. It also assumes you are&nbsp;familiar with&nbsp;traditional web forms and trying to map this new world into what you know. It's laid out as if you are first opening the app and trying to navigate your way through the flow starting from default.aspx. So&nbsp;I will jump around from topic to topic but it's meant to answer questions as they would theoretically occur chronologically.</p>
+<p>Whenever there are no references to explicit explanations, it is essentially my understanding of how things work. So take it as such.</p>
+<p>So without further adieu, we'll see how far we get today...</p>
+<p><strong>Default.aspx</strong></p>
+<p>Your standard MonoRail default page. It does nothing other than redirect you to the "real" main page: /home/index.rails. It exists because very likely, the IIS directory is configured so that default.aspx is the default page.</p>
+<p><strong>OK, so let's take a look at index.rails. Waitaminute...</strong></p>
+<p>It doesn't exist. And in fact, you may also be looking for a home directory off the root. Stop thinking of things in terms of files and directories.</p>
+<p>If you look in the web.config, there is a section called <a href="http://msdn2.microsoft.com/en-us/library/aa903367(VS.71).aspx" target="_blank">&lt;httpHandlers&gt;</a>. The first one in the list says that any time ASP.NET finds a URL request that ends in .rails (excluding the query string), process that request with the MonoRailHttpHandlerFactory. That factory parses the URL and decides what to do with the request based on what it finds. And 99% of the time, that *doesn't* involve&nbsp;navigating to and processing an aspx file.</p>
+<p>To continue from default.aspx, the page redirects you to /home/index.rails. In MonoRail-speak, this means: Find the <a href="http://www.castleproject.org/monorail/documentation/v1rc2/usersguide/controllerbasics.html" target="_blank">controller</a> for "home" and process it using "index" as the action to perform.</p>
+<p><strong>How does it know where the home controller is?</strong></p>
+<p>Back to web.config. The &lt;castle&gt; section lists references to a bunch of other config files. One of these is controllers.config, which lists all the controllers used in the application. The one we are interested in is home.controller, which refers you to the HomeController class in the web project.</p>
+<p><strong>How does it know to look at the "home.controller" element?</strong></p>
+<p>Through the magic of convention and the <a href="http://www.castleproject.org/container/index.html" target="_blank">Windsor</a> IoC container. If you're not familiar with Windsor or IoC, think of it as a way of helping the application to find things it needs when they aren't explicitly provided to it. In this case, Windsor is helping the application to find which class to use when we request the home controller. In this case, it's HomeController.cs in the Controllers folder of the web app, as can be seen from the home.controller component.</p>
+<p><strong>So where's the HTML&nbsp;that HomeController&nbsp;renders?</strong></p>
+<p>It may not seem obvious but there&nbsp;are other files associated with this class, similar to how an aspx file is associated with its code-behind/code-beside file. The controller has two attributes attached to it: Layout("default") and Rescue("generalerror"). The Layout attribute tells us which layout to use when rendering the page. Layouts are stored in the layouts folder in the web project. This is always where MonoRail looks for layouts which is why there is no explicit link to&nbsp;the folder&nbsp;from the controller. <a href="http://www.castleproject.org/monorail/documentation/v1rc2/usersguide/layouts.html" target="_blank">Layouts</a> are analogous to master pages and I'll leave it at that for now.</p>
+<p>If you open the layouts folder, there is only one layout: default.vm. Coincidentally, the same name as was used in the Layout attribute of the home controller. (Note: It's not really a coincidence.)</p>
+<p>So at this point, we have the controller telling us which layout to use to render the page template. Default.vm contains mostly HTML with some "other stuff" thrown in. The only "other stuff" I'm interested in at the moment is $childContent, which is analogous to the PlaceHolder ASP.NET server control in a master page. This is where the individual content goes for each controller that uses this layout.</p>
+<p>The HTML that goes into that placeholder is located under the Views folder in the web project. Specifically, it is in Views/Home/index.vm. Again, there is no direct link telling the controller to go to this file specifically. Rather, Monorail will look under the <a href="http://www.castleproject.org/monorail/documentation/v1rc2/usersguide/views.html" target="_blank">Views</a> folder for a subfolder matching the name of the controller. And also note that the name of the file, index.vm, matches the name in the URL we are requesting: index.rails. Minus the extensions. Again, not a coincidence.</p>
+<p>One final note on the controller. It contains a method called Index which, by this time, should give you some indication that it is important with our request for index.rails. This method will be executed before the index.vm view is rendered. And again, nowhere does it explicitly say, "if you are requesting index.rails, execute the Index method in HomeController". The underlying link in all of this is just the name of the request: index.</p>
+<p><strong>Summary</strong></p>
+<p>In our request for /home/index.rails, the following actions were taken:</p>
+<ul>
+<li>The request was routed to MonoRailHttpHandlerFactory because it ended in .rails</li>
+<li>The factory parsed the URL to determine which controller should be used to render the request. Using the Windsor container, it determined that we should use HomeController to render the request</li>
+<li>HomeController executed the Index() method, loaded the default.vm layout, and inserted the index.vm view into it and rendered the result.</li>
+</ul>
+<p>One of the underlying themes you may have seen is the reliance on "convention over configuration". MonoRail knows where to find things because of the conventions used. Views are stored in the views folder, layouts in the layouts folder. The Index method is executed because we are responding to the index.rails request. Compare this with an aspx page where there is an explicit link 'twixt it and it's underlying code-behind file (via the Inherits attribute on the &lt;@Page@&gt; directive).</p>
+<p>This is (hopefully) the first in a series because, quite frankly, we haven't covered much yet. Next time, we'll continue where we left off, which is with the index.vm view. But before that, we'll need to talk about why, when you launch the application, you are actually first re-directed to the login page.</p>
+<p>Kyle the Derailed</p>

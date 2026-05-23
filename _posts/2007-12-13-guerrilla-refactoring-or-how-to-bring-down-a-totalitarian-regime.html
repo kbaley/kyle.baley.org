@@ -1,0 +1,33 @@
+---
+layout: post
+title: Guerrilla refactoring, or "How to bring down a totalitarian regime"
+date: 2007-12-13 23:05:35.000000000 -05:00
+categories:
+- Featured
+tags:
+- Refactoring
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '4520'
+  dsq_thread_id: '350095102'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Have started a new project at the current contract and I'm muy excited about it. It's a &quot;legacy&quot; .NET 1.1 app that was upgraded to 2.0 by running the wizard, then left alone. It has a web service created by an architect who appears to have <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/06/do-you-really-know-where-that-code-has-been.aspx" target="_blank">worked with Jeremy Miller</a> before. It returns datasets. Lots of them. There's a DataDude project created in some CTP version that can't be upgraded. There is no CI process.</p>
+<p>I discovered most of this without cracking open the code. I have since done so and analogously speaking, it is clearly the result of the type of relationship we hillbillies are *very* familiar with.</p>
+<p>I'm pretty pumped to dive into it, actually. The CI process is mostly done. The tests are running regularly (2.5% code coverage, woohoo!). Now it's time to start the grand-scale refactoring.</p>
+<p>First, however, we need to go to the customer and tell him, &quot;The architecture of this app is not unlike something akin to roadkill. It compiles only during the waxing phase of the moon and the fact that it runs at all has restored my faith in God. I know you've been using it relatively successfully for several months but we'll need several tens of thousands of dollars from you to refactor large portions of it. When we're done, there will be no discernible difference to the application from your perspective but we in the IT department will sure feel better about ourselves.&quot;</p>
+<p>Now I've never been able to say &quot;discernible&quot; out loud convincingly and I'm sure as heck not going to imply that I believe in a higher power so obviously, this isn't going to work for me. Which leads me to a tactic I've become quite fond of: Guerrilla Refactoring</p>
+<p>Guerrilla refactoring requires some unconventional tactics. Like in <a href="http://en.wikipedia.org/wiki/Guerrilla_warfare" target="_blank">guerrilla warfare</a>, I'll need to ambush the code often. Come at it from an angle it's not expecting. Do quick, focused skirmishes and get out again before anyone notices (except the code which will be grateful to be liberated from its bourgeois oppressors).</p>
+<p>Subterfuge and guile will be my allies. &quot;How long will it take to implement the 'sync' function? Four hours, minimum. Change the layout of the form? A good day of coding. You need the text changed on this label? I'd say....three full days. Not including writing tests to expose the bug.&quot;</p>
+<p>I will bear the brunt of their skeptical, leering eyes for the sake of the common good. No longer will we toil under the totalitarian regime of logic-laden views and hand-rolled data access code. Their armies will *tremble* in fear in the face of my legion of Freedom Fighter Presenters! And the fascists will COWER as I <em>slash</em> at them with my <strong>Sword of NHibernate!! </strong>JOIN ME, brothers (and to a lesser extent, sisters), as we stamp out the <strong>Dictatorship of Duplication</strong> and drive a *hammer* through the very <strong><em>heart</em></strong> of hardcodedness!!1!!1!!!!</p>
+<p><strong><em>VIVA LA REVOLUCION!!!!</em></strong></p>
+<p>Kyle the Pacifist</p>

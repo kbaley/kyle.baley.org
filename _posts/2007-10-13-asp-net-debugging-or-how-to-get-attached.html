@@ -1,0 +1,32 @@
+---
+layout: post
+title: ASP.NET Debugging, or "How to get attached"
+date: 2007-10-13 13:37:27.000000000 -04:00
+categories: []
+tags:
+- Visual Studio
+- Web development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1238'
+  dsq_thread_id: '381275222'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Strolling through some <a href="http://www.chinhdo.com/20070920/top-11-visual-studio-2005-ide-tips-and-tricks-to-make-you-a-more-productive-developer/" target="_blank">Visual Studio tips</a> courtesy of <a href="http://www.chinhdo.com" target="_blank">Chinh Do</a>. Some good tips although some go away with ReSharper (and we won't get into the part in Tip 4 where he says "Regions [are] a great way to organize your code".</p>
+<p>For now, I'll focus on Tip 6: "Attach to Process" to Start Debugging in ASP.NET. A quick summary: If you already have the application running in a browser, you can "attach to process" rather than pressing F5 to compile and run the app. The idea being that you don't need to launch your application and navigate to where you need to be.</p>
+<p>Here's my own preferred method which goes along the same lines. Like Chinh, I launch the application in its own browser. (Side note: Usually this means creating a separate virtual directory for it in IIS but if you want to use the built-in web server (Cassini it's called, yesno?), you will have to launch the app from Visual Studio at least once to start the web server.)The next step is creating an empty html page and setting it as the startup page.</p>
+<p>That's pretty much it. With this setup, you can play around with your code, re-compile (Ctrl+Shift+B), then refresh the browser to see the changes. Like Chinh's tip, there is no need to press F5 to launch the app, then navigate to the page to see your changes.</p>
+<p>And you can still debug in this method. That's what the blank startup page is for. Launching the app will attach the debug process to your existing browser instance (as well as the instance that is launched when you press F5). So if I do need to step through code on a page, I can set a breakpoint, press F5 to attach the debug process, flip over to my existing browser and refresh the page to hit the breakpoint. The blank startup page serves essentially as a launching pad.</p>
+<p>The advantages are pretty much the same as in Chinh's original tip. With my method, it's easier to attach to the debugger because all I need to do is press F5, rather than Alt+D, P, "as", Enter (which, truth be told, is still pretty quick). With his method, you manually stop debugging (Shift+F5). With mine, you can still do that or you can close the startup page to do the same thing (at least in IE, Firefox doesn't do the same thing). </p>
+<p>Having said that, Chinh's method has one serious advantage over mine (and over debugging with Visual Studio using F5&nbsp;in general): It doesn't matter which browser you use. If you want to use Firefox, you don't need to muck with Visual Studio to set&nbsp;it as your default browser. You can launch your application in both browsers, attach the aspnet_wp process, and refresh either one (or both) and your breakpoints will be hit.</p>
+<p>So with that advantage in mind, along with some other minor quirks in my method, I'll be switching over to his "Attach to Process" for the time being to see if it makes things easier.</p>
+<p>Kyle the Detached</p>

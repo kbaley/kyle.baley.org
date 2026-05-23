@@ -1,0 +1,29 @@
+---
+layout: post
+title: ASP.NET AJAX Gotchas, or "How to fix mistakes by changing frameworks"
+date: 2007-10-25 13:49:16.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+- Web development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1030'
+  dsq_thread_id: '389959262'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>And here we have, <a href="http://encosia.com/2007/10/24/are-you-making-these-3-common-aspnet-ajax-mistakes/">three common ASP.NET AJAX mistakes</a>.</p>
+<p>I haven't been out Ajaxin' that much lately but reading through that list surfaced some painful, painful memories. And I've dealt with <a href="http://kyle.baley.org/VenetianCustoms.aspx">Rogers Wireless Customer Service</a> so I know a thing or two about pain.</p>
+<p>The underlying thought that went through my head for each and every one of these mistakes is: Why is the technology so complicated as to allow these mistakes in the first place?</p>
+<p>Look at the recommended practices to avoid the mistakes: Litter your code with checks for IsPostBack or IsInAsyncPostBack. Make sure you call events in the right order. And for heaven's sake, put that code in PreRender, not Load. Dummy. And my favorite from the intro: "this...means that using the UpdatePanel requires careful attention to the <a href="http://msdn2.microsoft.com/en-us/library/ms178472.aspx">ASP.NET Page Life Cycle</a>."</p>
+<p>Now I don't want to be a hippo-critter-cal hillbilly. I did, at one point, live and breathe the page life cycle and saw no never mind to it at the time. But it's interesting how the introduction of <a href="http://www.castleproject.org/">alternatives</a> can change one's perspective. Nowadays, I look back at when I dealt with OnInit, OnLoad, OnPreRender, OnRender and&nbsp;wonder if I&nbsp;sounded like some crazed Santa Claus when I talked to other people about it.</p>
+<p>Kyle the Commonly Mistaken</p>

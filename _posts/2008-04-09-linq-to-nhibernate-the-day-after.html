@@ -1,0 +1,33 @@
+---
+layout: post
+title: Linq to NHibernate - The Day After
+date: 2008-04-09 12:34:44.000000000 -04:00
+categories: []
+tags:
+- Linq
+- NHibernate
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1214'
+  dsq_thread_id: '359288938'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>What a difference a day makes. Spent the better part of <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/04/07/trying-out-linq-for-nhibernate.aspx" target="_blank">yesterday</a> trying to figure out the <a href="http://www.hookedonlinq.com/LINQToNHibernate.ashx" target="_blank">Linq to NHibernate</a> so that I could use Contains on something other than a string, like so:</p>
+<pre class="c-sharp" name="code">from job in session.Linq<job>( )
+where officeIds.Contains( job.Office.Id )
+select job;</job></pre>
+<p>The book <a href="http://www.manning.com/marguerie/" target="_blank">Linq in Action</a>, as well as Matt Warren's <a href="http://blogs.msdn.com/mattwar/archive/2007/07/31/linq-building-an-iqueryable-provider-part-ii.aspx" target="_blank">series on query providers</a>, both provided a lot of help in understanding the code. As I started sifting through it and looking at failing tests, I started making some fairly sweeping changes to the code. Not necessarily to check it in, mind you, more for my own eddy-ficashun. I was in spike mode, not &quot;someone else may actually look at this&quot; mode.</p>
+<p>In the end, it wasn't quite as hard as I first thought. 'Course, I have a built-in advantage since parsing expression trees is much like parsing the family tree, what with all the AndAlso's and OrElse's. ExclusiveOr was a new concept though.</p>
+<p>By the time I was done, I had an ExpressionVisitor very similar to the one Matt Warren specified and I had implemented it in a couple of the visitors in the codebase. It still didn't do what I wanted but I was a lot clearer on how things flowed. It fixed a couple of bugs while introducing others and while I wasn't any further ahead in my specific task, it was a nice break to do something I haven't in a long time.</p>
+<p>Then I updated to the latest and lo! Chadly (who I'd link to if I had a blog for him) has implemented what appears to be the same thing, albeit in a much cleaner way. And even better! Doug Mayer (also conspicuously unlinked) has implemented the exact Contains support that I needed! Well, almost. Contains works on arrays now but not on Lists (or anything deriving from ICollection methinks). But ToArray helps out there.</p>
+<p>Anyway, here I am a day later having learned about query providers and my work still got done for me in my absence. All hail OSS!</p>
+<p>Kyle the NHiberLinq'd</p>

@@ -1,0 +1,56 @@
+---
+layout: post
+title: RedirectToAction in Filter Attributes
+date: 2008-03-28 21:22:00.000000000 -04:00
+categories: []
+tags:
+- ASP.NET MVC
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '349935192'
+  pvc_views: '1922'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Thankfully, ASP.NET MVC now has filters, seemingly called thus because that's what they are called in Monorail whereas &quot;interceptors&quot; would probably be a more appropriate name.</p>
+<p>So I did what I imagine ninety percent of people are going to use the thing for: created a filter to authenticate a controller/action. You know the one. If you aren't authenticated then redirect to the login page. It's a problem that apparently still hasn't been solved to everyone's satisfaction given the number of solutions out there.</p>
+<p>I turn to my natural resource, CodeCampServer, and check out their solution (off-topic code has been removed):</p>
+<pre class="c-sharp" name="code">    public override void OnActionExecuting(FilterExecutingContext filterContext)
+    {
+        if(!filterContext.HttpContext.User.Identity.IsAuthenticated)
+        {
+            filterContext.Cancel = true;                                           
+            //no way to access RedirectToAction() or Url.Action() here....
+            filterContext.HttpContext.Response.Redirect(&quot;~/login?redirectUrl=&quot; + HttpUtility.UrlEncode(filterContext.HttpContext.Request.Url.PathAndQuery));
+        }
+    }</pre>
+<p>Alas, my crest has fallen. No way to access RedirectToAction or Url.Action from within a filter attribute. They are protected or internal, I don't care which because neither will help me.</p>
+<div style="border-right: black 1px solid; padding-right: 0.5em; border-top: black 1px solid; padding-left: 0.5em; font-size: 8pt; float: right; padding-bottom: 0.5em; margin: 0.5em; border-left: black 1px solid; width: 200px; padding-top: 0.5em; border-bottom: black 1px solid; background-color: #cccccc"><strong>Side note</strong></p>
+<p>I'm surprised more people haven't mentioned one of the major reasons I see for not redirecting to hard-coded URLs. I'm developing on Windows XP and *not* using Cassini. Which means I've had to use .mvc in my routes as per the handy little comment in the default Global.asax.cs. But when I deploy to an IIS 7.0-ish environment, it's nice to know I can change the route table in one place and not have to worry about hard-coded URLs anywhere.</div>
+<p>So I'm not liking that little hard-coding in there. But here's where it's nice to have the actual <a href="http://www.codeplex.com/aspnet" target="_blank">source code for MVC</a> (and on another side note: I'd reckon the CodePlex project should be named in such a way that it actually shows up when you search for &quot;MVC&quot; on that site, as opposed to the generic name it has now). What I want is what happens when I do a RedirectToAction.</p>
+<p>Taking a look through the RedirectToAction code, I came up with something I'm not going to show you. It worked like a charm but after I wrote it, I found an <a href="http://forums.asp.net/p/1239842/2262373.aspx" target="_blank">even better method</a> from SteveSanderson which is a slight variation on the theme:</p>
+<pre class="c-sharp" name="code">    public override void OnActionExecuting(FilterExecutingContext filterContext)
+    {
+        if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
+        {
+            filterContext.Cancel = true;
+            var requestContext = new RequestContext( filterContext.HttpContext, filterContext.RouteData );
+            var values = new RouteValueDictionary(new { Action = &quot;Index&quot;, Controller = &quot;Login&quot; });
+            var vpd = RouteTable.Routes.GetVirtualPath(requestContext, values);
+            var target = vpd.VirtualPath;
+            var url = HttpUtility.UrlEncode(filterContext.HttpContext.Request.Url.PathAndQuery);
+            filterContext.HttpContext.Response.Redirect(target + &quot;?redirectUrl=&quot; + url);
+
+        }
+    }</pre>
+<p>Please note the relative nature of the term &quot;even better&quot;. This is by no means ideal but my NOR (Naive Optimism Radar) tells me that this will get better.</p>
+<p>Final side note: Yes, there's nothing stopping me from using <font face="Courier New">FormsAuthentication.LoginUrl</font> instead of a controller action but c'mon, it's so 1.1.</p>
+<p>Kyle the Nouveau</p>

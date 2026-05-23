@@ -1,0 +1,32 @@
+---
+layout: post
+title: Conscientious Coding is the new TDD
+date: 2006-07-16 13:51:00.000000000 -04:00
+categories: []
+tags:
+- Conscientious Coding
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1062'
+  dsq_thread_id: '362994650'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I've been reading, listening to, and watching articles, podcasts, and webcasts on Test-Driven Development as well as talking to colleagues who are in the same boat as I am in that we are kind of excited about it but are still learning.&nbsp;I'm going to waffle a bit on my ultimate opinion.</p>
+<p>At the moment, I don't buy it. At least not the whole thing. There are bits and pieces I like. Unit tests, for example. And continuous integration (which may or may not be part of the methodology; haven't quite worked that out yet). But on the whole, I don't see the benefits of writing tests first. Or rather, I don't think there are enough benefits to TDD to outweigh the cost of the extra code you have to write. And make no mistake, you have to write a lot of code.</p>
+<p>Part of my disillusionment, I think, has to do with the examples I've seen which range from rudimentary to impractically simple. I watched both episodes of Jean-Paul Boodhoo's <a href="http://www.dnrtv.com/default.aspx?showID=10">dnrTV</a> episode on the subject. Two hours of presentation to&nbsp;bind a combobox to to a list of customers from the Northwind database. And if I recall correctly, he added a total of six projects to his already-populated solution to get it to work. This is code I can “write” in about seven minutes in Visual Studio 2005. I say “write“ in quotes because these days, you don't even need to write code to do this.</p>
+<p>There's an argument that the code I write won't be testable. My counter to that is: so what? I'm binding a dropdown to a datasource. It's not rocket science. And once it's working, in what universe is this code ever going to break? This is basic functionality practically built-in to the framework. Why am I even writing code to bind this combobox, let alone code to test it?</p>
+<p>To be fair, I'm railing against the example, rather than the methodology. And I will admit that I probably don't understand the benefits as well as I could. For some more complicated piece of logic, I can see how someone would justify writing the tests first. But even then, as <a href="http://spaces.msn.com/kilmati/PersonalSpace.aspx?owner=1">a wise man</a> pointed out, you're losing some features offered by the IDE. Like Intellisense. I don't program well without Intellisense.</p>
+<p>And I should point out that there is lots to like about Boodhoo's dnrTV episode. The Model-View-Presenter pattern, for instance (which I'm hoping to see more of in his <a href="http://www.dnrtv.com/default.aspx?showID=14">follow up</a> episode). The way he lays out projects made a lot of sense to me. And the overall architecture of the project looked interesting enough that I wish his code was made available. The man clearly knows his stuff.</p>
+<p>I've also heard the argument that TDD forces you to write unit tests which are oh-so-often dropped due to time constraints. That's very true. But let's assume we are given three months to do a project that we know will take four with the unit tests.... I'm trying to dance around how to word the fact that I would rather hand in fully functional but untested code rather than fully tested but not fully functional code because it would be too easy for that argument to be attacked. But sometimes there are certain time restrictions that just can't be avoided. Yes, you should try to convince the client of the benefits and yes, you should always unit test and yes, you should always brush your teeth three times a day. Well, the sky is blue in my world and sometimes my boyish good-looks and easy charm aren't enough to convince the client that I'm going to need another month to get all the features done.</p>
+<p>Again, I'm not against unit tests. In fact, I'm all for them. They should be written often, they should be run often. And right now, I don't believe they need to be written for absolutely every piece of code that you write. There are certain places where you just have to trust the fact that a certain function has run properly for the last ten years and will probably continue to do so for the next ten. In the end, I think TDD was borne of some good ideas but maybe got sidetracked because it got thrust into a formal methodology.</p>
+<p>So despite my early enthusiasm, I'm going to keep TDD in the back of my mind for now. At this point, I think I know enough that if I tried it on my own, I would get frustrated very easily. And let me make my ignorance clear: I'm going solely on what I've read and seen, not on actual practice. I don't want to shortchange the idea without giving it a decent runthrough. So until I'm on a real business project with someone who knows and loves it, consider me firmly on the fence.</p>
+<p>Until then, I've become an advocate of a new practice proposed by the aforementioned <a href="http://spaces.msn.com/kilmati/PersonalSpace.aspx?owner=1">wise man</a>: Conscientious Coding. In this methodology, there is no strict, religious adherence to any one programming dogma. There is only one basic tenet: someone else is going to have to look at your s**t. Be nice to them.</p>

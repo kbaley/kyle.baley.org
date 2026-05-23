@@ -1,0 +1,30 @@
+---
+layout: post
+title: Subversion, or "How I Learned to Almost Care About Source Control"
+date: 2007-04-11 17:31:48.000000000 -04:00
+categories: []
+tags:
+- Tools
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '963'
+  dsq_thread_id: '364284533'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Plethora of postings today. Could combine them but I'm trying to stick to the Single Responsibility Principle, at least in one small aspect of my life. Doesn't seem to work while I'm parenting the young 'un.</p>
+<p>Have recently started working with Subversion. Out of necessity because I want to share code with someone and it's harder to share when you're in the Bahamas. (That generally applies to everything in the Bahamas, especially in the government.)</p>
+<p>First thing I did when installing Subversion was to add TortoiseSVN and AnkhSVN to my tool list. Hillbillies aren't generally what you would call command line coders.</p>
+<p>Like most side aspects of software development, I don't have a very strong opinion on source control. The only thing I want is for it not to get in my way. In that respect, I liked SourceSafe while still recognizing that it was the one piece of software that Microsoft actually *needed* to update in the last ten years. Having said that, I haven't had any horror stories that many, many others have and checking in/checking out was pretty seamless from Visual Studio.</p>
+<p>Now comes Subversion where I am painfully aware of the source control because it's throwing errors all over the place. Well, probably not Subversion but certainly Tortoise and definitely Ankh. Errors like "the directory already exists"&nbsp;and "this is not a working copy of the directory". When it wasn't failing, it was creating folder structures&nbsp;I didn't want or adding support files to source control. (Don't get me started on ignore lists. Sometimes I want to ignore the bin directory, sometimes I don't.)</p>
+<p>Granted, part of this is a shift from my comfort zone. I've managed to get to a point where I can create a Subversion repository and folder structure I like and not have one overwrite the other. I'm also able to mangle Ankh enough to add another project to my solution without polluting it with ReSharper files. But even today, I'm not able to Update... my solution with Ankh because it says the lib object already exists. "lib" is a folder that contains my <a href="http://www.mikebroberts.com/blog/archive/Tech/ArticlesandPapers/Howtosetupa.NETDevelopmentTree.html" target="_blank">third-party tools</a>. It's not even part of my solution.</p>
+<p>Having said that, when it's on, it's really on. Fast and clean be Subversion. Especially over HTTP. But it's not exactly an "install and go" type application.</p>
+<p>And it's better than SourceSafe. I say that mostly to keep my inbox free of hate mail because in reality, I don't care if it is "better" or not. It's just source control. I just want it to work.</p>

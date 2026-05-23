@@ -1,0 +1,36 @@
+---
+layout: post
+title: EasyLAPI for .NET
+date: 2006-12-12 00:21:22.000000000 -05:00
+categories: []
+tags:
+- ".NET"
+- Livelink
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2882'
+  dsq_thread_id: '352197138'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Here's one for you .NET Livelink developers. I love Christopher Meyer's EasyLAPI library from the Open Text <a href="http://knowledge.opentext.com/" target="_blank"><font color="#669966">Knowledge Centre</font></a>. But of course, it's in Java and the Coding Hillbilly is strictly caffeine-free these days on account of his cholesterol.</p>
+<p>The library was manageable enough that it didn't take too long to create a C# version. Some minor syntax changes and some other changes based on how I would do things if I were to write it from scratch in C# (most notable, replacing the Vector references with ArrayLists), and away I went.</p>
+<p>Of course, that doesn't help you, the throngs of C# LAPI developers, in my readership. So I cleaned it up further, converted the comments to be .NET-like, and changed a couple of methods to properties as I saw fit. Resulting library is attached.</p>
+<p>One fairly major change is the addition of a configuration handler for the sessions. The Java version used an .ini file to manage multiple sessions. I'm using a custom config section. The upshot is that you should include something like this in your app.config:</p>
+<p><font size="2"></p>
+<p /></font><font color="#0000ff" size="2">&lt;</font><font color="#800000" size="2">LLSessions</font><font color="#0000ff" size="2">&gt;<br />&nbsp;&nbsp;&nbsp; </font><font color="#0000ff" size="2">&lt;</font><font color="#800000" size="2">Session</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">name</font><font color="#0000ff" size="2">="local"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">server</font><font color="#0000ff" size="2">="localhost"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">port</font><font color="#0000ff" size="2">="2099"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">username</font><font color="#0000ff" size="2">="Admin"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">password</font><font color="#0000ff" size="2">="livelink"</font><font color="#ff00ff" size="2"> </font><font color="#0000ff" size="2">/&gt;<br />&nbsp;&nbsp;&nbsp; </font><font color="#0000ff" size="2">&lt;</font><font color="#800000" size="2">Session</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">name</font><font color="#0000ff" size="2">="dev"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">server</font><font color="#0000ff" size="2">="localhost"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">port</font><font color="#0000ff" size="2">="2099"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">username</font><font color="#0000ff" size="2">="Admin"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">password</font><font color="#0000ff" size="2">="lldev@dm1n"</font><font color="#ff00ff" size="2"> </font><font color="#0000ff" size="2">/&gt;<br />&nbsp;&nbsp;&nbsp; </font><font color="#0000ff" size="2">&lt;</font><font color="#800000" size="2">Session</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">name</font><font color="#0000ff" size="2">="test"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">server</font><font color="#0000ff" size="2">="localhost"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">port</font><font color="#0000ff" size="2">="2099"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">username</font><font color="#0000ff" size="2">="Admin"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">password</font><font color="#0000ff" size="2">="lltst@dm1n"</font><font color="#ff00ff" size="2"> </font><font color="#0000ff" size="2">/&gt;<br />&nbsp;&nbsp;&nbsp; </font><font color="#0000ff" size="2">&lt;</font><font color="#800000" size="2">Session</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">name</font><font color="#0000ff" size="2">="prod"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">server</font><font color="#0000ff" size="2">="localhost"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">port</font><font color="#0000ff" size="2">="2099"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">username</font><font color="#0000ff" size="2">="Admin"</font><font color="#ff00ff" size="2"> </font><font color="#ff0000" size="2">password</font><font color="#0000ff" size="2">="llprd@dm1n"</font><font color="#ff00ff" size="2"> </font><font color="#0000ff" size="2">/&gt;<br /></font><font color="#0000ff" size="2">&lt;/</font><font color="#800000" size="2">LLSessions</font><font color="#0000ff" size="2">&gt;</font></p>
+<p>Then in your code:</p>
+<p><font size="2"></p>
+<p>&nbsp;&nbsp;&nbsp;<font face="Courier New">llSession = SessionProperties.getSession(&nbsp;"test" );</font></p>
+<p></font></p>
+<p>In my code, I also add a defaultSession key to my app settings which allows me to switch environments quickly and without having to re-compile the code. Ideally, I should have a defaultSession attribute on the LLSessions node but I haven't got that far yet. Also on tap is the ability to encrypt username and password. Wouldn't mind using the Enterprise Library for configuration as well but then I get into problems of having one version for .NET 1.1 and another for .NET 2.0 (and perhaps 3.0 but I doubt it). Plus I don't want to force people to use the Enterprise Library if they don't wanna.</p>
+<p>It has been tested very little except to create some folders and some RM objects. The rest of the code is lifted directly from Christopher Meyer's version which seems to be pretty solid to my limited understanding of Java and LAPI in general. The commenting took more time than the conversion.</p>
+<p><a href="http://kyle.baley.org/content/binary/EasyLapi.NET.zip">EasyLapi.NET.zip (308.23 KB)</a></p>

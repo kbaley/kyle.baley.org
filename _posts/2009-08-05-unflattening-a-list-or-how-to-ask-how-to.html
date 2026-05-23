@@ -1,0 +1,32 @@
+---
+layout: post
+title: Unflattening a list, or "How to ask 'how to'"
+date: 2009-08-05 13:44:45.000000000 -04:00
+categories: []
+tags:
+- ".NET"
+- Linq
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '379959730'
+  pvc_views: '1232'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Code challenge time! And by code challenge, I mean, "Do my work for me so I don't have to think/Google".</p>
+<p>We have a parent object, called Parent, and each one has a collection of child objects, called AllegedChild. Ignore potential cycles for this exercise. The database has a single table with fields: ParentID, ParentName, ChildID, ChildName. The data is such:</p>
+<p>1, Coding Hillbilly, 1, Brandi-Lynn<br />1, Coding Hillbilly, 2, Sammy-Jo<br />1, Coding Hillbilly, 3, Sammy-Jo Jr.<br />1, Coding Hillbilly, 4, Sammy-Jo Sr.<br />2, Donald Belcham, 5, Justice Gray<br />2, Donald Belcham, 5, Dave Laribee<br />2, Donald Belcham, 5, Scott</p>
+<p>We will retrieve this list into a collection of ParentChildDto objects with properties that mirror the database. From this list, we'd like to create a new list of Parent objects each with an appropriate list of AllegedChild objects.</p>
+<p>The challenge, given a List&lt;ParentChildDto&gt;, what is a clean and efficient way of creating a List&lt;Parent&gt;? The current implementation looks something like this:</p>
+<pre name="code" class="c-sharp">private List&lt;Parent&gt; GitEm( IEnumerable&lt;ParentChildDto&gt; flatList )<br />{<br />    rFrom = from p in flatList<br />            orderby p.ParentId<br />            select p;<br /><br />    ParentChildDto prev = null;<br />    var to = new List&lt;Parent&gt;( );<br />    foreach( var dto in rFrom )<br />    {<br />        if(prev == null || prev.ParentId != dto.ParentId)<br />        {<br />            prev = new Parent<br />                       {<br />                           Id = dto.ParentId,<br />                           FullName = dto.Name<br />                       };<br />            to.Add(prev);<br />            prev.AllegedChildren = new List&lt;AllegedChild&gt;();<br />        }<br />        if(dto.ChildId != null)<br />            prev.AllegedChildren.Add(new AllegedChild<br />                                  {<br />                                      Id = dto.ChildId,<br />                                      FullName = dto.Name<br />                                  });<br />    }<br />    return to;<br />}<br /><br /></pre>
+<p>While this works, it looks a little too old-school what with the funky indentation and the use of a "previous" placeholder. But try as I might, I can't think of another solution that would be cleaner or more maintainable. There's a chance I may be too "close" to the problem though.</p>
+<p>Honorary Hillbilly Status awaits the person who provides an answer deemed worthy of the domain upon which this example is based. Answers must assume a cordial tone and work within the context outlined. Ones that do not (hint: These will be the answers that take the form "Why are you doing XXXX in the first place?" or one of its variations) will be summarily dismissed.</p>
+<p>Kyle the Advancefully Grateful</p>

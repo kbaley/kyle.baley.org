@@ -1,0 +1,169 @@
+---
+layout: post
+title: Automated releases (with a touch of deployments)
+date: 2008-03-01 13:44:00.000000000 -05:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '192268070'
+  pvc_views: '1503'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>One of the things I espoused in my recent presentation on Brownfield<br />
+applications is automating your releases and your deployments for continuous<br />
+integration. And being a good-natured hillbilly who has been a little lax on<br />
+technical content of late, I will now turn your attention to that very<br />
+topic.</p>
+<p style="margin: 0.5em; padding: 0.5em; font-size: 10pt; float: right; width: 150px; background-color: rgb(221, 221, 221);">Note:<br />
+Even though I mention this in the context of a Brownfield application, you would<br />
+do the same thing to set it up with your Greenfield application as well.</p>
+<p>First off, we should define a release and a deployment because they sound<br />
+pretty similar.</p>
+<p>A <b>release</b> is a packaged version of the application. That is,<br />
+it is some artifact or group of artifacts that *could* be deployed if so<br />
+desired. A <b>deployment</b> is the actual act of deploying a<br />
+release.</p>
+<p>A couple of notes on the definitions:</p>
+<ul>
+<li>There doesn't need to be a one-to-one mapping 'twixt releases and<br />
+deployments. You can create releases all the live long day and not deploy any of<br />
+them.
+</li>
+<li>The reverse isn't true. You can't create a deployment without a release.<br />
+Because, there ain't nuthin' to deploy, Jed! </li>
+</ul>
+<p>There are a few schools of thought on when to create releases and what to do<br />
+with them. Which is another way of saying don't take what I'm about to say as<br />
+gospel. This is how I've implemented it on my current project which has a<br />
+development team consisting of The Coding Hillbilly 'n his alter-egos, <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/01/04/monitoring-code-coverage-or-quot-how-to-descend-into-madness-quot.aspx" mce_href="../../blogs/kyle.baley/archive/2008/01/04/monitoring-code-coverage-or-quot-how-to-descend-into-madness-quot.aspx" target="_blank">Code Coverage Nazi</a> and <a href="http://codebetter.com/blogs/kyle.baley/archive/2007/12/13/guerrilla-refactoring-or-quot-how-to-bring-down-a-totalitarian-regime-quot.aspx" mce_href="../../blogs/kyle.baley/archive/2007/12/13/guerrilla-refactoring-or-quot-how-to-bring-down-a-totalitarian-regime-quot.aspx" target="_blank">Guerrilla Refactorer</a>. It's not without its faults which I'll<br />
+talk about in the next post on deployments.</p>
+<p>So with my requisite disclaimer out of the way, I create a release on every<br />
+build. I.E. Every time I check in code, a new release is built. Wackiness?<br />
+Maybe, but that's where the the Coding Hillbilly alias gives me a free pass. My<br />
+advice is so easy to dismiss as the ramblings of a hick that when I eventually<br />
+do say something useful, it's all the more meaningful.</p>
+<p>Why create a release on every check-in? Easy, because I can. It's easy to<br />
+create them so why not do so every time you can. That way, if the client says,<br />
+"show me what you have" you can give him the absolute latest and, one might<br />
+assume, greatest. What's the downside to having a release on each check-in?<br />
+Wasted disk space? Give me half a day off and go <a href="http://www.newegg.com/Product/Product.aspx?Item=N82E16822136061" mce_href="http://www.newegg.com/Product/Product.aspx?Item=N82E16822136061" target="_blank">buy yourself something nice</a> with the savings. (Yes, I'm<br />
+ignoring a whole lot of internal politics. Such is the benefit of developing on<br />
+your own build environment.)</p>
+<p>That's enough theory. Here's the NAnt task that creates my releases, with all<br />
+subtasks merged into one. A summary of properties used follows:</p>
+<pre name="code" class="xml">&nbsp;&nbsp;&nbsp;&nbsp; &lt;target name="release"&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;property name="current.release.dir" value="${releases.dir}${project.fullversion}" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;delete dir="${current.release.dir}" failonerror="false" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;mkdir dir="${current.release.dir}" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;copy todir="${current.release.dir}"&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;fileset basedir="${app.src.dir}Trilogy.Gunton.Web"&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;include name="Content*.*" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;include name="***.master" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;include name="bin*.*" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;include name="***.aspx" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;include name="***.asax" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;include name="***.config" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/fileset&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/copy&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;copy file="${config.dir}nhibernate-default.cfg.xml.template" tofile="${current.release.dir}nhibernate-default.cfg.xml"&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;filterchain&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;replacetokens&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;token key="SERVER" value="${database.server}" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;token key="DBNAME" value="${database.name.test}" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;token key="SHOW_SQL" value="${debug.show_sql}" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;token key="DATA_ACCESS_ASSEMBLY" value="${data.access.assembly}" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/replacetokens&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/filterchain&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/copy&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;delete dir="${latest.release.dir}" failonerror="false" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;mkdir dir="${latest.release.dir}" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;copy todir="${latest.release.dir}"&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;fileset basedir="${current.release.dir}"&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;include name="***.*" /&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/fileset&gt;<br />&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/copy&gt;<br />&nbsp;&nbsp; &nbsp;&lt;/target&gt;</pre>
+<table border="2" cellpadding="2" cellspacing="0" width="90%">
+<tbody>
+<tr>
+<td valign="top" width="200">releases.dir</td>
+<td valign="top">Path to the releases folder. e.g.<br />
+C:projectsLineageOrganizerreleases</td>
+</tr>
+<tr>
+<td valign="top" width="200">project.fullversion</td>
+<td valign="top">Full version number of the project. This is generated partially<br />
+using the CCNetLabel</td>
+</tr>
+<tr>
+<td valign="top" width="200">current.release.dir</td>
+<td valign="top">Combines releases.dir and project.fullversion. e.g.<br />
+C:projectsLineageOrganizerreleases1.0.31</td>
+</tr>
+<tr>
+<td valign="top" width="200">app.src.dir</td>
+<td valign="top">Path to the source code for the application. e.g.<br />
+C:projectsLineageOrganizersrcapp</td>
+</tr>
+<tr>
+<td valign="top" width="200">config.dir</td>
+<td valign="top">Path to a folder that contains templates that vary from<br />
+environment to environment. e.g. C:projectsLineageOrganizerconfig</td>
+</tr>
+<tr>
+<td valign="top" width="200">database.server</td>
+<td valign="top">Name of the database server you want to use for this<br />
+environment</td>
+</tr>
+<tr>
+<td valign="top" width="200">database.name.test</td>
+<td valign="top">Name of the test database you are using for this<br />
+environment.</td>
+</tr>
+<tr>
+<td valign="top" width="200">data.access.assembly</td>
+<td valign="top">Name of the data.access.assembly to be used for<br />
+NHibernate</td>
+</tr>
+<tr>
+<td valign="top" width="200">latest.release.dir</td>
+<td valign="top">Path to the latest release folder. e.g.<br />
+C:projectsLineageOrganizerreleasesLatest</td>
+</tr>
+</tbody>
+</table>
+<p>Some these will become clear when I go through the build file. I won't add "I<br />
+hope" because I GUARANTEE lucidity*.</p>
+<p>If you look closely at the tasks in this target, it does one of three<br />
+things:</p>
+<ul>
+<li>Deletes folders
+</li>
+<li>Makes folders
+</li>
+<li>Copies files </li>
+</ul>
+<p>That's all a release is in my case. Elsewhere in my build file, I'm already<br />
+building the application for testing purposes and as it so happens, I'm building<br />
+it in the same way I would release it. This is admittedly a little dicey here<br />
+because you may not want to do that. For example, you may want to compile with a<br />
+different configuration for your releases. But it's not a pain point for me yet<br />
+so the decision can be put off.</p>
+<p>So, in order, here is what is happening (more explanation follows):</p>
+<ol>
+<li>Get the path to the new release we are building (based on the current<br />
+version number). This uses the <a href="http://www.igloocoder.com/archive/2008/01/04/versioning-applications-using-nant-and-cruisecontrol.net.aspx" mce_href="http://www.igloocoder.com/archive/2008/01/04/versioning-applications-using-nant-and-cruisecontrol.net.aspx" target="_blank">CCNetLabel</a> property as described by Donald Belcham, whom I<br />
+should have referenced long ago in this post because most of these ideas come<br />
+from conversations with him.
+</li>
+<li>Delete the folder if it exists (it usually won't) and create/re-create it
+</li>
+<li>Copy the contents of the web application to the release folder
+</li>
+<li>Copy the NHibernate configuration template to the release folder and replace<br />
+its tokens with values appropriate for the test environment.
+</li>
+<li>Delete the folder containing the latest release and re-create it. This is<br />
+NOT the folder labeled with the previous release number. It is a subfolder in<br />
+the releases folder that is physically named Latest. It will always exist<br />
+already except for the first time you run this target (or if you physically<br />
+delete it)
+</li>
+<li>Copy the contents of the current release folder to the latest release folder
+</li>
+</ol>
+<p>Note on #3. We copy only the files we need to run the application. No code<br />
+files and no project files here, bub!</p>
+<p>Note on #4. The only reason I am creating a separate NHibernate file (rather<br />
+than using the one already in the app folder) is because I want my releases to<br />
+go against a different database than they do in the normal, everyday testing of<br />
+the application. That database gets blown away and re-created every time I run<br />
+my integration tests and I don't want that affecting any testing the QA<br />
+department is doing on the latest deployment. So the database name is <font face="Courier New">${database.name.test}</font> rather than <font face="Courier New">${database.name.dev}</font>. Note that everything here is<br />
+running on the same server so I don't need to differentiate the server<br />
+names.</p>
+<p>Note on #5. Why have a separate folder for the latest release that is simply<br />
+a copy of another folder? That's the subject of the next post where I go into<br />
+the deployment target.</p>
+<p>Kyle the Anticipatory </p>
+<p><font size="1">* I remind you that there are no refunds</font></p>
+<p>&nbsp;</p>

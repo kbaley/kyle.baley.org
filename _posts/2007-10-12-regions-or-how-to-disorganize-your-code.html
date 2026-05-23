@@ -1,0 +1,34 @@
+---
+layout: post
+title: '#Regions, or "How to disorganize your code"'
+date: 2007-10-12 18:00:12.000000000 -04:00
+categories: []
+tags:
+- ".NET"
+- ReSharper
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1767'
+  dsq_thread_id: '350026105'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Holiday in the Bahamas today but not in Canada. Which means I'm working while my daughter plays XBox behind me. So I'm going to vent my frustration on #regions.</p>
+<p>Maybe it's my alternative upbringing but I'm not a huge fan of #regions in Visual Studio. And here is one example why:</p>
+<p><img style="border-right: 0px; border-top: 0px; border-left: 0px; border-bottom: 0px" height="242" alt="Raccoons ain't pests y'know" src="/assets/image_1.png" width="439" border="0" /> </p>
+<p>As-is, this is pretty useless to me. My first order of action when I see this is Ctrl+M, then Ctrl+L to expand the entire thing which is another step I need to do to get my work done.</p>
+<p>"But Coding Hillbilly," you say, "doesn't it help to organize your code?" NAY, I say, NAY! If you are looking through a piece of code and see a method or property belonging to the Raccoon class, how do you go about looking for it? Do you analyze whether it is a property or method, then search for the class in Solution Explorer, then epxand the corresponding region and scroll through it? Of course not, you press Ctrl+B to zero in on it with ReSharper (and I'm pretty sure Visual Studio has a semi-functional alternative).</p>
+<p>The point is, you couldn't care less where the method is in the code. There are better ways to find methods. Ctrl+B, Ctrl+Alt+B, Alt+F7, Ctrl+Shift+F, Ctrl+F12, even skipping through the methods using Alt+Up and Alt+Down. In fact, I would argue that separating them into #regions like this actually makes it harder to scan through code because of the cases where some regions are expanded and others aren't.</p>
+<p>Using ReSharper also exacerbates this problem.&nbsp;A common&nbsp;refactoring scenario&nbsp;is Extract to Method (Ctrl+Alt+M, if memory serves). And ReSharper isn't going to bother searching through #regions to figure out where the method should be placed (nor should it). Ditto for when I start using method names that don't exist, then Alt+Enter my way through some NotImplementedException goodness. The #regions just get in my way.</p>
+<p>I've also been in places that are so dogmatic about them, there are actually empty #regions because the coding standard says you *have* to have one for private methods, even if you don't have any. And don't get me started on nested #regions.</p>
+<p>Admittedly, they do have their place. Prior to .NET 2.0, it was nice having the designer code hidden from view. Ditto for when you implement trivial interfaces that you rarely want to look at again. IConvertible, for example.</p>
+<p>So I suppose the real point is, don't overuse them. You aren't organizing anything by compartmentalizing properties and methods in this way. If you're one of those compulsive types, write some sort of add-in that alphabetizes the members or organizes them by how long they are or something. Just don't dump them into #regions.</p>
+<p>Kyle the Regional</p>

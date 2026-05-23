@@ -1,0 +1,33 @@
+---
+layout: post
+title: Bork bork bork!
+date: 2006-04-24 17:24:00.000000000 -04:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '599'
+  dsq_thread_id: '362997194'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I read an interesting discussion somewhere a couple of weeks ago on comments. Pretty much everyone in the discussion was unanimous in their stance: if you write your code well enough, comments are a waste of time and may even be dangerous.</p>
+<p>I shall rebut from afar because I don't remember where I read this and even if I did, I don't feel strongly enough about the topic to start a flame war. Because I just know I'm going to end up calling these guys idio--oh bother...</p>
+<p>Some interesting points were brought up, two of which I remember. Firstly that if code is written well, it should be clear what it is doing and comments are moot. Secondly, since developers are generally a lazy species of human, we don't generally update them as often as we should and over time, they can end up being flat out wrong.</p>
+<p>Seems to me that these are contradictory. I.E. If&nbsp;a developer is&nbsp;too lazy to update comments, do we trust him or her to write code that is easy enough to read without accompanying documentation? But I'll forego my analysis into the mind of a programmer and argue why I write comments religiously.</p>
+<p>For the most part, I'm a .NET developer and mostly in C#. Visual Studio has colour coding for a reason. Comments are in green, keywords blue, code black (barring customisation). Which makes it much easier to tell where one function ends and another begins, provided you preface every method with a comment. And even if you're too lazy to type &#8220;this method does blah&#8221;, how hard is it to type /// at the beginning of each method to at least put in the<br />
+<summary>stub? Even when you look at code outside Visual Studio, it's easier to pick out the methods when there are three lines of /// before each one.</summary></p>
+<p>My second point addresses the misguided and delusional idea that code can always be clear. It can't. Plain and simple. I write business apps in which the problems are pretty easy to decipher and there are still algorithms that can get pretty complicated. In many cases, there are half a dozen ways of doing something. Maybe you've tried two or three and run into problems. Throw some comments in to the effect of &#8220;I tried this with a serializer and it threw this error.&#8220; That way, when the serialization expert sweeps through, he'll have the benefit of your hard work before he runs into the same error during a refactor.</p>
+<p>But let's assume you are able to create this universally comprehensible code that describes exactly what your function is doing. What about a piece of complicated business logic that spans several functions, and possibly several classes? Sure you can glean what you're doing from the individual function names and their internals but what would you rather read: well-written code in several places or even rudimentary comments in one place?</p>
+<p>I'll grant that there is a danger that comments can become outdated over time. That's to be expected (but not necessarily accepted, which it generally is). I would counter that the same argument can be made about well-written code. On the first pass, you create magically-named functions and variables which have no double meanings (which means they clearly don't contain any English words). Then during your QA, a tester says: &#8220;Wait a minute. You're supposed to discount the interest here, not compound it.&#8221;</p>
+<p>So you fix the code, then update all your function names that say &#8220;compoundMyValue&#8221; so that they now say, &#8220;discountMyValue&#8221;, right? Of course you do. No matter how close you are to deadline, you always have time to rename the functions in your entire project so that they are abundantly clear for the support&nbsp;person that's coming in tomorrow. The unit tests will catch any you've forgotten because, naturally, you've been keeping all those up to date, too.</p>
+<p>Ignore the naysayers and for Jayzus' sake, comment your code. How hard is it really? It can be fun. It's one of the few places we can be creative. You don't need to go overboard and comment every line and every variable. But&nbsp;putting in something that says &#8220;Create another hashtable to cache our assemblies as we load them&#8220; can be pretty useful for the next person that has to read your tripe.</p>
+<p>And if you really want to stand out, make it sound like the <a href="http://rinkworks.com/dialect/dialectp.cgi?dialect=bork&amp;url=http%3A%2F%2Fkyle.baley.org%2Farchive%2F2006%2F04%2F13%2F368.aspx&amp;inside=1" target="_blank">Swedish Chef</a> wrote the code.</p>

@@ -1,0 +1,37 @@
+---
+layout: post
+title: Relationships in BigTable, or “How to put extra effort into being lazy”
+date: 2010-09-06 21:35:04.000000000 -04:00
+categories: []
+tags:
+- Google App Engine
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1008'
+  dsq_thread_id: '380328149'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><strong>Executive Summary: </strong>We’ve had to re-think some of the relationships between our objects with BigTable and, in some cases, reverse them.</p>
+<p>One thing you can never accuse the hillbilly of is proper use of prepositions. Another thing of which you can never accuse the hillbilly is that he is not lazy. (Nor can you not accuse his use of double negatives of not being interesting.)</p>
+<p>NHibernate has made me lazy about loading things. It’s also made me lazy about querying things. But in the BigTable world of AppEngine, I’ve had to actually think about both of these topics.</p>
+<p>In our domain, a StaffMember has a collection of exactly seven DayAvailability objects, each one representing his or her availability on a given day of the week. I’d show you a nice little class diagram but I’m still trying to maintain a base level of laziness here. And this blog post is increasingly not helping.<img style="display: inline; margin-left: 0px; margin-right: 0px" alt="[lazy.gif]" align="right" src="/assets/lazy.gif" /></p>
+<p>Because it’s BigTable (which may be a NoSQL database if I had the gumption to look up what that exactly means rather than making assumptions based on the words involved), the collection of seven DayAvailability objects is stored with the staff member. I.e. I load the StaffMember, I get the DayAvailibility objects.</p>
+<p>This is fine and dandy for our staff edit screen where we want to display the availability of the staff member. It’s also okay for our “add appointment” screen where we want to make sure that the appointment time falls within the staff’s availability.</p>
+<p>Now let’s add a new scenario: A customer wants to book a massage at 2pm on Saturday. We open the book appointment screen and notice there are no slots available. The customer says “When’s the earliest after 2 I can get in?” We click on the handy new “find next available” link…</p>
+<p>There are a couple of ways to implement this. Let’s try a naive approach where the system advances every half hour and checks to see if anyone is available that can perform the service. There are a few factors to consider but one of those factors is which staff members are available at 2:30.</p>
+<p>In order to perform this query, we need to load each staff member and look through his or her availability. When it would be much easier to do a search like “Find an availability interval that includes 2:30 and return the staff member for it.”</p>
+<p>Because of issues like these, we often have to rethink the relationship between objects. StaffMembers no longer carry a collection of DayAvailability objects. Rather, the DayAvailability object has a reference back to the staff member so that we can perform queries like the one above.</p>
+<p>This affects the staff edit page because now we need an extra query. When we load the data for the page, we first get the StaffMember, then we query for all DayAvailability objects that refer to that StaffMember.</p>
+<p><strike><a href="http://www.lostechies.com/blogs/sharoncichelli/archive/2010/08/30/three-simple-steps-to-improve-your-writing.aspx">Basically</a>, </strike>If you look closely, we’ve implemented a poor man’s lazy loading. The StaffMember now holds only the basic information. When we need its availability, we query for it.</p>
+<p>After coming to terms with this, I decided it was actually a good thing. In many cases, we don’t need the staff member’s availability. So we don’t need to bandy it about like a wounded badger.</p>
+<p>Who knew it was so much work being lazy?</p>
+<p>Kyle the Re-edumacated</p>

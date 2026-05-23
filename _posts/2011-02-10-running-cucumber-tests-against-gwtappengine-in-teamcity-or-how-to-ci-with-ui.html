@@ -1,0 +1,106 @@
+---
+layout: post
+title: Running cucumber tests against GWT/AppEngine in TeamCity, or “How to CI with
+  UI”
+date: 2011-02-10 13:16:47.000000000 -05:00
+categories: []
+tags:
+- BDD/TDD
+- BookedIN
+- Continuous Integration
+- Google App Engine
+- GWT
+- Java
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '9861'
+  dsq_thread_id: '349717629'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><strong>Executive summary</strong>: Setting up automated UI tests for an GWT/AppEngine application using TeamCity for CI and Cucumber for the tests.</p>
+<p>Settle in folks. I’ma feelin’ verbose…</p>
+<p>Sometimes this “best tool for the job” schtick is a royal pain in the raccoon when it comes to putting them together. We chose Google Web Toolkit because it is designed specifically for the type of app we want to build. Google App Engine made sense because of its integration with GWT. We went with Ruby/Cucumber for the UI tests because we recognized its power in this area and we were lucky enough to have a resource available to help guide us through the learning curve. For our CI server, we have TeamCity because…well, okay, I have no idea if it’s the best. It works well and I know how to use it. There’s only so much time you can spend for R&amp;D (outside of family reunions, at least).</p>
+<p>I’ve been happy with all four pieces. GWT has proved its worth and we’ve been CI’ing for many months, happily compiling and running unit tests. The UI tests have been a bit slower to catch up but they work really well, especially lately since we’ve made a shift towards (what I think is) BDD.</p>
+<p>We’ve been running the UI tests against a deployed version of the app on AppEngine, one specifically set aside for UI tests because from experience, trying to show someone the app while the UI tests are constantly clearing and resetting the data makes for a poor demo experience.</p>
+<p>Recently, I’ve switched the tests over to run against devmode, which is a way of running a GWT/AppEngine app locally. Usually it’s used for debugging as it allows you to step through Java client code in an IDE.</p>
+<h2>Why devmode?</h2>
+<p>Running against a deployed version works reasonably well but has led to a good number of scenarios like:</p>
+<p><em>Given I’m on the user form      <br />And I wait 2 seconds so the watermark has time to load</em><em>      <br />And I fill in the password       <br />And I press “Save”       <br />And I wait 5 seconds so the screen can finish loading       <br />Then hopefully I’ll see a message at the top. But even if you do, mark the test failed anyway ‘cause the hillbilly has nothing better to do than rerun failing tests and watch them pass locally.</em></p>
+<p>(&lt;Random deity&gt; bless Capybara for allowing me the freedom to write tests to express my *real* intent.)</p>
+<p>That is, the tests needed to be told to pause every once in a while to allow things time to load. This isn’t to say the app is slow, just that computers are fast. And until we find a way to instantaneously populate a cascading dropdown, computers will continue to have an edge.</p>
+<p>Devmode, on the other hand, is crazy fast if you don’t have it configured for debugging (i.e. you don’t add the gwt.codesvr parameter to the URL). It requires you to GWT compile the app first but hey, it’s a CI server; it can wait the extra three minutes to do that.</p>
+<p>Another issue with this: using a deployed version requires the latest code to be deployed first. Granted, we have automated this in the CI server but it still adds fifteen to forty-five minutes to the process depending on how much bandwidth GoDaddy deems appropriate for our server on any given day.</p>
+<p>Finally, there are quotas to consider. Every action on our application is logged and we have to be mindful of how much CPU time we’re using, how much bandwidth, how many emails get sent out, etc. At this stage, it’s unlikely we’ll reach those quotas but an errant test could potentially have costs associated with it.</p>
+<p>So between the slow tests, the deployment time, and the potential cost, an obvious solution was to run the tests in devmode.</p>
+<h2>Hosted mode/devmode</h2>
+<p>If you create a GWT app with the built-in webAppCreator, you get a nice little Ant build file with a target that launches the app in devmode (nee hosted mode). I had to do some finagling to get it to work though. Here’s the final target in Ant (formatted to fit the width):</p>
+<pre class="code"><span style="color: #bb5e00">&lt;target name=</span><span style="color: green">&quot;devmode&quot; </span><span style="color: #bb5e00">depends=</span><span style="color: green">&quot;&quot; </span><span style="color: #bb5e00">description=</span><span style="color: green">&quot;Run development mode&quot;</span><span style="color: #bb5e00">&gt;
+  &lt;java fork=</span><span style="color: green">&quot;true&quot; </span><span style="color: #bb5e00">classname=</span><span style="color: green">&quot;com.google.gwt.dev.DevMode&quot; 
+    </span><span style="color: #bb5e00">dir=</span><span style="color: green">&quot;${basedir}/war&quot; </span><span style="color: #bb5e00">spawn=</span><span style="color: green">&quot;true&quot;</span><span style="color: #bb5e00">&gt;
+    &lt;classpath&gt;
+      &lt;pathelement location=</span><span style="color: green">&quot;src&quot; </span><span style="color: #bb5e00">/&gt;
+      &lt;path refid=</span><span style="color: green">&quot;project.class.path&quot; </span><span style="color: #bb5e00">/&gt;
+      &lt;path refid=</span><span style="color: green">&quot;tools.class.path&quot; </span><span style="color: #bb5e00">/&gt;
+    &lt;/classpath&gt;
+    &lt;jvmarg value=</span><span style="color: green">&quot;-Xmx512M&quot; </span><span style="color: #bb5e00">/&gt;
+    &lt;jvmarg value=</span><span style="color: green">&quot;-javaagent:${appengine.folder}/<br />          lib/agent/appengine-agent.jar&quot; </span><span style="color: #bb5e00">/&gt;
+    &lt;jvmarg value=</span><span style="color: green">&quot;-Duser.dir=${basedir}/WAR&quot; </span><span style="color: #bb5e00">/&gt;
+    &lt;arg line=</span><span style="color: green">&quot;-war&quot; </span><span style="color: #bb5e00">/&gt;
+    &lt;arg value=</span><span style="color: green">&quot;${basedir}/war&quot; </span><span style="color: #bb5e00">/&gt;
+    &lt;arg line=</span><span style="color: green">&quot;-logLevel&quot; </span><span style="color: #bb5e00">/&gt;
+    &lt;arg value=</span><span style="color: green">&quot;INFO&quot; </span><span style="color: #bb5e00">/&gt;
+    &lt;arg value=</span><span style="color: green">&quot;-server&quot; </span><span style="color: #bb5e00">/&gt;
+    &lt;arg value=</span><span style="color: green">&quot;com.google.appengine.tools</span></pre>
+<pre class="code"><span style="color: green">        .development.gwt.AppEngineLauncher&quot; </span><span style="color: #bb5e00">/&gt;
+    &lt;arg value=</span><span style="color: green">&quot;net.bookedin.bam.BAM&quot; </span><span style="color: #bb5e00">/&gt;
+  &lt;/java&gt;
+&lt;/target&gt;
+</span></pre>
+<p>Most of this you can glean yourself if you look at the arguments tab of the GWT run <a href="http://kyle.baley.org/content/binary/Windows-Live-Writer/02a3fa52d758_1384C/Config_2.png"><img style="background-image: none; border-right-width: 0px; margin: 0px 0px 24px; padding-left: 0px; padding-right: 0px; display: inline; float: right; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="Config" border="0" alt="Config" align="right" src="/assets/Config_thumb.png" width="244" height="155" /></a>configuration in Eclipse. Some notes on discrepancies ‘twixt this and the default one:</p>
+<h3>AppEngine support</h3>
+<p>The second <font face="Courier New">&lt;jvmarg&gt;</font> and the second and third last <font face="Courier New">&lt;arg&gt;</font> values are included to support AppEngine. In some recent upgrade to AppEngine, the javaagent JVM argument was added.</p>
+<h3>Changing the working directory</h3>
+<p>If you leave the working directory as is, you’ll get a warning that the working directory doesn’t match the WAR directory. In most cases, this won’t matter. For us, we have files we wish to access so we need the working directory to match in order to access them.</p>
+<p>To do this, we added the dir attribute to the <font face="Courier New">&lt;java&gt;</font> task and added the last <font face="Courier New">&lt;jvmarg&gt;</font> argument. We also updated the argument value for the –war parameter.</p>
+<h3>Logging</h3>
+<p>When you launch the app, the logLevel parameter needs to match what’s in your web.xml file.</p>
+<h3>Spawn=”true”</h3>
+<p>I’ll come back to this.</p>
+<h2>Running the UI tests</h2>
+<p>This wasn’t much of an issue. We run our UI tests with cucumber in Ruby. From what I can tell, it’s a standard implementation. And TeamCity supports it natively. Set Rake as the runner and run your cucumber task like you normally would.</p>
+<h2>Killing dev mode</h2>
+<p>The reason we added <font face="Courier New">spawn=”true”</font> to the <font face="Courier New">&lt;java&gt;</font> task above is to allow the Ant task to actually finish once devmode is launched. Without it, the process waits until devmode is finished before allowing you to continue. Which means it won’t go on to the next step in the CI process: running the UI tests.</p>
+<p>Because of this, we needed a way of killing devmode after it had been started:</p>
+<pre class="code"><span style="color: #bb5e00">&lt;target name=</span><span style="color: green">&quot;kill&quot;</span><span style="color: #bb5e00">&gt;
+      &lt;exec executable=</span><span style="color: green">&quot;taskkill&quot;</span><span style="color: #bb5e00">&gt;
+          &lt;arg value=</span><span style="color: green">&quot;/fi&quot;</span><span style="color: #bb5e00">/&gt;
+          &lt;arg value=</span><span style="color: green">'&quot;Windowtitle eq GWT Development Mode&quot;'</span><span style="color: #bb5e00">/&gt;
+      &lt;/exec&gt;
+&lt;/target&gt;
+</span></pre>
+<h2>&#160;</h2>
+<h2>Putting it together</h2>
+<p>This was harder than one might expect and we still don’t quite have it right. We now have three TeamCity build configurations, one for each step above:</p>
+<ul>
+<li>Launch devmode </li>
+<li>Run tests </li>
+<li>Kill devmode </li>
+</ul>
+<p>“Run tests” is configured to run upon a successful “Launch devmode” build. And “Kill devmode” runs upon any build, successful or otherwise, of “Run tests”.</p>
+<p>Note that as of TeamCity 6, you can have multiple build steps per configuration. And indeed, my first pass at this was one configuration with three build steps. But as per <a href="http://confluence.jetbrains.net/display/TCD6/Configuring+Build+Steps">the documentation</a>: <strong>If a build step fails the rest are not executed.</strong></p>
+<p>This automatically means “Kill devmode” has to be a separate configuration because I don’t want devmode hanging around active if any of the tests fail. (Alternatively, I could configure the build not to fail if any tests fail but…c’mon!)</p>
+<p>The reason we separated the first two steps is that the Java code lives in a separate repository than the UI test scenarios. If we combine the two steps, then we need to pull both repositories. This is fine but I also want to configure the build to launch when code is checked in on only one of them, not both. By separating the steps, the first runs on one repository and the second on another. So I can configure the first to run whenever any Java code is checked in.</p>
+<p>But this doesn’t work either. The UI tests take about forty minutes to run (which, I should note, is half an hour shorter than they did against the deployed version of the app). If any code is checked in during that forty minutes, “Launch devmode” will kick off again and fail miserably.</p>
+<p>That said, I’ve just now thought of a better solution that I will try the minute I click Publish. We already have a build configuration that runs the unit tests. I’m going to combine the first two steps into a single configuration again and make it contingent on a successful build of <em>that</em> configuration. That way, even if someone checks in code while the UI tests are running, it won’t launch devmode until the UI tests are done because they’re both part of the same configuration.</p>
+<p>I’m skipping a whole lot of details here so if you’re interested, ping me in the comments or offline.</p>
+<p>As Joe Jackson says in Happy, Loving Couples: Right, that’s enough.</p>
+<p>Kyle the Configurated</p>

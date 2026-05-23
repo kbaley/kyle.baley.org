@@ -1,0 +1,52 @@
+---
+layout: post
+title: Getting ASP.NET MVC to do the dirty work
+date: 2008-02-25 22:50:00.000000000 -05:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '658309642'
+  pvc_views: '1136'
+  _edit_last: '1'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Hey, whaddaya know! I have some actual feedback to give on something in the form of &quot;boy, I wish the product could do X&quot;. Who knew I had evaluation skillz?</p>
+<p>The product is ASP.NET MVC and I'm implementing some pretty standard functionality: Get the data from the user and save it in the database. For this post, we'll call the object being saved a Critter.</p>
+<p>One of the properties on a Critter is Species and its value is selected from a dropdown list. This is not such a far cry from Scott Guthrie's equally descriptive <a href="http://weblogs.asp.net/scottgu/archive/2007/12/09/asp-net-mvc-framework-part-4-handling-form-edit-and-post-scenarios.aspx" target="_blank" mce_href="http://weblogs.asp.net/scottgu/archive/2007/12/09/asp-net-mvc-framework-part-4-handling-form-edit-and-post-scenarios.aspx">Product/Category example</a> which is an okay example if you're looking only for education and not entertainment.</p>
+<p>Like Scott's version, I'm passing what amounts to a DTO as the ViewData. The DTO includes a list of Species to select from as well as the actual Critter object. You fill in the name of the critter, select your species, and click Save and watch the magic happen in the form of saving the Critter to the database.</p>
+<p>Now, according to the tutorial, there are two ways to create your Critter object in the Create action. The first way is to specify a method parameter for each property. For example:</p>
+<pre class="c-sharp" name="code">[ControllerAction]
+public void Create( string CritterName, int SpeciesID )
+{
+    Critter critter = new Critter( );
+    critter.Name = CritterName;
+    critter.SpeciesID = SpeciesID;
+    // Do &quot;stuff&quot; with the critter
+}</pre>
+<p>The second way is shorter and possibly cleaner:</p>
+<pre class="c-sharp" name="code">[ControllerAction]
+public void Create( )
+{
+    Critter critter = new Critter( );
+    critter.UpdateFrom( Request.Form );
+    // Do &quot;stuff&quot; with the critter
+}</pre>
+<p>This one is kinda cool if a little too magic. Updating from a NameValueCollection sounds like it might be fragile but they seem to have a good collective head on their shoulders so that might not be a concern.</p>
+<p>Here's where my wish list comes in. Neither of these methods are how I would code the thing if I were doing it in, say, a Windows app. Ideally, I'd like to be able to do this:</p>
+<pre class="c-sharp" name="code">[ControllerAction]
+public void Create( ICritter critter )
+{
+    // Do &quot;stuff&quot; with the critter
+}</pre>
+<p>That is, I'd like the framework to create my critter for me. It can do this for primitive types but not so much with objects. Admittedly, this is probably a tall order without getting back into a ViewState state of being but a hillbilly can dream, can't he?</p>
+<p>Kyle the Utopian</p>

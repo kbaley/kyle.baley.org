@@ -1,0 +1,78 @@
+---
+layout: post
+title: Many-to-many relationships with data attached in NHibernate
+date: 2008-12-24 20:56:43.000000000 -05:00
+categories: []
+tags:
+- NHibernate
+status: publish
+type: post
+published: true
+meta:
+  hl_twitter_has_auto_tweeted: 'New post: Many-to-many relationships with data attached
+    in NHibernate, Full text: http://blog.baley.org/?p=97'
+  pvc_views: '1504'
+  dsq_thread_id: '349695767'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I'm such a nice brother. For Christmas this year, I got my older brother an MVC application to help him with some of his community work for his land surveying responsibilities. In return, I've got a nice little app that's got at least two more posts in it and probably just as many <a href="http://www.dimecasts.net" target="_blank">Dimecasts</a>.</p>
+<p>I'll describe the domain that led to this post so's I don't have to change any of the sample code I'll inevitably paste in here.</p>
+<p>We have land surveyors. Each one, over the course of his or her career, will use &quot;monuments&quot;. Which as far as I can tell are those big sticks with orange paint on the end you often see stuck into the ground. Why are they called something as grandiose as monuments? My brother likes to say it's the second oldest profession in the world (and given what some of them charge, they aren't far removed from the first). So in ye olde dayes, instead of using sticks, they'd erect monuments. See, the Pyramids and the Eiffel Tower aren't actually the grand constructions you think they are. They're just the result of diligent land surveyors trying to find the property line.</p>
+<p>Anyway, I'm getting off track (though to my credit, I took longer than usual to do so this time). A surveyor will use monuments/sticks and they each one has an official label. These days, the label appears to be related to the company you work for. So all surveyors currently working for Tango &amp; Cash Geomatics will use monuments labelled TC. If a surveyor jumps ship over to Rowan &amp; Martin Land Surveyors, he'll then use a monument labelled RM. And so on and so forth.</p>
+<p>Here are the tables involved:</p>
+<p><a href="http://codebetter.com/blogs/kyle.baley/WindowsLiveWriter/22191e300de0_D3F4/image_2.png"><img style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="167" alt="image" src="/assets/image_thumb.png" width="644" border="0" /></a> </p>
+<p>A pretty standard many-to-many relationship. But where this differs from almost all of the NHibernate examples you see is that there is data attached to the relationship. I.e. it's not enough that we know Sandy McLean used monument TH, we want to know the period in which he and/or she used it.</p>
+<p>Now, I'm using Fluent NHibernate here because, well, it's my app. I don't to answer to you people. And the question arose, how do I map this to my domain?</p>
+<p>I've skipped an obvious precursor question though. Namely: what does the domain look like. This may not be crazy obvious at first glance. Of course, there is a Surveyor object and a Monument object (sparse as it is at the moment). And you might think that a surveyor has a collection of Monuments but that's not the case.</p>
+<p>In fact, as was pointed out to me by a few people (acknowledgements are at the end), the relationship 'twixt Surveyors and Monuments is a domain concept in its own right. That is, we need another object to represent that relationship. A MonumentAssignment, for example, which contains the properties you might expect: Monument, Surveyor, YearStarted, and YearEnded.</p>
+<p>Mapping the MonumentAssignment with Fluent NHibernate was relatively easy (&quot;relatively&quot; being the key word; this *is* NHibernate we're dealing with):</p>
+<pre class="c-sharp" name="code">public class MonumentAssignmentMap : ClassMap<monumentassignment>
+{
+    public MonumentAssignmentMap( )
+    {
+        WithTable( &quot;SurveyorMonument&quot; );
+        Id( x =&gt; x.ID, &quot;SurveyorMonumentID&quot; );
+        References( x =&gt; x.Surveyor, &quot;SurveyorID&quot; )
+            .WithForeignKey( &quot;SurveyorID&quot; )
+            .FetchType.Join( );
+        References( x =&gt; x.Monument, &quot;MonumentID&quot; )
+            .WithForeignKey( &quot;MonumentID&quot; )
+            .FetchType.Join( );
+        Map( x =&gt; x.YearStarted );
+        Map( x =&gt; x.YearEnded );
+    }
+}</monumentassignment></pre>
+<p>The References calls required some Googling. They basically allow you to map a class to multiple tables.</p>
+<p>Now to the Surveyor map. At first, I thought this required the use of HasManyToMany because, y'know, this is a many-to-many relationship. That's not quite true. Yes, in one sense, a Surveyor has many Monuments and a Monument can have many Surveyors but in fact, a Surveyor isn't directly related to Monument. It is related to MonumentAssignments. In a many-to-many relationship, this intermediate object is usually left out because it doesn't have any meaning other than to relate two objects. In our case, it has a temporal meaning outside of just the relationship itself.</p>
+<p>So now, our Surveyor has a many-to-one relationship with MonumentAssignment. Monument, in turn, also has a many-to-one relationship with MonumentAssignment. With that in mind, we can map our Surveyor class thusly:</p>
+<pre class="c-sharp" name="code">public class SurveyorMap : ClassMap<surveyor>
+{
+    public SurveyorMap() {
+        WithTable(&quot;Surveyor&quot;);
+        Id(x =&gt; x.ID, &quot;SurveyorID&quot;);
+        
+        Map(x =&gt; x.CommissionNumber);
+        Map(x =&gt; x.Surname);
+        Map(x =&gt; x.GivenNames);
+        Map(x =&gt; x.YearCommissionGranted);
+
+        HasMany<monumentassignment>( x =&gt; x.Monuments )
+            .Cascade.AllDeleteOrphan( )
+            .WithKeyColumn( &quot;SurveyorID&quot; );
+    }
+}</monumentassignment></surveyor></pre>
+<p>That's it. In the end, it wasn't nearly as complicated as it first seemed. Of course, two key ideas led to this (again, relative) simplicity:</p>
+<ul>
+<li>MonumentAssignment is a domain concept in its own right</li>
+<li>Surveyor has a many-to-one relationship with MonumentAssignment, *not* a many-to-many relationship with Monument</li>
+</ul>
+<p>This post was brought to you by <a href="http://colinjack.blogspot.com/" target="_blank">Colin Jack</a>, <a href="http://chadmyers.lostechies.com/" target="_blank">Chad Myers</a>, <a href="http://shane.jscconsulting.ca/" target="_blank">Shane Courtrille</a>, <a href="http://blog.jagregory.com/" target="_blank">James Gregory</a> and the number 12.</p>
+<p>Merry Christmas!</p>
+<p>Kyle the Monumental</p>

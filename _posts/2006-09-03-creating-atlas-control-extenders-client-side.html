@@ -1,0 +1,28 @@
+---
+layout: post
+title: Creating Atlas Control Extenders client-side
+date: 2006-09-03 13:22:32.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '913'
+  dsq_thread_id: '631995333'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Y'know, I don't generally consider myself a stupid&nbsp;hillbilly but I have to say that doing stuff in <a href="http://atlas.asp.net">Atlas</a> that's outside the scope of the documentation is pretty hard. My latest abandoned-for-now project is embedding extender controls from the <a href="http://atlas.asp.net/atlastoolkit">Atlas Control Toolkit</a> into Gadgets for use in live.com.</p>
+<p>Seems Gadgets don't allow server-side controls, which is understandable, so I was looking for a way to embed extenders into my page with javascript. Thanks to the clear and surprisingly prompt <a href="http://forums.asp.net/1388187/ShowThread.aspx">responses</a> of honorary hillbilly, Ted Glaza, I am now on my way to having a page with client-created Atlas controls. (By the by, the Atlas Control Toolkit <a href="http://www.codeplex.com/Wiki/View.aspx?ProjectName=AtlasControlToolkit">codebase</a> is now completely public, including the ExtenderBase. Doesn't look like that's quite in the CTP yet but check out the latest source.)</p>
+<p>Unfortunately, it seems like there are issues with Atlas Gadgets themselves on live.com. I have been able to <a href="http://atlas.asp.net/docs/Walkthroughs/DevScenarios/gadget.aspx">install</a> a basic Atlas gadget that contains only the word, "moo". But I have yet to be able to successfully remove it from my live.com page. Whenever I try, I am redirected to my gadget's XML. Others are having <a href="http://forums.asp.net/thread/1368244.aspx">different issues</a>, so until those are resolved, I have enough problems to deal with just trying to get my project working on a basic functionality level, let alone as a Gadget.</p>
+<p>But if these little kinks do eventually work themselves out, this will be a tremendous boon to Gadget development. The <a href="http://microsoftgadgets.com/livesdk/docs/default.htm">existing SDK</a> leaves much to be desired. Seems like a big step backward to have to build your entire thingamabob in javascript.</p>
+<p>This week's "oh yeah" moment for migrating from an old laptop to a new one: Indexing Service index for a document repository and the corresponding SQL Server linked server that lets me query the repository along with SQL metadata.</p>
+<p>*UPDATE* Sweet Jayzus, I need to type these things up faster or install <a href="http://graysmatter.codivation.com/RollingYourOwnAutosaveWithAJAXAndHttphandlersTheTrueDasblog19StoryPart1.aspx">dasBlog 1.9</a>.</p>

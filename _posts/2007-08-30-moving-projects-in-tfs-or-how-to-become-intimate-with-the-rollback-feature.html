@@ -1,0 +1,69 @@
+---
+layout: post
+title: Moving projects in TFS, or "How to become intimate with the rollback feature"
+date: 2007-08-30 13:35:36.000000000 -04:00
+categories: []
+tags:
+- Development
+- Tools
+- Visual Studio
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '10726'
+  dsq_thread_id: '349726756'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Having been having a merry old time moving projects around in our solution in Team Foundation Server. We had a few that had strayed from the folder where they were supposed to live and we can't have free-thinkin' VS projects now, can we? Anyway, there was a bit of a learning curve involving more than one rollback. Plus I coined at least three new words and phrases but it's all good now, as the kids say. So forthwith is my guide to doing the same in your project (as in your software project, not your Visual Studio project, rather your Visual Studio solution, I'm...ummm...rambling, aren't I).</p>
+<p>Underlying guidelines:</p>
+<ul>
+<li>One at a time. Don't try to get cocky and move all your projects in one shot. You'll save yourself days of pain if you move them individually within one "check-in" session. (OK, maybe not *days* of pain but certainly precious minutes.)
+</li>
+<li>Rebuild and run your tests often. After you re-add your projects, before you check in, after you re-get the latest version, pretty much every second step of the process.
+</li>
+<li>If at all possible, make sure everyone has checked in pending changes, *especially* if they have stuff checked out in one of the projects you intend to move.</li>
+</ul>
+<p>Now to the heart of the matter:</p>
+<ol>
+<li>Make sure you have the latest version of the solution and have nothing checked out.
+</li>
+<li>Rebuild and run your tests.
+</li>
+<li>Remove the project from the solution. TFS should check out any projects that have a reference to the one you just emasculated.
+</li>
+<li>Physically move the project to where you want it to be in Windows Explorer.
+</li>
+<li>Re-add the project to the solution. It will be marked as "not under source control" which is a bit of a lie.
+</li>
+<li>Loop through each project in the solution checking to see if it has been checked out. This is your indication that the project has a reference to the one you just moved. Re-add the reference to the moved project.
+</li>
+<li>Re-build and run your tests.
+</li>
+<li>Open the "Change source control" dialog. (Alt-F, R, O)
+</li>
+<li>Unbind the project you just moved and click OK. It should be easy to find as it will be marked as Invalid.
+</li>
+<li>Add the project back to source control. (With the project selected, Alt-F, R, E.) With any luck, TFS should add it in the appropriate path, adding any necessary folders along the way.
+</li>
+<li>Re-build and run your tests.
+</li>
+<li>Check-in your changes.
+</li>
+<li>Re-build and run your tests.
+</li>
+<li>Open the Source Control Explorer (from Team Explorer) and find the project in its old location. Delete it and check-in your change.
+</li>
+<li>Re-build and run your tests.
+</li>
+<li>Repeat ad infinitum.</li>
+</ol>
+<p>One thing to watch out for is references to third-party assemblies. When I re-added our data access project, the compiler complained about a couple of NHibernate methods not existing. I dropped and re-added the NHibernate reference and they went away. If I had to guess, I would say that I have an old version of NHibernate in my GAC which the project tried to use after I moved it.</p>
+<p>Kyle the Gatekeeper</p>

@@ -1,0 +1,27 @@
+---
+layout: post
+title: 'Creating an Atlas Extender: Part 2.1'
+date: 2006-06-28 00:35:00.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '581'
+  dsq_thread_id: '362995874'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Blogged this entry&nbsp;from the airport recently so I could pretend I was&nbsp;too cool to waste precious minutes waiting for my flight to leave. My facade is dampened somewhat by the fact that I was&nbsp;in the Miami airport whose main culinary highlight is the fact that the Skittles in the kiosks have the new Limited Edition strawberry ice cream flavour. Donde es los wireless, MIA? Perhaps the bird's nest in the loft of the A terminal where I awaited my flight interfered with the signal somehow. Poor little fella. All he did was stare out the window wondering, "I know I got myself into this mess. How the &amp;$*% am I going to get out of it?" The parallels to my own career are a little frightening.</p>
+<p>A small update on my extender which is not forgotten but not progressing thanks to my recent trip to London (and if you're ever going to London, I'd suggest doing so during the World Cup). Got a couple of good <a href="http://forums.asp.net/thread/1312734.aspx">suggestions</a> from Ted Glaza on the Atlas forums. First was that my internal control should derive from Sys.UI.Control which is good to know.</p>
+<p>The second is that a similar control is already in the works in the new toolkit. It's an accordion control and it's still in their prototype project. I didn't quite get it to work completely but enough to see how it was going to do it. I just glanced at the implementation briefly and I think I'll continue on the path I'm on. I think it does what I want but what I didn't like was that each panel had to be implemented within the accordion control itself. What I'd rather do is specify my panels in the HTML, then elsewhere, define an extender that references. This is how the other controls work and this is how I expect an extender to work. That's why it's called an extender.</p>
+<p>Which is not to slight the accordion control, which is more robust in that it allows more than one panel to be defined instead of hardwiring it to two like I'm doing.</p>
+<p>Anyway, haven't done any actual coding (hillbilly or otherwise) since I last pontificated. Stay tuned.</p>

@@ -1,0 +1,30 @@
+---
+layout: post
+title: Javascript references in Atlas
+date: 2006-09-26 14:15:00.000000000 -04:00
+categories:
+- dasBlog
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '834'
+  dsq_thread_id: '437793435'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>A couple of minor clean-up details on my recent Atlas journey.</p>
+<p>Firstly, during the upgrade, I again had to remove all references to blowery.web from the web.config in dasBlog. Not sure why. It works on my laptop, not on the server. Perhaps something to do with Windows 2003. I care not...for now. But don't you&nbsp;folks go makin' the Coding Hillbilly all pop'lar now.</p>
+<p>To clarify the javascript references for Atlas: There are a lot of them necessary for basic Atlas functionality. All of the Atlas .js files are in C:Program FilesMicrosoft ASP.NETAtlasv2.0.50727AtlasScriptLibrary[Debug|Release].</p>
+<p>The good news is you don't need to reference them yourself. The ScriptManager handles that for you. But if you are in an environment that doesn't allow ASP.NET server-side controls, like PHP, you need to copy these files somewhere in your project and reference them. In order. Don't ask me what the order is.</p>
+<p>The extenders in the Atlas Control Toolkit also require appropriate .js file references. These files are located directly in the codebase which is wherever you unzipped it.</p>
+<p>Again, good news here. If you add a CollapsiblePanelExtender server-side control to your .aspx page, you don't need to worry about these references. For dasBlog, however, the themes don't support server-side ASP.NET controls (as far as I know) so my options were: a) embed the server-side controls directly into the WebControl objects (which I did the first time around), or b) bring the .js files I needed into my theme folder and reference them directly</p>
+<p>The extender scripts aren't quite as order specific. You need to reference the AtlasControlExtender.js script first, I imagine, but after that, they're pretty much all independent of each other. The CollapsiblePanel is one exception because it relies on animation code in the AtlasUIGlitz.js script and for whatever reason, my ScriptManager wasn't including it. I imagine one of the ScriptManager properties could handle that but the less mucking with compiled code, the better.</p>

@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { formatPostDate, getArchivePosts } from "../../../lib/archive";
+
+const posts = getArchivePosts();
+---
+
+<BaseLayout
+  title="Writing Archive"
+  description="Older technical writing by Kyle Baley, preserved from the previous Jekyll blog."
+>
+  <section class="page-header">
+    <div class="container">
+      <p class="eyebrow">Writing Archive</p>
+      <h1>Older posts, kept for reference.</h1>
+      <p class="lead">
+        Older technical writing from earlier stages of my career. Some posts may be dated,
+        but they remain here for reference.
+      </p>
+    </div>
+  </section>
+  <section class="container section">
+    <div class="archive-list" aria-label={`${posts.length} archived posts`}>
+      {posts.map((post) => (
+        <a class="archive-post" href={post.archivePath}>
+          <time datetime={post.date.toISOString()}>{formatPostDate(post.date)}</time>
+          <strong>{post.title}</strong>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

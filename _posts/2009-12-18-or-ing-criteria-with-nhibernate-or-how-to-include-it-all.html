@@ -1,0 +1,139 @@
+---
+layout: post
+title: OR-ing criteria with NHibernate, or “How to include it all”
+date: 2009-12-18 21:03:17.000000000 -05:00
+categories: []
+tags:
+- NHibernate
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '354279422'
+  pvc_views: '2706'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Gonna delve away from CodeBetter tradition into more of the realm of our sister site, Devlicious. I.e. This post will be about code, not about <em>thinking</em> about writing code. Having gone through this monstrous exercise though, I gotta say, Ivory Tower Architect is looking like a <em>mighty</em> fine role these days.</p>
+<p>I’m working on a search interface that uses NHibernate to search for people using various criteria, such as Languages Spoken (generally a zero to many relation), Special Skillz, and Preferred Side Dish for Various Roadkill. It uses HBM files and a couple of the collections on the Person object are mapped as composite-elements, like so:</p>
+<pre class="xml" name="code">    &lt;class name=&quot;Person&quot; table=&quot;People&quot;&gt;
+    ...
+        &lt;bag name=&quot;SpecialSkills&quot; table=&quot;Mad_Skills&quot;&gt;
+            &lt;key column=&quot;PersonFK&quot; /&gt;
+            &lt;many-to-many class=&quot;Skill&quot; column=&quot;SkillFK&quot; /&gt;
+        &lt;/bag&gt;
+    ...
+        &lt;bag name=&quot;PersonalHygieneMilestonesReached&quot; table=&quot;Personal_Hygiene&quot;&gt;
+            &lt;key column=&quot;PersonFK&quot; /&gt;
+            &lt;composite-element class=&quot;PersonalHygiene&quot;&gt;
+                &lt;many-to-one name=&quot;HygieneAction&quot; column=&quot;HygieneFK&quot; /&gt;
+                &lt;property name=&quot;LastPerformed&quot; column=&quot;Date_Last_Performed&quot;/&gt;
+            &lt;/composite-element&gt;
+        &lt;/bag&gt;
+        
+    ...
+    &lt;/class&gt;</pre>
+<p>This is just a representative sample. The Person class has a collection of Skill objects (accessed via a property named SpecialSkills) as well as a collection of PersonalHygiene objects (mapped via the PersonalHygieneMilestonesReached property). The PersonalHygiene object contains a HygieneAction object (which is just an ID and Description) and a DateLastPerformed property.</p>
+<p>In the search interface, we'd like to search for people who have, say, bathed. (I'm ignoring the date last performed to avoid muddying the wa--err...clouding the issu---ummm, complicating things.) So the search interface gives us a dropdown list, the user selects “bathed”, and our NHibernate-based data access class goes on its merry way.</p>
+<pre class="c-sharp" name="code">public IList&lt;Person&gt; FindByPersonalHygiene( int PersonalHygieneId )
+{
+    var query = DetachedCriteria.For&lt;Person&gt;( )
+        .CreateAlias( &quot;PersonalHygieneMilestonesReached&quot;, &quot;hygiene&quot; )
+        .Add( Property.ForName( &quot;hygiene.Id&quot; ).Eq( PersonalHygieneId );
+    return query.GetExecutableCriteria( Session ).List&lt;Person&gt;( );
+}</pre>
+<p>Similarly, here's how we could find everyone who has a given special skill, say, &quot;Converses at a Third Grade Level.&quot;:</p>
+<pre class="c-sharp" name="code">public IList&lt;Person&gt; FindBySpecialSkill( int SpecialSkillId )
+{
+    var query = DetachedCriteria.For&lt;Person&gt;( )
+        .CreateAlias( &quot;SpecialSkills&quot;, &quot;skill&quot; )
+        .Add( Property.ForName( &quot;skill.Id&quot; ).Eq( SpecialSkillId );
+    return query.GetExecutableCriteria( Session ).List&lt;Person&gt;( );
+}</pre>
+<p>All well and good and does what we want. It’s slightly different than searching on a property of the Person object in that we are searching for the existing of an item in one of its collections. Hence, the use of CreateAlias.</p>
+<p>The next task: Add the ability to apply multiple filters to our list of people. If someone matches ANY of the supplied criteria, they are returned by the search. That is, we want to OR the criteria together.</p>
+<p>Let's search for anyone that has bathed OR has the ConversesAtAThirdGradeLevel special skill. Luckily, there is an Expression.Or method that, in theory, should make this easy. Let's take a look at this special case before generalizing some.</p>
+<pre class="c-sharp" name="code">public IList&lt;Person&gt; FindByHygieneOrSkill( int PersonalHygieneId, int SpecialSkillId )
+{
+    var query = DetachedCriteria.For&lt;Person&gt;( )
+        .CreateAlias( &quot;PersonalHygieneMilestonesReached&quot;, &quot;hygiene&quot; )
+        .CreateAlias( &quot;SpecialSkills&quot;, &quot;skill&quot; )
+	.Add( Expression.Or( 
+            Property.ForName( &quot;hygiene.Id&quot; ).Eq( PersonalHygieneId ), Property.ForName( &quot;skill.Id&quot; ).Eq( SpecialSkillId )
+        );
+    return query.GetExecutableCriteria( Session ).List&lt;Person&gt;( );
+}</pre>
+<p>This is essentially a combination of the two queries. We need to add all the aliases up front because Expression.Or takes two ICriterion objects, not two ICriteria objects. This can be generalized as well by modifying the FindByXXX methods so that they look more like this:</p>
+<pre class="c-sharp" name="code">public ICriterion AddAliasAndGetCriteriaForSpecialSkill( DetachedCriteria query, int SpecialSkillId )
+{
+    query.CreateAlias( &quot;SpecialSkills&quot;, &quot;skill&quot; );
+    return Property.ForName( &quot;skill.Id&quot; ).Eq( SpecialSkillId );
+}
+
+public IList&lt;Person&gt; GetPeopleMatching( SearchCriteria criteria )
+{
+    var query = DetachedCriteria.For&lt;Person&gt;( );
+    var disjunction = new Disjunction( );
+    if ( criteria.SpecialSkillId.HasValue )
+    {
+        var criterion = AddAliasAndGetCriteriaForSpecialSkill( query, criteria.SpecialSkillId.Value );
+        disjunction.Add( criterion );
+    }
+    if ( criteria.PersonalHygieneId.HasValue )
+    {
+	var criterion = AddAliasAndGetCriteriaForPersonalHygiene( query, criteria.PersonalHygiene.Value );
+        disjunction.Add( criterion );
+    }
+    query.Add( disjunction );
+    return query.GetExecutableCriteria( Session ).List&lt;Person&gt;( );
+}</pre>
+<p>Kinda messy with all the if statements and the specialized AddAliasAndGetCriteriaForXXX methods but those can be cleaned up. I switched to using a Disjunction because it allows you to chain a bunch of ICriterion objects together, rather than limiting it to two like Expression.Or does.</p>
+<p>The reason I won't show you the cleaned up code because when all is said and done, this won't actually work. If you look at the underlying query being executed, it looks something like this:</p>
+<pre class="sql" name="code">SELECT *    -- Not really * but you get my drift
+FROM Person p
+INNER JOIN Person_SpecialSkills pss ON p.Id = pss.PersonId
+INNER JOIN Person_PersonalHygiene pph ON p.Id = pph.PersonId
+WHERE pss.SkillId = @p0 OR pph.PersonalHygieneId = @p1</pre>
+<p>On the surface, this looked correct to me intuitively. It gave me results and those people had the specified skill and/or hygiene habit.</p>
+<p>But I noticed there were people missing in the results. Specifically, people that had either no special skills or no personal hygiene habits. Which is when the INNER JOIN assignment from my second year databases class came rushing back to me. Of course, if you use INNER JOIN, you exclude any data where there is no match between the two tables. So my little SQL statement above will include only people who have BOTH a special skill AND personal hygiene and only those that match the given criteria.</p>
+<p>Instead, I could use OUTER JOIN. But I didn’t much like how things were starting to meld together with the aliases and the criteria so I decided on a separate approach. In essence, for each search filter, I want to run a query. Then I want to return the list of people from all those queries. I could do that programmatically, I suppose. I.e. Execute the queries, then use List.Intersect to pull them all together.</p>
+<p>But that ain’t how the hillbilly rolls. Instead I went with subqueries. The underlying pseudo-SQL:</p>
+<pre class="sql" name="code">SELECT *
+FROM Person
+WHERE Id IN ( SELECT PersonId FROM Person_SpecialSkills WHERE SkillId = @p0 )
+OR Id IN ( SELECT PersonId FROM Person_PersonalHygiene WHERE PersonalHygieneId = @p1 )</pre>
+<p>To achieve this, I need slight modification to my original method</p>
+<pre class="c-sharp" name="code">public DetachedCriteria FindByPersonalHygiene( int PersonalHygieneId )
+{
+    var query = DetachedCriteria.For&lt;Person&gt;( )
+        .SetProjection( Projections.Property( &quot;Id&quot; ) )
+        .CreateAlias( &quot;PersonalHygieneMilestonesReached&quot;, &quot;hygiene&quot; )
+        .Add( Property.ForName( &quot;hygiene.Id&quot; ).Eq( PersonalHygieneId );
+    return query;
+}</pre>
+<p>The changes: return the actual query and specify a projection, which is fancy-Hibernate-speak for &quot;what fields to I want this query to return?&quot;.</p>
+<p>From here, I created the main search method:</p>
+<div style="padding-bottom: 1em; background-color: #eeeeee; margin: 1em; padding-left: 1em; width: 200px; padding-right: 1em; float: right; font-size: 8pt; padding-top: 1em">In this case, finders is a dictionary of Func&lt;int, DetachedCriteria&gt; objects keyed on a SearchType enum. It's initialized elsewhere. I use it as a sort of pseudo-strategy-type thing and if you claim that it's not *really* a strategy pattern, I won't disagree because I don't care. I just know it's cleaner than using a switch statement. </div>
+<pre class="c-sharp" name="code">public IList&lt;Person&gt; FindBy( IList&lt;SearchExpression&gt; expressions )
+{
+    var query = Session.CreateCriteria( typeof (Person) );
+    var disjunction = new Disjunction( );
+
+    foreach ( var expression in expressions )
+    {
+        var subquery = finders[expression.SearchType]( expression.Id );
+        disjunction.Add( Subqueries.PropertyIn( &quot;Id&quot;, subquery ) );
+    }
+
+    query.Add( disjunction );
+    return query.List&lt;Person&gt;( );
+}</pre>
+<p>The main method is pretty clean now. It loops through the list of all the filters the user has selected and adds an appropriate subquery, checking to see if the Person.Id is in the returned query.</p>
+<p>Now some of you may cry foul in the name of performance or some other NHibernate feature that makes all this obsolete. To you, I say, software is a journey, not a destination.</p>
+<p>Kyle the Tacit</p>

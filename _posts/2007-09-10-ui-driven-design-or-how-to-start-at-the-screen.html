@@ -1,0 +1,31 @@
+---
+layout: post
+title: UI-Driven Design, or "How to start at the screen"
+date: 2007-09-10 03:49:50.000000000 -04:00
+categories: []
+tags:
+- Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '990'
+  dsq_thread_id: '363268636'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Have been following a small, but growing, discussion on various approaches to design. The initial post I saw was by <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/09/06/bdd-tdd-and-the-other-double-d-s.aspx" target="_blank">Jeremy Miller</a> on the various double D's (heh!) with a sort of rebuttal/clarification by <a href="http://codebetter.com/blogs/scott.bellware/archive/2007/09/07/167623.aspx" target="_blank">Scott Bellware</a>. Personally, I don't feel I'm experienced enough to add my thoughts on the various flavours of x-driven design but I would like to add one: UI-driven design. (And my apologies to whomever posted saying they like to start from the UI. That prompted this introspective but I forget where I read it first. Jeremy Miller or <a href="http://timheuer.com/blog/" target="_blank">Tim Heuer</a> maybe?)</p>
+<p>At my current POB, we recently had a nice little design session where the team hunkered down and hashed out high-level pieces of the new feature. And while the ideas were flying around, I kept wondering how some of them would be presented in the UI. I asked more than once how the screen would look and I thought the same question even more but kept it to myself 'cause I think the team was getting a little annoyed&nbsp;at the question.</p>
+<p>But I didn't ask in a "are you sure you've thought this through" kind of tone. There are many cases where I simply can't grasp the subtleties of a feature unless I see how it's going to work in the final product.</p>
+<p>One feature we discussed: adding a user to a role for a particular project. There are any number of ways that could be designed, all valid, all maintainable, all happy and shiny. And if we were to build this in <a href="http://www.jpboodhoo.com" target="_blank">JP's Nothin' But .NET</a> course, we'd pick one, build out the domain, add some database code, then add in a screen to tie it all together at the end. And it would be good, partially because it's a classroom setting and the example is somewhat canned but mostly because JP would have the solution in his head already.</p>
+<p>But for me personally, I like to see the screen first. How is it going to be laid out? Does the screen show all users in all roles in all projects and let you maintain it on a global level? Or do you pick a project first and manage all the users within it? Or do you select a user and manage his or her project roles? Or both? These decisions could potentially have impacts on the design, not the least of which is defining what the aggregate root is.</p>
+<p>It seems natural to me to start with the UI. Specifically, the view. The thing that holds all the controls but isn't wired up to anything. From there, I can drive out the domain pretty easily. I don't necessarily need to start at the presenter and work up to the database but at least I have something concrete in my head that I'm working toward. And it makes sense to me to work more from the mindset of, "how is the user eventually going to use this?"</p>
+<p>There is a danger that you code too much to the UI. That you might pollute the domain with UI constructs. After all, what is a screen but a final visual representation of a user story anyway? So why bother with the screen? But when the user story is "An administrator should be able to add a super user to a project", that still leaves a lot of room for negotiation.</p>
+<p>To tie things back to&nbsp;the example, we went back and forth on the responsibility of the screen. And it wasn't until we laid out exactly which components (i.e user controls) would be on it that it become more obvious what that responsibility was. And in this example, we didn't crowd around a computer banging out HTML. Our UI consisted of a bunch of boxes on a whiteboard. But when it was finished, let me tell you, this hillbilly had zero questions about how the design would look.</p>
+<p>Kyle the User</p>

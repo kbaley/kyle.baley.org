@@ -1,0 +1,33 @@
+---
+layout: post
+title: Name dropping
+date: 2006-09-10 21:31:30.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+- Conscientious Coding
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1126'
+  dsq_thread_id: '598765621'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>So just as I had managed to justify not having to learn Test Driven Development, <a href="http://www.jameskovacs.com/blog/ATaleOfTwoEpiphaniesTDDAndMocking.aspx">James Kovacs</a> throws his hat into the ring. <a href="http://www.jpboodhoo.com/blog">JP Boodhoo</a> convinced me to at least be agnostic about the methodology some months ago. But James has made me feel downright guilty about not going into it further. Like Catholic-guilty.</p>
+<p>Not to speak against JP's arguments, which are very good. This is more psychological. Some very interesting conversations aside, I know JP more by reputation. I hear he's a brilliant guy from many people and I assume that to be true. But I know first-hand that James is a brilliant guy (and a <a href="http://graysmatter.codivation.com/CalgaryCodeCamp5KungFuKovacs.aspx">snappy dresser</a>) so when he extols the virtues of a topic upon which I'm sittting on the fence, to paraphrase a billboard near Steinbach, MB, I can no longer be neutral. (If you're familiar with Steinbach, you can imagine what the context of that billboard is.)</p>
+<p>So...ummm...that's the whole point of this post, I guess. That I should learn TDD and that other people are smart. Suppose I should point out some random technical junk to stave off a class action from my readership:</p>
+<ul>
+<li>FeedBurner FlareItems don't work with the release version of dasBlog 1.8. Latest builds have support for it as does the upcoming 1.9. Error comes from <a href="http://forums.feedburner.com/viewtopic.php?t=6700&amp;highlight=baley">a missing attribute</a> in the RSS.</li>
+<li>The following code will attach a TextboxWatermark Atlas Control Extender to an existing textbox using Javascript</li>
+</ul>
+<p><font size="2"></p>
+<p /></font><font color="#0000ff" size="2">var</font><font size="2"> textbox = </font><font color="#0000ff" size="2">new</font><font size="2"> Sys.UI.TextBox( $(&lt;&lt;ID of Textbox&gt;&gt;) );<br /></font><font color="#0000ff" size="2">var</font><font size="2"> watermark = </font><font color="#0000ff" size="2">new</font><font size="2"> AtlasControlToolkit.TextBoxWatermark( );<br />watermark.set_WatermarkText(&nbsp;"watermark text"&nbsp;);<br />watermark.set_WatermarkCssClass( </font><font color="#800000" size="2">"watermarked"</font><font size="2"> );<br />textbox.get_behaviors( ).add( watermark );<br />watermark.initialize( );</font></p>
+<p><font size="2">You'll need to include reference to a lot of Atlas scripts if you haven't already included a ScriptManager. The scripts are most likely in: C:Program FilesMicrosoft ASP.NETAtlasv2.0.50727AtlasScriptLibrary on your machine. You'll also need a reference to AtlasControlExtender.js and TextboxWatermark.js from the latest Atlas Control Toolkit build. (NOTE: In the latest release, the AtlasControlExtender is still a compiled assembly; the latest build makes its source available.)</font></p>

@@ -1,0 +1,63 @@
+---
+layout: post
+title: Using an NHibernate Formula to aid searching
+date: 2010-07-30 14:34:53.000000000 -04:00
+categories: []
+tags:
+- Linq
+- NHibernate
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '350988071'
+  pvc_views: '1614'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><strong>Executive Summary</strong>: Use a formula in an NHibernate mapping to facilitate searching the entire string, “LastName, FirstName”, for a User object.</p>
+<p>Will see how long this Executive Summary thing lasts. Getting tired of people wasting my time by posting comments saying I’m wasting their time. (I’m also working on an idea for curbing “<a href="http://codebetter.com/blogs/kyle.baley/archive/2010/07/28/why-java-or-how-to-describe-a-decision-process.aspx">Smells like fail</a>” comments as well but it’ll involve some serious changes to your browser. Or, based on the average age of people that say things like that, a call to your parents to discuss how much time you spend on Facebook.)</p>
+<p>When I’m not Google Web Toolkittin’, I have a nice side project that I use to keep my .NET skills sharp, keep one foot in the door, and whatever other reason I can think of to avoid saying the real reason, which is “pay the bills”. Because one thing start-ups ain’t got a lot of is stable (read: any) income.</p>
+<p>In said project, I have a page with an auto-suggest feature to search for users. I.e. you enter some text, and it finds any users with the entered text in the name and displays them in a dropdown. I’d show a screenshot but in the time between when I developed it and when I wrote this, the feature was dropped.</p>
+<p>The mechanics of the auto-suggest might be the subject of another post but I doubt it because it’s been covered to death (though not so much in <a href="http://www.sencha.com/">ExtJS</a> which is what we’re using). I’m going to talk about what happens in the back-end. That is, how do I get the data from the database with NHibernate.</p>
+<p>We’re using Linq to NHibernate so my first pass was straight-forward:</p>
+<pre class="c-sharp" name="code">public IList&lt;User&gt; Search(string searchText) {
+    var session = NHibernateSession.Current;
+
+    return ( from w in session.Linq&lt;User&gt;()
+                where w.FirstName.Contains(searchText) || w.LastName.Contains(searchText)
+                select w).ToList();
+}</pre>
+<p>This works exactly as one would expect. If the user enters &quot;will&quot;, it will display &quot;William F. Buckley&quot; and &quot;Ted Williams&quot; and &quot;William 'Wild Bill' W. Williamson&quot; in the search results. Or rather, it will show &quot;Buckley, William F.&quot;, &quot;Williams, Ted&quot;, and &quot;Williamson, William 'Wild Bill' W.&quot; because that's how we're displaying our search results.</p>
+<p>And to facilitate that display, we have a Name property on the User object:</p>
+<pre class="c-sharp" name="code">public string Name {
+   get { return LastName + &quot;, &quot; + FirstName; }
+}</pre>
+<p>Problem is that this search doesn't cover a common scenario. What if the user types 'Williams, T'? This would be a natural thing to do. They want Ted Williams, so they start typing Williams. The search results are too big and they are showing items in the &quot;Last, First&quot; format so it makes sense to keep typing and try to narrow it down further.</p>
+<p>The code above will return zero results for such a search. Really what we want is to search the Name property, like so:</p>
+<pre class="c-sharp" name="code">public IList&lt;User&gt; Search(string searchText) {
+    var session = NHibernateSession.Current;
+
+    return ( from w in session.Linq&lt;User&gt;()
+                where w.Name.Contains(searchText)
+                select w).ToList();
+}</pre>
+<p>Which doesn't work either because Name isn't a database field and as yet, NHibernate is not able to parse formulas in your properties and convert them into SQL or Criterion.</p>
+<p>But NHibernate *does* allow formulas if you describe the formula to it in the mapping. We're using Fluent NHibernate (assuming it hasn't been merged into the NHibernate project yet and completely replaced mapping files, which it should be):</p>
+<pre class="c-sharp" name="code">public class UserMapOverride : IAutoMappingOverride&lt;User&gt;
+{
+    public void Override(AutoMapping&lt;User&gt; mapping)
+    {
+        mapping.Map(x =&gt; x.Name).Formula(&quot;LastName + ', ' + FirstName&quot;);
+    }
+}</pre>
+<p>And update the Name property in the User object accordingly: </p>
+<pre class="c-sharp" name="code">public virtual string Name { get; private set; }</pre>
+<p>Now, our Search function works the way I want.</p>
+<p>Kyle the Formulaic</p>

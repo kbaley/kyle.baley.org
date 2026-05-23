@@ -1,0 +1,51 @@
+---
+layout: post
+title: Random responses to MVC comments
+date: 2008-08-06 14:34:06.000000000 -04:00
+categories: []
+tags:
+- ASP.NET MVC
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '821343092'
+  pvc_views: '935'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Some pretty good comments in my most recent post on (re-)learning HTML in order to work with MVC. A few worth expanding upon.</p>
+<hr />
+<p><a href="http://primedigit.com/">Will Shaver</a> says:</p>
+<p><em>Actually... I'd counter that Javascript is the hardest tool in the box to use correctly. Harder than c#, sql, asp.net, webforms, html etc. It has several KEY differences to all other object oriented languages in the standard toolbox. Prototypal inheritance, functions are objects, objects are containers.</em></p>
+<p><em>Even worse is the massive amount of BAD information out there for javascript. For example the || is the &quot;default&quot; operator and has different meanings in Javascript than in c#!</em></p>
+<p><em>For more, read your crockford....</em></p>
+<p><strong>The Hillbilly says:</strong></p>
+<p>Yeah, I did kind of gloss over the intricacies of Javascript. If you use it to its full capacity, it can be pretty tough to understand. I have only vague notions of its inheritance mechanism. But the Javascript libraries available today make it easy to use without having to delve crazy deep into the more advanced concepts. I'm dancing around the line between encouraging you to look into its inner workings and encouraging you to use a library so you don't have to. Not sure where the trade-off is because I don't think I've found it yet. But <a href="http://graysmatter.codivation.com/JavascriptRapedMyDogAndOtherFalsehoods.aspx">Javascript still isn't too bad</a>.</p>
+<hr />
+<p><a href="http://www.helephant.com/">Helen</a> says:</p>
+<p><em>For me the lack of server controls is a big reason that MVC doesn't look too appealing to me because they're a big help in reusing repeated elements on different pages. WebForms is definitely a framework that's showing it's age but I kind of feel like Microsoft threw the baby out with the bath water when they designed MVC.</em></p>
+<p><strong>The Hillbilly says:</strong></p>
+<p>To be clear, and you probably already know this, WebForms isn't going away by any stretch. And MVC is not the next evolution of WebForms. It's a framework for building apps on the web, just like WebForms is.</p>
+<p>But the nature of MVC as it applies to the web is such that server controls don't make a whole lot of sense. Server controls are all about managing state. The web is stateless. MVC doesn't throw away server controls. It just doesn't accommodate them because of environmental restrictions.</p>
+<p>Also, user controls are still supported in MVC, though again, you can't really use server controls in them. Only standard HTML elements. Which means you need to manage the state yourself. And in my experience, that's a good thing because user controls are traditionally where I've had to become, shall we say, &quot;familiar&quot; with the ASP.NET life cycle.</p>
+<hr />
+<p>Łukasz Podolak says:</p>
+<p><em>Could you explain :</em></p>
+<p><em>&quot;Or at the very least, that it's never been easier to add rounded corners to a DIV.&quot; ?</em></p>
+<p><strong>The Hillbilly says:</strong></p>
+<p>I was being flippant actually but just the same, I haven't had <em>too</em> much trouble. I'm using jQuery and <a href="http://plugins.jquery.com/project/jquery-roundcorners-canvas">this plug-in</a>. I did have a problem with it working in IE because it uses excanvas which apparently IE doesn't support natively. But <a href="http://code.google.com/p/explorercanvas/">this library</a> helped solve that issue. There are <a href="http://plugins.jquery.com/search/node/corners+type%3Aproject_project">other plug-ins</a> for jQuery and I'm sure you've tried some non-jQuery ones but I like this one because it doesn't add a bunch of nested DIVs to your elements to achieve roundedness.</p>
+<hr />
+<p><a href="http://www.dualbotic.com/dasBlog">Charlie Barker</a> says:</p>
+<p><em>The problem they have failed to come up with a solution for (as far as i know) is the 3rd party controls issue. 3rd party control developers need a way to plug their controls into the MVC framework. Without this small in-house dev teams that rely heavily on these controls will have to stick with webforms.</em></p>
+<p><strong>The Hillbilly says:</strong></p>
+<p>That question came up as well. As yet, I haven't found any companies offering third-party controls though I admit I haven't looked too hard. It'll be interesting to see what comes out because they'll be &quot;limited&quot; to what can be done in HTML. I don't foresee this being a big deal though because everything that's possible in WebForms should be possible in regular HTML, mostly because WebForms controls *are* HTML when you get right down to it. Besides which many of the vendors already offer AJAX versions of their controls. It will be a matter of getting their hands dirty and scaling back to the basics.</p>
+<hr />
+<p>Keep the comments coming. This was one of the easier blog posts to write.</p>
+<p>Kyle the Verbal</p>

@@ -1,0 +1,45 @@
+---
+layout: post
+title: Atlas Shrugged
+date: 2006-05-15 02:45:00.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '696'
+  dsq_thread_id: '362996690'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>(No, I've never read the book. Just want to sound more cultured than I am.&nbsp;A hillbilly can dream, can't he?)</p>
+<p>Been doing quite a bit of work with Atlas in preparation for the upcoming <a href="http://www.calgarycodecamp.com">Calgary Code Camp</a>. Part of it involves writing a traditional ASP.NET application and converting it to Atlas, a process that is mind-blowingly simple. Trust me, folks, there is no editting magic in the demos. Add a couple of &lt;atlas:UpdatePanel&gt; tags and a ScriptManager and you're done. I'll be demonstrating this approach live on <a href="http://www.calgarycodecamp.com">May 27</a> so come check it out if you're in the area.</p>
+<p>I don't generally question the inner workings of a new technology but I've always kind of liked what you can do with client-side scripting (which is what it was called in the olden days of the early 21st century; the acronym never really caught on for some reason). And since I'm going to purport to being an expert of some sort, I thought it best to dig behind the curtain a bit.</p>
+<p>When I first started working with UpdatePanels, my first thought was, of course: how is it generating the UpdatePanels client-side given how little work is needed to do it? Given what I know about AJAX, my initial suspicion was pretty sobering. Here's what I thought would happen when you clicked an element that normally causes a postback:</p>
+<ol>
+<li>All form elements are gathered together</li>
+<li>An XMLHTTP object posts back to the given page passing in the form elements</li>
+<li>The resulting page is parsed and the HTML for the UpdatePanel is removed from its HTML and injected into the client-side page</li>
+</ol>
+<p>The reason I thought this is that I couldn't see any other way of accomplishing this task. But if this was true, there is one pretty big concern: What are we gaining by switching to UpdatePanels? We are still posting all the form elements to a page and still generating the entire response. All we've done is add the overhead of parsing the page and injecting part of the response back into our client page. Sure it gets rid of screen flicker but that's only part of what makes client-side scripting so attractive.</p>
+<p>Luckily, there are smarter people than I working on the Atlas project. Here's what really happens when you perform a "postback":</p>
+<ol>
+<li>All form elements are gathered together</li>
+<li>An XMLHTTP object posts back to the given page passing in the form elements</li>
+<li>The resulting page is parsed and the HTML for the UpdatePanel is removed from its HTML and injected into the client-side page</li>
+</ol>
+<p>Yes, it's the same as the above list. The difference 'twixt the two is in the definition of "resulting page". In my original assumption, I thought that meant the entire page would get returned. But that doesn't appear to be the case. My first clue-in for this is that the response comes back as XML. I.E. It comes back in the responseXML object of the XMLHTTP, not the response object. The response contains only the HTML to be injected into each UpdatePanel along with some other necessary client-side script. That is, it doesn't return the entire page, only what has (potentially) changed.</p>
+<p>I'm not really sure how they've accomplished this. I didn't change any of the server-side code so how does it know to generate a delta response rather than a full one? My guess is that an Atlas HTTP handler is doing some work behind the scenes. Atlas does add a bunch of things to the web.config and I'm only vaguely aware of the inner workings of HTTP handlers and HTTP modules. (But James Kovacs' <a href="http://www.jameskovacs.com/blog/DevelopingAndTestingRoleBasedASPNETApplicationsWithImpostorHttpModule.aspx">ImposterHTTPModule</a> does look pretty cool.)</p>
+<p>In any case, this is not nearly as efficient as it could be. It generates a response for every UpdatePanel on the page regardless of whether it has changed or not.</p>
+<p>At least, that's what it does by default. By judicious use of Mode="Conditional" on the UpdatePanel, you can tell the Atlas framework to update the region only on certain conditions. For example, on a button click or when the Update( ) method is explicitly called in the code-behind. In this way, you can have multiple UpdatePanels on the page, each updating only when it makes sense to do so. And your developers can take the blue pill and stay in their little ASP.NET world without having to learn what Atlas can really do.</p>
+<p>It's very powerful and makes a better demo than the early DataSet and DataConnection demos from .NET 1.0 which were flashy but you'd never actually write an app that way (right?). UpdatePanels are easy to implement and you would actually use them in practice. But they are only a small part of the Atlas framework, which also includes an entire client-side library you can use to make the requests even more efficient (i.e. pass in and request only the data that you need and styling the results through DHTML or XSL or the declarative Atlas approach which I'm just getting into). </p>
+<p>So you could take the low road and just add UpdatePanels throughout your app without linking them to other controls or adding any further code. I wouldn't necessarily recommend the approach for new Atlas applications but it is fantastic for a first step in converting existing applications to use more client-side code. It produces a very quick win for very little code. And in many cases, the extra data passed back and forth is likely negligible. If you've got a fast network connection, the extra data going back and forth is likely negligible and should be balanced against the cost of having a team of monkeys, er...highly skilled developers build it using the client-side library.</p>
+<p>Caveat: Absolutely everything I've talked about here has been the result of my own research and I didn't exactly follow the scientific method. In other words, debugging Javascript is &amp;%*^ hard. I'm not associated with Microsoft nor have I talked with anyone on the Atlas team to confirm or deny any of my assumptions. For all intents and purposes, Atlas "appears" to work as I've described but I will be the first to back down if someone questions anything I've said based on their own experimentation or discussions with people who know better.</p>

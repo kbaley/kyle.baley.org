@@ -1,0 +1,91 @@
+---
+layout: post
+title: SimpleStateMachine on CodePlex
+date: 2008-06-02 13:13:07.000000000 -04:00
+categories: []
+tags:
+- ASP.NET MVC
+- Utilities
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '349697119'
+  hl_twitter_has_auto_tweeted: 'New post: SimpleStateMachine on CodePlex, Full text:
+    http://blog.baley.org/?p=134'
+  pvc_views: '1162'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I bet you didn't know hillbillies believe in kismet. Well, we do, mostly because it typically works in our favour. The minute things start going wrong, well, that's just plain someone else's fault and typically requires at least <a href="http://www.americanlawsuits.com/tre.html" target="_blank">one lawsuit</a>.</p>
+<p>But today, kismet. That's the only reason I can think of why someone would post a <a href="http://www.codeplex.com/SimpleStateMachine" target="_blank">SimpleStateMachine</a> project on CodePlex not three days after I started working on this very problem.</p>
+<p>&lt;-- snip --&gt;</p>
+<p>I've just cut out an Imperial tonne of back story that upon re-reading was boring as all git out, though wittily told. I'm going to skip to the implementation.</p>
+<p>Which still requires some knowledge of the worfklow I'm trying to implement.</p></p>
+<p>This image encapsulates quite a few false starts, most notably in the places where it &quot;branches&quot; off (the beige boxes). My first implementation was a flow where a job could be in three states at once. For example, a job could be &quot;To Be Invoiced&quot;, &quot;Awaiting Hydro Approval&quot; and &quot;Awaiting Regulatory Approval&quot; all at the same time. Not a traditional definition of a <a href="http://en.wikipedia.org/wiki/Finite_state_machine" target="_blank">State Machine</a> but one that I could start coding against nonetheless.</p>
+<p>Then comes the SimpleStateMachine that was oh so enticing but also a little less liberal with the rules of a state machine. So I moved, after much deliberation, to the above diagram in which the branches represent the launching of separate workflows. Thus, in a sense, a job *can* be in more than one state at once, but not in a given workflow. Now I could try out the SimpleStateMachine and still appeal to my sense of ancestral ambiguity.</p>
+<p>The code is surprisingly easy to follow, not least of which is because of the unit tests and demo application, both of which paint a pretty good picture of how the application can be used. When you need to step through it, you'll find things clearly separated out so it's pretty easy to figure out what's going on.</p>
+<p>I'm including the entirety of my main workflow below partially because I like testing out the scrollbars of your RSS reader but mostly so you can see how simple it is. I'm told it's in Boo format but it's my first exposure to the language so I haven't verified. All I know is that it works.</p>
+<pre name="code">workflow &quot;Basic Job&quot;
+
+state_identifier_target @JobStatus
+event_identifier_target @JobEvent
+
+on_enter_state      @PersistState, &quot;on_enter_state&quot;
+
+_event @SetUp
+_event @DraftingCompleted
+_event @DraftingRejected
+_event @DraftingApproved
+_event @Invoiced
+_event @Paid
+_event @Uncollected
+_event @Cancel
+
+state @Ordered:
+  when @SetUp                &gt;&gt; @InDrafting
+  when @Cancel               &gt;&gt; @Cancelled
+	
+state @InDrafting:
+  when @DraftingCompleted     &gt;&gt; @ToBeChecked
+  when @Cancel                &gt;&gt; @Cancelled
+
+state @ToBeChecked:
+  when @DraftingRejected      &gt;&gt; @InDrafting
+  when @DraftingApproved      &gt;&gt; @ToBeInvoiced
+  when @Cancel                &gt;&gt; @Cancelled
+	
+state @ToBeInvoiced:
+  when @Invoiced              &gt;&gt; @AwaitingPayment
+  when @Cancel                &gt;&gt; @Cancelled
+	
+state @AwaitingPayment:
+  when @Paid                  &gt;&gt; @Closed
+  when @Uncollected           &gt;&gt; @BadDebt
+
+state @Closed
+
+state @BadDebt
+
+state @Cancelled</pre>
+<p>This is *almost* something I could assign to a business user to create. Not that I would. But they could certainly read it and figure it out with minimal coaching.</p>
+<p>You'll notice the <font face="Courier New">on_enter_state</font> task at the top. This means that the PersistState task (which is a custom task I've written to write the job status to the database) will execute each time we enter a state.</p>
+<p>This concept also applies to individual states. For example, this workflow doesn't totally match the diagram. I've omitted the part where it launches two other workflows. The way I plan to implement them is to modify the @ToBeInvoiced task as follows:</p>
+<pre name="code">state @ToBeInvoiced:
+  when @Invoiced              &gt;&gt; @AwaitingPayment
+  when @Cancel                &gt;&gt; @Cancelled
+  on_enter_state @LaunchHydroWorkflow, &quot;on_enter_state(ToBeInvoiced)&quot;
+  on_enter_state @LaunchApprovalWorkflow, &quot;on_enter_state(ToBeInvoiced)&quot;</pre>
+<p>That is, I will create custom tasks to launch the two other workflows after we enter the <font face="Courier New">ToBeInvoiced</font> state.</p>
+<p>So check out the <a href="http://www.codeplex.com/SimpleStateMachine" target="_blank">library</a> if you are working with workflows (and props to <a href="http://www.ayende.com/Blog/archive/2008/05/31/Simple-State-Machine.aspx" target="_blank">Ayende</a> for pointing me to the library to begin with). As an added bonus, the author is amazingly quick in responding to issues. In the time it took me to type this up, he added the ability to use an IoC container with your custom tasks and a more efficient way of searching for custom tasks. Both in response to questions I asked on the discussion list.</p>
+<p>Next post will likely be on the actual implementation of this workflow. Suffice it to say that the project lives up to the premise on the home page: </p>
+<blockquote>
+<p>&quot;The motiviation for creating this library was a dissatisfaction with the complexity and weight of Windows Workflow Foundation for creating, maintaining, testing and versioning of what should have been simple state machine workflows in our applications.&quot;</p>
+</blockquote>
+<p>Kyle the Flowed</p>

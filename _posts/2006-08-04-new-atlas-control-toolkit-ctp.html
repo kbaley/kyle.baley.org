@@ -1,0 +1,28 @@
+---
+layout: post
+title: New Atlas Control Toolkit CTP
+date: 2006-08-04 03:10:05.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '750'
+  dsq_thread_id: '362993563'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>One little thing before we get started. I've added FeedBurner flares to my posts and have noticed a distinct delay when the first post is rendered. Time will tell if my patience holds...</p>
+<p>So there's a new CTP for the <a href="http://atlas.asp.net/default.aspx?tabid=47&amp;subtabid=477">Atlas Control Tookit</a>&nbsp;with a bunch of new controls and presumably some bug fixes and improvements. The bug I encountered previously, where TextBoxWatermark and AutoComplete could not refer to the same textbox seems to be fixed at least.</p>
+<p>I notice the <a href="http://atlas.asp.net/atlastoolkit/Accordion/Accordion.aspx">Accordion</a> control is now a full-fledged control. It looks great. Transitioning 'twixt AccordionPanes is pretty snazzy and there are some nice configuration options on it.&nbsp;I tested it with my <a href="http://www.suvius.com/musicplayer">music player</a> thingy and got it up and running with a minimal amount of fuss except for one little issue. I no longer seem to have direct access to any ASP.NET controls within the AccordionPanes. I can get at them if I navigate through the various Controls and GetAccordionPanes collections/methods but the controls no longer exist as variables in my page. Which is a bummer because it means the other extenders I've added to the controls within the Accordion don't work anymore.</p>
+<p>Love the new <a href="http://localhost:3659/SampleWebSite/FilteredTextBox/FilteredTextBox.aspx">FilteredTextBox</a>, though. How many times have I cut and pasted my little javascript library to disallow certain characters in a textbox. Can't believe I didn't think of that. The <a href="http://localhost:3659/SampleWebSite/PagingBulletedList/PagingBulletedList.aspx">PagingBulletedList</a> has promise, too if the initial flicker can be taken out.</p>
+<p>One thing that is new and that I plan to post on the Atlas forums as soon as I'm done with you people: The AutoCompleteExtender throws a javascript error when it is attached to a textbox within a CollapsiblePanel that is collapsed at startup. Doesn't happen when the panel is expanded at startup and I'm pretty sure this wasn't happening before. If I'm feeling ambitious, I'll see if I can track it down myself but from past experience, there are smarter people working on Atlas than I am.</p>
+<p><font color="#ff0000"><strong>** UPDATE **</strong></font> The <a href="http://forums.asp.net/1363828/ShowThread.aspx">workaround</a> (and I hope they consider this a workaround) is to ensure your AutoCompleteExtender is declared before the CollapsiblePanel.</p>

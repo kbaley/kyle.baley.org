@@ -1,0 +1,30 @@
+---
+layout: post
+title: INNER JOINs are your friends
+date: 2006-02-15 22:20:00.000000000 -05:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '814'
+  dsq_thread_id: '362998336'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Time to make this thing interactive. I have a moderately strong opinion on something and need to know the performance ramifications.</p>
+<p>The topic is SQL. Sub-topic: inner joins. Very, VERY often, I will see SQL such as:</p>
+<div style="BORDER-RIGHT: black 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: black 1px solid; PADDING-LEFT: 0.5em; FONT-SIZE: 10pt; PADDING-BOTTOM: 0.5em; MARGIN-LEFT: 5em; BORDER-LEFT: black 1px solid; MARGIN-RIGHT: 5em; PADDING-TOP: 0.5em; BORDER-BOTTOM: black 1px solid; FONT-FAMILY: courier new; BACKGROUND-COLOR: #fafafa">SELECT&nbsp;&nbsp; *<br />FROM&nbsp;&nbsp;&nbsp;&nbsp; Employee e,<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EmployeeDepartment ed,<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Department d,<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EmployeePosition ep,<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Position p<br />WHERE&nbsp;&nbsp;&nbsp; e.EmployeeID = ed.EmployeeID<br />AND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ed.DepartmentID = d.DepartmentID<br />AND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e.EmployeeID = ep.EmployeeID<br />AND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ep.PositionID = p.PositionID<br />AND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e.EmployeeName = "Bobbie Sue Sister-Wife"</div>
+<p>This is, of course, valid SQL. And I hate it. Here is how I would write it:</p>
+<div style="BORDER-RIGHT: black 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: black 1px solid; PADDING-LEFT: 0.5em; FONT-SIZE: 10pt; PADDING-BOTTOM: 0.5em; MARGIN-LEFT: 5em; BORDER-LEFT: black 1px solid; MARGIN-RIGHT: 5em; PADDING-TOP: 0.5em; BORDER-BOTTOM: black 1px solid; FONT-FAMILY: courier new; BACKGROUND-COLOR: #fafafa">SELECT&nbsp;&nbsp;&nbsp;&nbsp; *<br />FROM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Employee e<br />INNER JOIN&nbsp;EmployeeDepartment ed<br />ON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.EmployeeID = ed.EmployeeID<br />INNER JOIN Department d<br />ON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ed.DepartmentID = d.DepartmentID<br />INNER JOIN EmployeePosition ep<br />ON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e.EmployeeID = ep.EmployeeID<br />INNER JOIN Position p<br />ON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ep.PositionID = p.PositionID<br />WHERE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e.EmployeeName = "Bobbie Sue Sister-Wife"</div>
+<p>Both will return the same results but I like the second much better. The reason is thus: the filter is blatantly obvious. In most cases, I know the inner joins will be for stupid little tables that were included for the sake of normalcy and I can ignore them. I don't want to sift through all that crap in my where clause just to find out what data I really want. This way, I can quickly see where my data is coming from (i.e. the inner joins) and how it is filtered (i.e. the where clause). It's not all munged together for the sake of saving a few keystrokes.</p>
+<p>This is especially true for complicated procedures and ones that involve outer joins. I never remember what direction += goes and it's not an easy thing to search for. Enter += into Google (or better yet, Google Groups) and see for yourself.</p>
+<p>Here's where the interactive part comes in. Which one performs better? Note that in most cases, I'll go with the second one anyway because I don't think the performance is that much different as to make a noticeable difference either way. And I do prefer <a href="http://kyle.baley.org/archive/2005/10/23/347.aspx">maintainable</a> code over more-performant-than-anyone-will-notice code. But if I'm ever doing work on Amazon's database, I'd like to justify my astronomical rate.</p>
+<p>So don't be shy. I'll be judging answers based on clarity of thought, support for my position, and potential clients.</p>

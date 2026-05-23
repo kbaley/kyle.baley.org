@@ -1,0 +1,36 @@
+---
+layout: post
+title: To search, perchance to find
+date: 2006-04-22 16:28:00.000000000 -04:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '624'
+  dsq_thread_id: '362997312'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Phew! I really need to be more careful when I promise to pontificate on a topic. Either that or lower my standards when writing them. As it is, I could spend at least another few days making the sample code a little more presentable.</p>
+<p><a href="http://kyle.baley.org/articles/379.aspx">Part 2</a> of the search article is up. I've converted it (and part 1) to an article to make it somewhat more permanent and so it doesn't get lost among the trappings of my other meanderings.</p>
+<p>A couple of extraneous tidbits I kept out of the article:</p>
+<ul>
+<li>I haven't spent much time on the UI because I wanted to focus on the SQL this time around. Besides, it takes me a while to come up with a decent UI that I'm remotely happy with and I have other projects I should be working on at the moment.
+</li>
+<li>Something new with BoundColumns: If you want the DataFormatString to work, you need to specify HtmlEncode="false". At least for date columns. Don't know why and don't care much.
+</li>
+<li>There's no validation anywhere. In the page where you generate data, it's expecting a number and will throw an error if you don't enter one. Same with the textboxes on the search page. I didn't put any thought into what would happen when you start throwing in funky characters.
+</li>
+<li>If you don't select anything in the listboxes or the Locations checkbox list, the search will not filter on that column. I.E. It will assume you've selected all values. This allows you to open the search page, click GO, and have all search results returned. This may seem reasonable but in a future article (probably the next one), I'll explain why this isn't how I would normally approach this.
+</li>
+<li>One thing that kind of annoyed me about ListBoxes and CheckBoxLists in .NET 1.0 and 1.1 is that you always had to iterate through the Items collection to get all the selected items (if they were multi-select listboxes). I'm still annoyed in .NET 2.0.</li>
+</ul>
+<p>So without further adieu, check out the <a href="http://kyle.baley.org/articles/379.aspx">article</a>.</p>

@@ -1,0 +1,45 @@
+---
+layout: post
+title: BigTable concerns, or “How to put your trust in the cloud”
+date: 2010-02-19 17:07:43.000000000 -05:00
+categories: []
+tags:
+- Google App Engine
+- GWT
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '903'
+  dsq_thread_id: '372730803'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I didn’t necessarily mean to piggyback off <a href="http://codebetter.com/blogs/gregyoung/archive/2010/02/18/using-an-orm-is-like-kissing-your-sister.aspx">Greg’s two posts</a> on <a href="http://codebetter.com/blogs/gregyoung/archive/2010/02/19/using-an-orm-is-like-kissing-your-sister-part-2.aspx">ORMs</a> but c’mon, what’s a hillbilly to do when he perpetuates such negative stereotypes? I mean, before you start knocking it, have any of you *tried* kissing your sister?</p>
+<p>He also has some blather in there on RDMSs and ORMs. So I suppose I should hide my indignation behind something technical.</p>
+<p>We’re using <a href="http://en.wikipedia.org/wiki/BigTable">BigTable</a> for our project by way of Google App Engine. The decision to use it was pretty easy once we landed on GWT as our platform. The integration ‘twixt GWT and App Engine is pretty seamless and hey, App Engine uses Big Table.</p>
+<p>I’m glossing over the dozens of times we’ve second-guessed ourselves since making the decision though. The most recent was just yesterday as a matter of fact when my friend expressed a couple of concerns:</p>
+<ul>
+<li>How do we back it up? </li>
+<li>How do we do ad hoc reports against it? </li>
+</ul>
+<p>Over the course of the conversation, these boiled down to: How can we work with BigTable in a way we’re used to with RDMSs?</p>
+<p>The inevitable option came up. Maybe we shouldn’t use BigTable. Maybe MySQL is more suitable if we’re unsure. That means moving off App Engine though and we like what we’ve seen so far with it.</p>
+<p>It was a bit of an uncomfortable conversation actually and this was between two very seasoned developers who have never shied away from new tech. I think the reason for the awkwardness though is that we aren’t dealing with someone else’s money. This is a startup so it’s a decision that he and I are going to have to live with.</p>
+<p>In the end, being seasoned developers, we recognized that moving to a new development platform will just substitute one set of problems with another. For basic transactions (I hesitate to say OLTP because that will imply I know more about the term than I do), like getting some objects and saving them again, BigTable just plain works. There’s no ORM behind the scenes to map your data structure to the domain model. You create a User and you save it. Any relationships are automatically dealt with by some magic that is buried in the documentation somewhere, I’m sure. It really is like working with an ORM without actually having to deal with the mapping.</p>
+<p>As for our two questions above, we have a tentative solution that I still like a day later and it will solve both problems. Let’s take the second one:</p>
+<p><strong>How do we do ad hoc reports against it?</strong></p>
+<p>See this is where RDMSs shine, I think. So breaking down the question we get: How can we get the benefits of BigTable for transactional stuff and the benefits of RDMSs for reporting and ad hoc querying?</p>
+<p>Funny how CQRS starts to make sense when you have the right problem staring you in the face. We’ll have a separate relational database for querying. As requests are sent to BigTable, we’ll also dump them out to another service elsewhere that queues them up to be processed into the relational database.</p>
+<p>This also addresses our first question:</p>
+<p><strong>How do we back it up?</strong></p>
+<p>The nice thing about this approach is that we now have our offline backup though of course, <a href="http://haacked.com/archive/2009/12/14/back-in-business-again.aspx">backing up is only half the solution</a>. We also need some way to restore BigTable from our relational database easily. But the idea seems sound enough even if the mechanics may prove otherwise.</p>
+<p>Maybe this sounds unduly complicated. It really doesn’t to me. App Engine and BigTable offer a lot of advantages. They solve problems I don’t want to deal with, most notably, scalability. The ones they introduce, backing up and querying, by contrast, are pretty simple. Besides which, I’m scheduled for <a href="http://www.udidahan.com/training/">Udi’s course</a> in a couple of months anyway.</p>
+<p>And for the record, I don’t have any sisters. Just three adventurous brothers.</p>
+<p>Kyle the Restored</p>

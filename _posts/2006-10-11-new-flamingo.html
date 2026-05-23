@@ -1,0 +1,32 @@
+---
+layout: post
+title: New Flamingo
+date: 2006-10-11 18:07:12.000000000 -04:00
+categories:
+- Flamingo
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '835'
+  dsq_thread_id: '349706820'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Finally did an update of Flamingo, my online music player. After reflecting on it, I'm not going to call it an upgrade, just a different-grade. Basically, it's still not releasable but there it is.</p>
+<p>New stuff you'll notice:</p>
+<ul>
+<li>Moved selected music grid beside the search results to make better use of the space. Play button is still too inconspicuous way at the bottom.</li>
+<li>Added my entire music collection instead of just the WMAs. Only one <a href="http://kyle.baley.org/EarlyHalloween.aspx">Air Supply song</a>, folks,&nbsp;so don't be scared. Plenty of other good stuff to be heard.</li>
+</ul>
+<p>That's basically it from an end-user perspective. That's a month and a half's work. Of course, you don't see the starts and stops of various research areas but yeah, I'm pretty disappointed in my progress, too.</p>
+<p>From an admin perspective, there is the ability to edit the metadata for a particular song which is useful because of the <a href="http://kyle.baley.org/OnMusicMetadata.aspx">crappy, crappy state</a> the MP3 headers are in. Too bad I'm still working through SQL issues with the authentication piece.</p>
+<p>Oh, and be very careful what songs you add to your playlist because you can't remove them again individually.</p>
+<p>Much kudos to <a href="http://home.fuse.net/honnert/hundred/?UltraID3Lib" target="_blank">UltraID3Lib</a>, a .NET library for reading/writing ID3 metadata in MP3 files. It's by Mitch Honnert who, unlike me,&nbsp;clearly doesn't waste his time on things he's not good at, like web design. The library rocks, though and is MUCH easier to use than the Windows Media Player SDK which still uses COM and doesn't hide that fact judging by the various errors that came up while I used it. (Incidentally,&nbsp;COMException 0xc00d0018 could refer to the fact that the account that is reading the files doesn't have permission to them, despite the other "solutions" Google might throw at you.)</p>

@@ -1,0 +1,47 @@
+---
+layout: post
+title: The Bahamas .NET User Group
+date: 2008-02-23 17:10:49.000000000 -05:00
+categories: []
+tags:
+- Community
+- Presenting
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1885'
+  hl_twitter_has_auto_tweeted: 'New post: The Bahamas .NET User Group, Full text:
+    http://blog.baley.org/?p=173'
+  dsq_thread_id: '418120963'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>OK, I've already given away the ending so I'll skip the build-up. But to set the stage for the official announcement, I'll direct your attention to the pictures adorning this post. They represent two of the workspaces I frequent, both in my condo complex. All pictures are clickable for larger, more enviable versions. I could try to justify why I'm putting them up with some sort of ergonomic crap but really, I'm just gloating.</p>
+<p>The formal announcement: <a href="http://www.bahanet.org" target="_blank">The Bahamas .NET User Group</a> is up and, quite possibly, running. With little more than a half-baked plan and a dream (but still no location for the first meeting). The inaugural meeting is April 30 and the topic is Software Development in the Bahamas. It will be a round-table discussion, very likely done in fishbowl style because I predict a lot of opinions on the subject.</p>
+<p>Many thanks to all who listened to me babble on it to date and those who showed enough enthusiasm to convince me that this might actually work. And to those who critiqued the various incarnations of the websites. These include: <a href="http://www.igloocoder.com" target="_blank">Donald Belcham</a> (head of <a href="http://www.edmug.net">www.edmug.net</a>), <a href="http://devlicio.us/blogs/derik_whittaker/default.aspx" target="_blank">Derik Whittaker</a>, <a href="http://weblogs.asp.net/dotjosh/default.aspx" target="_blank">Josh Schwartzberg</a>, <a href="http://geekswithblogs.net/dnoderer/" target="_blank">Dave Noderer</a> (of <a href="http://www.fladotnet.com">www.fladotnet.com</a> fame), and Morgan Baker of INETA.</p>
+<p>Because the version you see before you is actually version 3.0. Version 1.0 was a DotNetNuke site that didn't last long after I received some advice from someone who has had to deal with it on a regular basis. I'd reprint it but I don't want to offend my younger readers. Besides, I'm not sure I could spell some of the profanity he used. </p>
+<p>Version 2.0 was SharePoint-based. Specifically, it was the <a href="http://www.codeplex.com/CKS" target="_blank">Community Kit for SharePoint: User Group Edition</a> template (more commonly known as CKS:UGE, which, and I'm sure this is a coincidence, is one letter away from containing all letters from the word &quot;suckage&quot;).</p>
+<p>This version actually lasted over a week. I even upgraded my server's RAM at GoDaddy to accommodate the slight increase in requirements that SharePoint needs in order to run. (Actually, to be fair to SharePoint, it ran fine on the box. It was every other web application that went on strike in a show of solidarity against the invading new kid.)</p>
+<p>So I configured SharePoint (on the advice of my psychiatrist, I shan't elaborate) and figured out how to install the CKS:UGE template. It doesn't quite work out of the box but there are pretty detailed instructions on what to do to remedy that. Kudos where they're due, they have done a good job in helping user group leaders get a demo site going from which you can steal ideas.</p>
+<p>But there were a fair share of minor annoyances with the template. You can follow along with my discussion of them with their demo site. Firstly is the usability of the design. There is way too much wasted space at the top which means users need to scroll down to see what is likely going to be the most commonly consumed piece of information: the next meeting. On my display resolution of 1440x900, the main content of the page starts just shy of halfway down the page. Everything above that is noise to me.</p>
+<p>Also on my display resolution, the Events Calendar section has only enough space to display the title of the event in the bottom right corner (depending on the size of the announcements). In my opinion, this should be the most prominent thing on the site, along with the Welcome message. It shouldn't be relegated to the galleys right above the sponsors that nobody clicks on. Yes, users can subscribe to events with RSS but for those that don't and just want to whip the site up for a quick check (possibly in a mobile device), don't make 'em look for what they need.</p>
+<p>Next issue: The left sidebar. The links here are mostly redundant so I wanted to ditch the thing and reclaim that space. No such luck. I don't think anyway. I can hide it but then it still takes up space. At least it did when I was logged in as an admin because it displayed the Recycle Bin. Looking at the demo, it doesn't display a Recycle Bin so perhaps it actually does go away when you are logged in anonymously.</p>
+<p>Final problem is how users sign up. They do it by completing a survey. Which means that for me to see the membership, I need to sign in and navigate to the results of that survey and click on each one individually so see the details. Or export it to Excel. Neither option makes it easy for me to grab a quick list of current membership.</p>
+<p>These little nitpicks, coupled with the fact that I need only three of the forty features it offers, led me down the custom app route. The three features I wanted for the initial launch:</p>
+<ul>
+<li>Ability to sign up</li>
+<li>Ability to display the next event</li>
+<li>Ability to display list of sponsors</li>
+</ul>
+<p>That about covers it. Don't need discussion lists, wiki pages, photos, or even a past events page. In fact, for the amount I'll be updating this site, I have serious doubts as to whether I even need to make the events list dynamic at all. I am a software developer after all. How hard is it to cut and paste HTML?</p>
+<p>Elapsed time to implement the current incarnation of the site: 1 day (thanks in part to the fine folks at <a href="http://www.oswd.org">www.oswd.org</a> for their free web templates). This includes a sign up process that writes to a .CSV file and sends an e-mail to me when new members join. Which is about as dynamic as it gets down here.</p>
+<p>So if you're in the Bahamas and have nothing else to do on April 30, consider joining us at a yet-to-be-determined location. I'm trying to decide between holding it at the local college or commandeering someone's yacht.</p>
+<p>Now to work on my plan for a CodeCamp every week from November through the end of April.</p>
+<p>Kyle the Ambitious</p>

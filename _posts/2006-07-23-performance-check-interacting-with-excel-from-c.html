@@ -1,0 +1,32 @@
+---
+layout: post
+title: 'Performance check: Interacting with Excel from C#'
+date: 2006-07-23 01:02:00.000000000 -04:00
+categories: []
+tags:
+- ".NET"
+- Office Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1432'
+  dsq_thread_id: '361663017'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Re: The leftover error from my last post. I did spend a little time mucking around with Regmon but other than a few missing keys that meant nothing to me, I didn't find anything. Then I opened&nbsp;SQL Server Management Studio and got the same error which was a big “uh oh” moment. I quickly realized I was out of my depth and re-installed Visual Studio 2005 so all is well for the moment. But that's not what I came to talk about.</p>
+<p>In my last post, I mentioned an economic model posing as a spreadsheet. I also mentioned some VBA behind the scenes. The VBA doesn't do a whole lot; most of the work is done by Excel as it should be. There's a form with some buttons on it and the main button will “process” the model. Which is to say it copies the contents of some cells from one place to another. There's a lot of busy work to support that but at its core, that's what it does. And processing the model takes, on average, about four seconds. Not too bad considering what it's doing and most people would consider that good enough...</p>
+<p>I also have a separate .NET application that makes use of this model. One of its functions is to automate the processing of the model for various dimensions. Among the dimensions: up to four different price levels, up to three cost levels, up to eight field scenarios and up to 500 sets of fiscal terms. Let me save you the math: that's 48,000 executions of the model to generate the entire set of results. So all of a sudden, my decent-looking execution time of four seconds translates to over two days straight of calculations. That doesn't include the time it takes to store the results in a database which brings it closer to three days.</p>
+<p>And let's talk about storing the results. There are a lot of them. On average, about 300 - 400 individual measures (i.e. cell values) to store for each individual calculation. In my first pass at the application, I controlled everything from the .NET application. It was essentially four nested loops, one for each dimension. And two of the dimensions (the field scenarios and the fiscal terms) involved opening a separate spreadsheet and importing it into the model before processing. After processing, I iterated through the results sheet and picked out the individual cell values to store in the database.</p>
+<p>This is INCREDIBLY time-consuming. A single run (one price, cost, field scenario and fiscal term set) took around forty-five seconds. Again, I'm no Interop specialist but from my own experience, retrieving the value of a cell in Excel is &amp;*$% murder on a CPU. If I had to make something up about what is going on, I'd say it's because you have to cross COM boundaries for each cell retrieval but frankly, I'm not quite sure what that means. I've heard the words spoken before and they seem to apply here so that's my official technical summary.</p>
+<p>To get around this, I had to sell a little bit of my soul and move code out of C# and into VBA. The application still controls importing the (up to) eight field scenarios and the (up to) 500 fiscal terms but everything else is done in VBA: setting the price, setting the cost level, processing the model and storing the results to the database. Net execution time dropped from forty-five seconds to 'twixt five and six on average.</p>
+<p>I was ecstatic about the performance gain but this really sucks for more than just the obvious reasons. It means I now have this external application's code in two places. And one of those places is an Excel spreadsheet that can be (and has been) zipped up and e-mailed anywhere in the world regardless of whether someone uses the external app or not. It means I have a lot more work to do if I ever need to update the external application. It means I have a bigger job ahead of me when a decent alternative to VBA comes out. But as long as the model resides in Excel (and there is no business justification to moving it to anything else; let's face it, Excel rocks at this kind of thing), I'm stuck with VBA.</p>
+<p>On a semi-related closing note: Every once in a while, my reference to the Excel interop library gets lost. I know now that this is because of the registry problems I had <a href="http://kyle.baley.org/archive/2006/07/21/589.aspx">yesterday</a> but I still don't know what causes it. Anyway, when this problem happens, I have to reset the reference to the Excel library and the&nbsp;namespace changes from Microsoft.Core.Interop.Excel to just plain Excel. It seems Microsoft.Core.Interop.Excel is the namespace for the PIA and Excel is the namespace for the plain old IA. So when I lost access to my PIA and re-added the reference to the Excel library, instead I got a reference to the IA. When I fixed the PIA problem and reset the reference to the Excel library, I got my Microsoft.Core.Interop.Excel namespace back.</p>
+<p>Can I get a Hoo-ah! for the Coding Hillbilly?</p>

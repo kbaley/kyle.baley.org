@@ -1,0 +1,35 @@
+---
+layout: post
+title: How to make Excel 2003 GPF
+date: 2007-01-15 17:32:19.000000000 -05:00
+categories: []
+tags:
+- Office Development
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1135'
+  dsq_thread_id: '372850686'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Yes, apparently this is still possible to do on cue. The attached file will do it and here's how:</p>
+<ul>
+<li>Click the button and wait for the web page to load
+</li>
+<li>Switch to either Sheet2 or Sheet3</li>
+</ul>
+<p>That's it, kiddies. You're very own spreadsheet that politely asks if it can send details on your porn collection to Microsoft when it crashes.</p>
+<p>Info on the spreadsheet for you paranoid delusionals: It contains three sheets. Sheet1 contains a Microsoft Web Browser control and a command button. The other two sheets are blank.</p>
+<p>It is free from virii to the best of my knowledge. There is a macro in it, the one that loads the web page when you click the button. It's contents in their entirety are as follows:</p>
+<p><span style="FONT-SIZE: 11px; COLOR: black; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent"><span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">&nbsp;&nbsp;&nbsp;Private</span> <span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">Sub</span> CommandButton1_Click()<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WebBrowser1.Navigate2 <span style="FONT-SIZE: 11px; COLOR: #666666; FONT-FAMILY: Courier New; BACKGROUND-COLOR: #e4e4e4">"www.google.com"</span><br /><span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">&nbsp;&nbsp;&nbsp;End</span> <span style="FONT-SIZE: 11px; COLOR: blue; FONT-FAMILY: Courier New; BACKGROUND-COLOR: transparent">Sub</span><br /></span></p>
+<p>The GPF appears to occur only if an element on the web page you load has focus at the time you switch sheets. As luck would have it, the fine folks at Google set focus to the textbox for you when the page loads but if you substitute a different web page that doesn't do this, you won't get the error unless you click in a textbox first. Haven't tested with other form elements.</p>
+<p>Enjoy! I know I did while researching this problem!</p>
+<p><a href="http://kyle.baley.org/content/binary/GPF.xls">GPF.xls (21 KB)</a></p>

@@ -1,0 +1,32 @@
+---
+layout: post
+title: TeamCity/CodeBetter PSA, or “How to disguise your intentions”
+date: 2009-11-25 19:10:20.000000000 -05:00
+categories: []
+tags:
+- Continuous Integration
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '404296831'
+  pvc_views: '1332'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I’d apologize for MY lack of posts lately but something tells me it didn’t adversely affect your life. I do have reaSONs that I WAS going to mention but again, I suspect no one lay awake at night thinking, “I wonder if the hillbilly has unleashed a new rule of thumB OR Not.” Suffice it to say, I did feel a little shamefuL AS The WEEKs went by but now it’s time to dust this little sideshow off with a quick PSA.</p>
+<p>The CI server at <a href="http://teamcity.codebetter.com">http://teamcity.codebetter.com</a> continues to thrive and somehow, I’ve indirectly inherited the mantle of “Project Setter Upper”. Probably because I have a lower tolerance of having the requests sit in my inbox than everyone else on the list.</p>
+<p>When a request does come in, it doesn’t take long to set up. And it’s always a nice feeling when I click Run for the first time and everything comes back green. Alas, that happens probably less than half the time. The errors are often minor and have to do with configuration or some other little tweak. Generally, I just scan the log file, make the requestor a project admin, and punt it back to him or her to fix.</p>
+<p>One of the most common errors is a missing assembly reference and invariably, it’s because the project is making assumptions of what’s installed on the server. So this PSA is to let everyone know what actually *is* installed on the server, which is, by and large, nothing.</p>
+<p>That’s an exaggeration, of course. TeamCity comes with versions of various build tools and we have the .NET framework and Git, SVN, and Ruby. I believe that’s the sum total of it though. These are required in order for TeamCity to do its job. If your project relies on some library that isn’t part of the base .NET framework, we generally prefer NOT to install it. This includes things like NUnit, Gallio, MSTest, DataDude, SharpLib, mocking frameworks, etc, etc, and so on and so forth. Our rule of thumB is to keep the build server as clean as possible. With over thirty projects on there, and as varied as they are, the fewer pieces we have to manage, the better. Plus, the point of a CI server is to mimic a client machine as much as possible and installing Visual Studio in order to run a build process doesn’t meet that criteria.</p>
+<p>To get around this, we ask project administrators to <a href="http://blog.jpboodhoo.com/AutomatingYourBuildsWithNAntPart1.aspx">include whatever libraries they need</a> in their source control systems. I.e. if you need to run NUnit tests, then include NUnit in your source control system somewhere.</p>
+<p>Now, I don’t want to get all politikal, but this can get a little cumbersome when it comes to Microsoft’s dependencies. I’m sure there are others that don’t allow them to be included in your source tree but in my experience setting up these projects, it has been things like MSTest, DataDude, TFS, and XNA that have been the most troublesome. (While I’m bashing, we’ve had issues with accessing code on CodePlex as well a couple of times so if you have a choice and are thinking of using our server, I recommend some other provider for source control. <a href="http://grabbagoft.blogspot.com/2008/01/nbehave-source-moved-to-google-code.html">CodePlex seems pretty good at managing everything else</a>.) Bottom line is: We don’t want to install any version Visual Studio on the CI server.</p>
+<p>That said, there are exceptions. We do have SQL Server Express 2008 on it (can’t remember if we allow user instances, though I imagine that would be all we allow.) So feel free to plead your case.</p>
+<p>And if anyone from JetBrains is reading, I’d LOVE to have a way to create a custom landing page for TeamCity, assuming it’s not already possible (and doesn’t require knowledge of JSP). So we can put the request instructions as well as an abridged version of this post on it.</p>
+<p>Kyle the Unsleeping</p>

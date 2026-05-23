@@ -1,0 +1,41 @@
+---
+layout: post
+title: How to strip away the super powers of borders in IE
+date: 2011-03-31 18:29:17.000000000 -04:00
+categories: []
+tags:
+- Miscellaneous
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1663'
+  dsq_thread_id: '349697286'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>If I can get philly-sophical for a moment, the IE team has clearly set out to be the hillbilly cousin of modern browsers and I, for one, can appreciate that. It’s a liberating space to occupy. You can spew out pretty much anything and if it’s good, people are pleasantly surprised. And if it’s crap, you can always claim questionable parentage and/or convoluted gene pool.<a href="http://kyle.baley.org/content/binary/Windows-Live-Writer/43f03d28df15_C1A7/Highlight_2.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; float: right; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="Highlight" border="0" alt="Highlight" align="right" src="/assets/Highlight_thumb.png" width="244" height="150" /></a></p>
+<p>We had a bug in <a href="http://bookedin.net">BookedIN</a>. Normally, when you mouse around the schedule, you should see a nice little highlight box in a colour I call Kraft Dinner Orange showing you what time you’re hovered over. Clicking it brings up a dialog allowing you to book an appointment.</p>
+<p>The way we do this is with a hidden interaction layer in each column. All mouse interactions in a column are handled there, including clicks. The highlight is a bit of HTML that we add <em>before</em> the interaction layer. That way, it sits behind the interaction layer in the z-order so it doesn’t swallow any clicks.</p>
+<p>The bug: In IE8 and IE9, if your mouse happens to be on the border of the highlight box, nothing happens when you click it. Works fine if you click inside the box, just not right on the border. Here’s a demonstration: <a href="http://baley.org/IETesting.htm">http://baley.org/IETesting.htm</a>.</p>
+<p>Our solution is courtesy of the mighty <a href="http://codebetter.com/jameskovacs/">James, The Professor, Kovacs</a>. He explains:</p>
+<blockquote><p>You have two absolutely positioned divs, inside and outside. According to the CSS spec (<a href="http://www.w3.org/TR/CSS2/visuren.html#z-index">http://www.w3.org/TR/CSS2/visuren.html#z-index</a>), since z-index isn't specified, the divs are layered back-to-front in document order. So the inside div is behind the outside div.</p>
+<p>In FF and Chrome, when you click on what looks like the inside div, you are actually clicking on the outside div since the inside div is underneath.</p>
+<p>Note that event capture and bubbling does not apply here. Events traverse up and down the DOM, but inside and outside divs are siblings, not parent-child.</p>
+</blockquote>
+<p>This was exactly how we designed it and how we want it to work. The highlight is supposed to be behind the invisible interaction widget so that we can deal with mouse overs and clicks. He continues:</p>
+<blockquote><p>Now what's up with IE? For some reason, IE thinks that the border and text of the inside div are above in the z-order and swallow the event. The click event propagates, but it goes document-&gt;body-&gt;div.inside in capture mode then div.inside-&gt;body-&gt;document in bubble mode. At no time does the event hit the div.outside.</p>
+</blockquote>
+<p>At this point, I didn’t even realize the problem also occurred with the text in the inside div. That didn’t matter much to us because we don’t have any text inside the highlight box.</p>
+<p>Now, this wouldn’t be a James Kovacs response if it didn’t come with a solution:</p>
+<blockquote><p>If you nest the inner div inside the outer, click events propagate as expected in IE, FF, and Chrome. (Haven't tested in others.)</p>
+</blockquote>
+<p>And as expected, it works: <a href="http://baley.org/IEWorking.htm">http://baley.org/IEWorking.htm</a>.</p>
+<p>I shall append another six months on to James’s already lengthy “Honorary Hillbilly” status for allowing me to return to my normal reduced usage of Internet Explorer.</p>
+<p>Kyle the Grateful</p>

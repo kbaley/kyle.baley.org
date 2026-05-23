@@ -1,0 +1,45 @@
+---
+layout: post
+title: Researching search
+date: 2008-05-13 13:29:07.000000000 -04:00
+categories: []
+tags:
+- Brownfield
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '448963085'
+  hl_twitter_has_auto_tweeted: 'New post: Researching search, Full text: http://blog.baley.org/?p=142'
+  pvc_views: '975'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I've had &quot;searching&quot; on my mind lately but in a very narrow focus. Specifically, I have a Brownfield application for a client I dig up every so often whenever new features need to be added to it. (Off topic: As soon as I can re-brand the sucker, it'll make a dandy little sample app for some Brownfield-related posts and webcasts. There, I said it on the Internet so the guilt will be that much greater if I don't follow through.)</p>
+<p>One of the key components to this application is a document repository that you can search both with meta-criteria as well as a full text search of the documents (see screenshot).</p>
+<p>The meta-criteria part is boring. Bunch of lookup tables in a SQL Server database and I'm building up a SQL query manually in the search process. (I *did* say this was a Brownfield application.)</p>
+<p>The full text search is done through a kind of poor-man's search index. I'm using a custom catalog with Microsoft's <a href="http://msdn.microsoft.com/en-us/library/ms689718.aspx">Indexing Service</a>, available on Windows Server 2000 and later.</p>
+<p>To do this, and I'm going to skim partially because it's not really the focus of the post but mostly because I think it's outdated, I <a href="http://msdn.microsoft.com/en-us/library/ms689718.aspx">create a catalog</a> that indexes the document folder. Then, I make the catalog accessible to SQL Server so I can combine queries to it with queries to the metadata. Here's the SQL to do so:</p>
+<p><font face="Courier New">EXEC sp_addlinkedserver &lt;linkedServerName&gt;, 'Index Server', 'MSIDXS', '&lt;name of catalog&gt;'</font></p>
+<p>Now I can write queries like the following:</p>
+<pre>SELECT DocumentID, Title, Date, Filename
+FROM doc_list_view dl,
+OpenQuery( &lt;linkedServerName&gt;, 
+   'SELECT Filename FROM SCOPE( ) 
+    WHERE CONTAINS( Contents, ''&lt;queryTerm&gt;'' ) '
+) q
+WHERE Date BETWEEN 'January 1, 1850' AND 'December 31, 2008'
+AND q.Filename = dl.Filename
+ORDER BY Date DESC, Title</pre>
+<p>Easy as raccoon pie, yesno? The nice thing about this is that it will automatically index all Microsoft Office docs and PDFs are handled by installing Adobe Reader 8.0 (though it's a <a href="http://blogs.adobe.com/pdfdevjunkie/2008/02/64bit_support_in_pdf_ifilter_8.html">separate download</a> for 64-bit).</p>
+<p>Fast-forward to 2008 and the Indexing Service is no longer turned on by default on either Vista or Windows Server 2008. Posed a problem for the client who runs it locally on his laptop but it was easily remedied simply by turning the service on. For my own newly-minted Server 2008 machine, Indexing Service and the new Windows Search can't run together. And I'm loathe to enable the older technology so it's time to update if I can.</p>
+<p>That led me to <a href="http://en.wikipedia.org/wiki/Windows_Search">this page</a> which confuses me to no end. Starting with the terminology: Windows Search, Windows Desktop Service, Instant Search, Windows Indexing Service, Indexed Search, MSN Desktop Search are the terms used to discuss various incarnations of the technology. And that's not including codenames or different versions of the same technology. Adding to my addlement is when Microsoft changes terminology from one page to the next. One example is <a href="http://msdn.microsoft.com/en-us/library/aa965362%28VS.85%29.aspx">this page</a> which, in the section on the History of Windows Search, leads you to the <a href="http://support.microsoft.com/kb/917013">download page</a> for Windows Search for Windows Server 2003. That one is titled: Description of Windows Desktop Search 3.01.</p>
+<p>So now I'm facing the unenviable, but oddly ironic, task of having to search through the myriad of search options for a solution that will run on Windows Vista, Windows Server 2008, and Windows Server 2003 (where the main site is hosted). At first glance, it seems Windows Desktop Search is the way to go for Server 2003 as it appears the new Windows Search is API-compatible with it.</p>
+<p>In any case, this'll make one heckuva a sample for the Brownfield series on managing integration with external systems. Because as you've probably guessed by now, there are no automated (or even manual) tests for this whole process.</p>
+<p>Kyle the Researched</p>

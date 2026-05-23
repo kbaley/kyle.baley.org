@@ -1,0 +1,62 @@
+---
+layout: post
+title: Client-side ASP.NET AJAX, or "How to keep tabs on your AJAX animation"
+date: 2007-06-05 21:55:12.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '2657'
+  dsq_thread_id: '350027395'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>So I'm back in ASP.NET AJAX/Atlas world for the time being while I work on my dad's application. And like a kid in a candy store, I'm trolling through the <a href="http://ajax.asp.net/ajaxtoolkit/" target="_blank">AJAX Control Toolkit</a>&nbsp;trying to see which ones I can use. As opposed to picking out the cool ones and trying to find a way to wedge them into the application. It's a subtle difference.</p>
+<p>Anyway, the <a href="http://ajax.asp.net/ajaxtoolkit/Tabs/Tabs.aspx" target="_blank">TabContainer</a> caught my eye and I played with it both online and locally with the source code. One thing I think is a nice touch is the effect you get when you hover over the tabs, something you are accustomed to in WinForms but not as often on the web. I'm sure I've said it before but the guys on that time are counting with all ten fingers.</p>
+<p>In the HTML for that page though is some javascript that caught my eye and it led me on a wondrous journey:</p>
+<pre class="code"><span style="background: rgb(255,255,255)">        <span style="color: rgb(0,0,128)">function</span> <span style="color: rgb(128,0,0)">ActiveTabChanged</span>(<span style="color: rgb(128,0,0)">sender</span>, <span style="color: rgb(128,0,0)">e</span>) {
+            <span style="color: rgb(0,0,128)">var</span> <span style="color: rgb(128,0,0)">CurrentTab</span> = <span style="color: rgb(128,0,0)">$get</span>(</span><span style="background: rgb(192,192,192)">'&lt;%=CurrentTab.ClientID%&gt;'</span><span style="background: rgb(255,255,255)">);
+            <span style="color: rgb(128,0,0)">CurrentTab</span>.<span style="color: rgb(128,0,0)">innerHTML</span> = <span style="color: rgb(128,0,0)">sender</span>.<span style="color: rgb(128,0,0)">get_activeTab</span>().<span style="color: rgb(128,0,0)">get_headerText</span>();
+            <span style="color: rgb(128,0,0)">Highlight</span>(<span style="color: rgb(128,0,0)">CurrentTab</span>);
+        }
+
+        <span style="color: rgb(0,0,128)">var</span> <span style="color: rgb(128,0,0)">HighlightAnimations</span> = {};
+        <span style="color: rgb(0,0,128)">function</span> <span style="color: rgb(128,0,0)">Highlight</span>(<span style="color: rgb(128,0,0)">el</span>) {
+            <span style="color: rgb(0,0,128)">if</span> (<span style="color: rgb(128,0,0)">HighlightAnimations</span>[<span style="color: rgb(128,0,0)">el</span>.<span style="color: rgb(128,0,0)">uniqueID</span>] == <span style="color: rgb(0,0,128)">null</span>) {
+                <span style="color: rgb(128,0,0)">HighlightAnimations</span>[<span style="color: rgb(128,0,0)">el</span>.<span style="color: rgb(128,0,0)">uniqueID</span>] = <br />                  <span style="color: rgb(128,0,0)">AjaxControlToolkit</span>.<span style="color: rgb(128,0,0)">Animation</span>.<span style="color: rgb(128,0,0)">createAnimation</span>({
+                    <span style="color: rgb(128,0,0)">AnimationName</span> : </span><span style="background: rgb(192,192,192)">"color"</span><span style="background: rgb(255,255,255)">,
+                    <span style="color: rgb(128,0,0)">duration</span> : 0.5,
+                    <span style="color: rgb(128,0,0)">property</span> : </span><span style="background: rgb(192,192,192)">"style"</span><span style="background: rgb(255,255,255)">,
+                    <span style="color: rgb(128,0,0)">propertyKey</span> : </span><span style="background: rgb(192,192,192)">"backgroundColor"</span><span style="background: rgb(255,255,255)">,
+                    <span style="color: rgb(128,0,0)">startValue</span> : </span><span style="background: rgb(192,192,192)">"#FFFF90"</span><span style="background: rgb(255,255,255)">,
+                    <span style="color: rgb(128,0,0)">endValue</span> : </span><span style="background: rgb(192,192,192)">"#FFFFFF"
+</span><span style="background: rgb(255,255,255)">                }, <span style="color: rgb(128,0,0)">el</span>);
+            }
+            <span style="color: rgb(128,0,0)">HighlightAnimations</span>[<span style="color: rgb(128,0,0)">el</span>.<span style="color: rgb(128,0,0)">uniqueID</span>].<span style="color: rgb(128,0,0)">stop</span>();
+            <span style="color: rgb(128,0,0)">HighlightAnimations</span>[<span style="color: rgb(128,0,0)">el</span>.<span style="color: rgb(128,0,0)">uniqueID</span>].<span style="color: rgb(128,0,0)">play</span>();
+        }</span></pre>
+<p>At first I thought this was their funky way of animating things when you switch tabs. But if you check the sample, there isn't really any animation on the page when you go from one tab to the next. Unless you look VERY closely at the text beside where it says "Current Tab". If you do, you'll see a short little fade effect that I tried to duplicate on my project with much frustration.</p>
+<p>For those readers who actually have the Ajax Control Toolkit source code and are so inclined, here's an exercise for you: In the sample page for the Tabs control, remove the two CollapsiblePanelExtender controls at the bottom of the page and refresh your browser. If you have a default installation of Firefox with no extensions, you'll notice the fade animation is no more. If you use IE or have a Firefox extension that reports javascript errors, you'll notice a little more than that. Namely, that AjaxControlToolkit.Animation doesn't exist.</p>
+<p>The reason is that the ScriptManager will output only those scripts it deems necessary for the controls on the page. And the Animations.js script (located in the Animation folder of the toolkit source code), which is the one that declares the AjaxControlToolkit.Animation "namespace", is not deemed necessary by the TabContainer control. But it *is* necessary for the CollapsiblePanelExtender, which you can see by opening CollapsiblePanelExtender.cs and having a boo at the [RequiredScript] attribute.</p>
+<p>So what if you want to do this funky animation without adding an Extender that requires it? There are at least two ways I can think of:</p>
+<ul>
+<li>Include the Animations.js file in your project and reference it like any other script. I've taken this approach in my dasBlog theme because it is, in fact, the only way to include toolkit objects in the template files since they don't allow server-side controls.</li>
+<li>Add an empty AnimationExtender to your aspx page, either in the code-behind/beside or in the .aspx file:</li>
+<pre class="code"><span style="color: rgb(0,0,255)"><span style="background: rgb(255,255,255)">&lt;</span><span style="color: rgb(128,0,0)">ajaxToolkit</span><span style="color: rgb(0,0,255)">:</span><span style="color: rgb(128,0,0)">AnimationExtender</span> <span style="color: rgb(255,0,0)">id</span><span style="color: rgb(0,0,255)">="MyExtender"
+</span>  <span style="color: rgb(255,0,0)">runat</span><span style="color: rgb(0,0,255)">="server"</span> <span style="color: rgb(255,0,0)">TargetControlID</span><span style="color: rgb(0,0,255)">="Tabs"&gt;
+&lt;/</span><span style="color: rgb(128,0,0)">ajaxToolkit</span><span style="color: rgb(0,0,255)">:</span><span style="color: rgb(128,0,0)">AnimationExtender</span><span style="color: rgb(0,0,255)">&gt;
+</span></span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></ul>
+<p>Both are mildly icky. The first seems a little too manual to me. What if I later add an extender that requires the Animations.js file? And worse, what if I upgrade to a later version of the toolkit that has a different version of Animations.js?</p>
+<p>The second is safer but the TargetControlID is required, so you have to have at least one server-side control on the page to attach the extender to.</p>
+<p>As it turns out, that little tidbit of javascript that inspired this post isn't actually necessary for the TabContainer control. It was added, I suspect, by some mean-spirited AJAXer who was acutely aware of my inquisitive nature and tendency to be easily interrupted.</p>
+<p>Kyle the Animated</p>

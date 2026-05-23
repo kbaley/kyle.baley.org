@@ -1,0 +1,36 @@
+---
+layout: post
+title: 'Creating an Atlas Extender: Part Two'
+date: 2006-06-14 13:24:00.000000000 -04:00
+categories: []
+tags:
+- ASP.NET AJAX
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '667'
+  dsq_thread_id: '362995927'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Phew! This Atlas Extender thing isn't as easy as I thought it would be. Have spent a good part of the day trying to build my dream toggle-able panels and am no further than I was yesterday. Gained a bit of knowledge though and yes, it is in fact a dangerous thing.</p>
+<p>In my original attempt, I essentially duplicated the existing CollapsiblePanel extender so I'd have something to start from. My next task was to remove properties I didn't plan to implement: ExpandControlID, ExpandDirection, AutoCollapse and&nbsp;AutoExpand. ExpandControlID because I'm forcing the control to be a toggle. AutoCollapse and AutoExpand because they don't really make sense in this context. ExpandDirection because, frankly, I have enough to worry about.</p>
+<p>Removing these properties from both the Properties.cs file and the Behavior.js file was pretty painless. I even got a little cocky and changed the animation parameters to make it a little smoother.</p>
+<p>Then came the part when I tried to implement the second panel.</p>
+<p>Every extender automatically implements a TargetControlID property because, well, we're extending an existing control so we should know which one it is. I decided to use this property to represent the panel that is initially visible and I added a second property, CollapsePanelID, to represent the sister panel that is collapsed on startup.</p>
+<p>The actual javascript for the CollapsiblePanel that does the main work is fairly simple. When initialised, it creates an animation object that is tied to the target control:</p>
+<p class="code">_animation = <font color="#0000ff">new</font> AtlasControlToolkit.NumberAnimination(); <br />_animation.set_property(<font color="#800000">"TargetHeight"</font>);<br />_animation.set_duration(.25); <br />_animation.set_fps(10);<br />_animation.set_target(<font color="#0000ff">this</font>);<br />_animation.ended.add(Function.createDelegate(<font color="#0000ff">this</font>, <font color="#0000ff">this</font>._onAnimateComplete));</p>
+<p>&nbsp;In the click event for the control that collapses the panel, it sets the start value for the animation to the panel's current size and sets the end value to its collapsed size (which is usually zero but doesn't have to be). Then it plays the animation. </p>
+<p class="code">_animation.stop(); <br />_animation.set_startValue(<font color="#0000ff">this</font>._getTargetSize()); <br />_animation.set_endValue(<font color="#0000ff">this</font>._getCollapsedSize());<br />_animation.play();</p>
+<p>The click event for the control that expands the panel is almost identical but sets the end value to the panel's expanded size.</p>
+<p>My problem comes in the _animation.set_target line. What I'd really like to do is set up an animation for the second panel and execute it at the same time as the first one. This, to me, would be the easiest implementation because the Atlas framework does all the work and it's consistent with the rest of the implementation.</p>
+<p>But it looks like set_target takes an object and I don't know what kind of object to pass in. I don't want to create a whole separate instance of my object to pass in because then I'll have to manage potential stack issues (since ToggledPanel objects will keep creating more ToggledPanel objects). But I'm also not familiar enough with the object model to know what else I could pass in. I tried Sys.UI.Panel but there is no such object as far as I know. And the documentation for animation is non-existent except for the actual code itself.</p>
+<p>As I type this, an idea is forming, though. I'm wondering if I can create a second version of the ToggledPanel object. One that will still expand and collapse but that is designed to be controlled by another object. Stay tuned...</p>
+<p>P.S. One thing I'm having trouble getting used to. When you modify&nbsp;the .js file for your extender, you need to recompile in order for the changes to be reflected. Been developin' these har web pages a long time and I ain't ne'er hadun ta compile ma javascript befur. And iffun I hafta compil'em, I reckon there should be some sorta benufit to it, see. Like compile time checkin'.</p>

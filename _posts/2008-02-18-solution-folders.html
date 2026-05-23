@@ -1,0 +1,29 @@
+---
+layout: post
+title: Solution folders
+date: 2008-02-18 13:32:16.000000000 -05:00
+categories: []
+tags:
+- Coding Style
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '375246812'
+  pvc_views: '1258'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>So what's your collective take on solution folders with Visual Studio?</p>
+<p>For the longest time, I didn't pay them no never mind. Then there was a brief period when I had an intense love affair with them. Everything went into my solution. Third-party libraries, testing tools, documentation, damning evidence that other members of the team were plotting to beat me up and steal my lunch money. At my last contract, even the projects were organized within solution folders and when I first saw that, I nodded approvingly to myself.</p>
+<p>The rationale was that if it was in the solution, I didn't need to leave Visual Studio to deal with source control. It was safe in Visual Studio. It gave me comfort. Even joy. Windows Explorer was a scary place and this TortoiseSVN/Explorer integration wackiness was just plain FREAKY FRIDAY! Better to stay in my happy place.</p>
+<p>Then I noticed cracks in the veneer. I couldn't add a physical folder to a solution folder and have it magically add all the files within it to my solution. I felt a slight twinge of annoyance at having to navigate an extra layer to get to the project I wanted. And at the risk of being called a &quot;slave to my tools&quot; (which is a funny accusation at the best of times, unless the accusers writes code in Notepad and compiles from the command line with csc), I do enjoy the Collapse All Projects feature of Gaston Milano's <a href="http://weblogs.asp.net/gmilano/archive/2005/11/10/430240.aspx" target="_blank">CoolCommands</a>, which didn't work as nicely with that extra layer.</p>
+<p>So now I find myself back to having all my projects at the top level and using solution folders sparingly for things like batch files, build files, and readme files. I ventured out of my comfort zone in Visual Studio and learned to deal with third party library folders and tool folders externally. And really, it only took one time re-creating the full NAnt folder structure in solution folder format to make me drop the practice.</p>
+<p>How about you? What do you store in solution folders? Do you maintain a project hierarchy in them? Use them for any non-code-type files? Love them long time or hate them with a Charles Bronson-like vengeance?</p>
+<p>Kyle the Solvable</p>

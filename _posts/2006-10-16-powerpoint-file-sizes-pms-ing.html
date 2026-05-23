@@ -1,0 +1,38 @@
+---
+layout: post
+title: PowerPoint file sizes PMS-ing
+date: 2006-10-16 20:09:13.000000000 -04:00
+categories: []
+tags:
+- Office
+- Software
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '1157'
+  dsq_thread_id: '391658103'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>So here's some interesting behaviour I'm witnessing with PowerPoint 2003. Try this at home, kiddies:</p>
+<ol>
+<li>Create a new PowerPoint 2003 presentation</li>
+<li>Type some text, any text, in the slide</li>
+<li>Save the presentation somewhere, anywhere, on your hard-drive</li>
+<li>Navigate to that location and note the size of the file</li>
+<li>Save the presentation again (without changing anything)</li>
+<li>Note the size of the file again</li>
+<li>Continue&nbsp;steps 5 and 6&nbsp;until you are suitably befuddled</li>
+</ol>
+<p>I've tried this on two systems with the same results so hopefully you'll see the same thing I did: namely that the file size increments with each save until a certain point, then reverts back to its original size and starts the cycle over again.</p>
+<p>Not sure what it's saving with each increment but this is kind of weird behaviour. I noticed it originally on a presentation file from a client. It has nigh on 300 slides in it and he added "three or four" and sent me the new one. The old one was 890KB, the new one 1604KB.</p>
+<p>Me: Are you very sure you didn't add say, pictures of Anna Nicole Smith into the presentation<br />He: Well, the before and after pictures are an excellent depiction of the variability of oil prices but in the end, yes, I did take them out.</p>
+<p>During various save cycles, the presentation will cycle through the following sizes: 899KB, 1103KB, 1295KB, 1494KB, and finally, a hard-drive-thrashin' 1693KB. That's a gain of 88% from the original file size!</p>
+<p>Any guesses about these drastic mood swings for a simple Hillbilly?</p>

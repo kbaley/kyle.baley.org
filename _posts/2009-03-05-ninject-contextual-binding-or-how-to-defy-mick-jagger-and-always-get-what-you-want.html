@@ -1,0 +1,79 @@
+---
+layout: post
+title: NInject Contextual Binding, or “How to defy Mick Jagger and always get what
+  you want”
+date: 2009-03-05 19:45:08.000000000 -05:00
+categories:
+- NInject
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '370863834'
+  pvc_views: '1092'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Going ahead with this post without a full investigation because, well, isn’t that pretty much the defining characteristic of a blog?</p>
+<p>I’m working on an application that reads data from a database and dumps it to an XML file. So I’m trying to figure out how to use NInject to inject dependencies into an SSIS package that uses managed code. I almost have it working but I have one small issue with the…</p>
+<p>Haha, I’m kidding of course. But I would love to have seen the collective spit takes all of you did when you read that.</p>
+<p>In fact, it’s a console app. It takes a single parameter which determines what kind of entity we want to export. Hypothetically, let’s call them Critters, Recipes, HuntingGrounds.</p>
+<p>The export process is identical for each of these: retrieve data from a repository and iterate over each item, dumping it to a file. The only difference is which repository is used to get the data. Which is where contextual binding comes in.</p>
+<p>This is my first foray into <a href="http://www.ninject.org">NInject</a> which is my way of seguing into “If you know a better way, I’m all ears.” I’ll skip the NInject overview because it’s described on their <a href="http://dojo.ninject.org/">wiki</a>. Instead, here are the important bits of the module:</p>
+<pre name="code">public class AIDependencyModule : StandardModule
+{
+    private readonly string _exportType;
+
+    public AIDependencyModule( string exportType )
+    {
+        _exportType = exportType;
+    }
+
+    public override void Load()
+    {
+        // ... Bind other dependencies
+        Bind&lt;IExportRepository&gt;().To&lt;CritterRepository&gt;()
+            .OnlyIf( l =&gt; _exportType == &quot;critter&quot; );
+        Bind&lt;IExportRepository&gt;().To&lt;RecipeRepository&gt;()
+            .OnlyIf( l =&gt; _exportType == &quot;recipe&quot; );
+        Bind&lt;IExportRepository&gt;().To&lt;HuntingGroundRepository&gt;()
+            .OnlyIf( l =&gt; _exportType == &quot;huntingground&quot; );
+    }
+}</pre>
+<p>This is all shiny and happy and works swimmingly. When my data reader class thingy needs a repository to retrieve the data, the correct one is used based on the exportType, which is supplied via command-line arguments. Pretty much a text-book case for contextual binding.</p>
+<p>But it’s not what I really <em>wanted</em> to do when I first looked into this. Initially, I was looking for syntax like this:</p>
+<p style="border-right: black 1px solid; padding-right: 0.5em; border-top: black 1px solid; padding-left: 0.5em; float: right; padding-bottom: 0.5em; margin: 0.5em; border-left: black 1px solid; width: 150px; padding-top: 0.5em; border-bottom: black 1px solid; background-color: #cccccc">To clarify, this is NOT valid NInject code.</p>
+<pre name="code">public class AIDependencyModule : StandardModule
+{
+    private readonly string _exportType;
+
+    public AIDependencyModule( string exportType )
+    {
+        _exportType = exportType;
+    }
+
+    public override void Load()
+    {
+        // ... Bind other dependencies
+        Bind&lt;CritterRepository&gt;().ToSelf().WithName(&quot;critter&quot;);
+        Bind&lt;RecipeRepository&gt;().ToSelf().WithName(&quot;recipe&quot;);
+        Bind&lt;HuntingGroundRepository&gt;().ToSelf().WithName(&quot;huntingground&quot;);
+
+        Bind&lt;IExportRepository&gt;().ToItemWithName(_exportType);
+    }
+}</pre>
+<p>That is, I want to register all of the repositories in the container, then bind IExportRepository to one based on the name. This seemed cleaner to me. If I want to add support for some other type, I can just added its repository to the container and be done with it. Instead of adding conditional logic to the IExportRepository binding.</p>
+<p>That said, this is less efficient than the way I’ve actually done it above. In that case, the only repository in the container is the one I need. With my fanciful, non-existent way, I’d add a bunch of repositories, then end up using only one (unless I actually <strong><em>do</em></strong> need the other repositories elsewhere, which is not the case here).</p>
+<p>To provide full disclosure, I had initially started typing this post with the aim being “why can’t I do it the way I want to.” It wasn’t until I started getting the ideas down that I realized my way would be sub-optimal. Just the same, I’m wondering:</p>
+<ul>
+<li>a) if providing bindings based on name might be useful in other contexts, or </li>
+<li>b) if it’s already available, how does one go about it? </li>
+</ul>
+<p>Kyle the Contextual</p>

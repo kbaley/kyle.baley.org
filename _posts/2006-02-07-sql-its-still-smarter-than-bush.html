@@ -1,0 +1,37 @@
+---
+layout: post
+title: 'SQL: It''s still smarter than Bush'
+date: 2006-02-07 23:20:00.000000000 -05:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  pvc_views: '467'
+  dsq_thread_id: '2170274050'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Just had an interesting discussion with a couple of people that merits repeating here, if only because more people agreed with me than not. Which means less chance of me having to come up with credible counter-arguments for people who comment.</p>
+<p>SQL functions or .NET expression columns. That was the topic under debate. The specific example I gave was thus: The database contains a field called fileSize which is an integer and represents the number of bytes for a file. On a web page, we want to display the size in Mb or Kb, which ever makes more sense depending on the size of the file.</p>
+<p>So in our stored procedure, do we return fileSize as-is or do we return convertToBeautifulShinyString( fileSize ) as fileSize? The answer, clearly, is the former and I'll tell you why:</p>
+<p>SQL should be stupid. I mean really stupid. "Walk through a screen door" stupid. "Let's start a war we can't finish" stupid. Well, maybe not THAT stupid...</p>
+<p>Ask your average developer to name four SQL keywords and you will invariably hear: SELECT, INSERT, UPDATE, DELETE. That, to most developers, is what SQL does. It doesn't do CAST or DECODE or CASE or CONVERT. It gets data, adds data, updates data, and deletes data.</p>
+<p>There are advantages too numerous to mention. I love saying that because you can sound correct without having to back up your claims. But I'll name a few anyway.</p>
+<p>Firstly, debugging SQL sucks. When was the last time you right-clicked on convertToBeautifulShinyString and selected "Go to definition"? (To be fair, you might be able to do it in Toad but I have only one monitor so I usually can't see the entire right-click menu.) The error messages are often cryptic and you get even less help when you get results that aren't the ones you want.</p>
+<p>Secondly, what if I want to sort on fileSize? Standard argument theory says I should pad this point out a little but I think it's obvious so e-mail me if you need further explanation.</p>
+<p>Thirdly, what the hell is the database doing formatting data for display anyway? How does it know how the data is being displayed? How does it know what language to display the data in? Why does it care?</p>
+<p>I'll borrow a phrase from one of the people that sided with me during the debate: It just feels wrong. It raises my finely-honed "hacker" alert.</p>
+<p>So we return the fileSize and let the code butcher it any way it wants. Before .NET, this usually meant code that also raised my "hacker" alert because I can't stand looping through a recordset just to manipulate data. Now, though, it can be done with a single line of code:</p>
+<blockquote dir="ltr">
+<p dir="ltr"><font face="Courier New, Courier, Monospace">myDataSet.Tables[0].Columns.Add( "displayFileSize" ).Expression = "IIF ( fileSize &gt; 1000000....oh figure it out yourself, ya lazy bastard )";</font></p>
+</blockquote>
+<p>To cover my ass, I will mention that this isn't an absolute rule. There are cases where I'll concede that using a SQL function or some simple SQL calculation is acceptable. An extended total for an invoice line, for example. Or even some simple business logic. But anything that involves string concatenation should make you as nervous as your average Canadian voter.</p>
+<div></div>

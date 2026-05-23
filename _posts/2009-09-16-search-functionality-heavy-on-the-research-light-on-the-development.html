@@ -1,0 +1,56 @@
+---
+layout: post
+title: 'Search functionality: heavy on the research, light on the development'
+date: 2009-09-16 14:11:12.000000000 -04:00
+categories: []
+tags:
+- Lucene.NET
+status: publish
+type: post
+published: true
+meta:
+  dsq_thread_id: '401212591'
+  pvc_views: '1054'
+  _edit_last: '1'
+author:
+  login: kyle6994
+  email: kyle@baley.org
+  display_name: Kyle Baley
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>The word “and” has always bugged me. I hate started sentences with it but sometimes can’t help myself. Whenever I have a list of three or more items in a sentence, I can never tell whether I should be a comma before the “and” separating the last two items. <span style="text-decoration: line-through;">And </span>Plus it causes me no end of grief in search interfaces.</p>
+<p>The impetus behind my most recent <a href="http://kyle.baley.org/2009/09/lucene-net-vs-indexing-services-or-how-to-conquer-your-fear-of-index-management/">foray into Lucene.NET</a> was one query phrase in particular:</p>
+<p>research and development</p>
+<p>Specifically, I want to be able to find documents that contained this phrase in it. Not both the word “research” AND the word “development” but the phrase “research and development”.<span style="text-decoration: line-through;"> And</span> Also, preferably it would return documents that contained “research &amp; development” or, if you *really* want to impress someone, “r&amp;d”.</p>
+<p>In the spirit of my search term, I’ve been doing some research and development to try to figure this little query out. More of the latter at first but it’s been increasingly obvious that to do a decent search interface, you also need plenty of the former. To that end, this will be a typically epic free-form meandering of my process with my usual caveat: If any of this is useful to you, that’s not my fault. I won’t go into much detail here because: a) <a href="http://codeclimber.net.nz">Simone Chiaretta</a> will almost certainly cover it shortly (if he hasn’t already), and b) there is plenty of documenta---…actually, that’s not true. Oh well, I’m still not covering the inner workings of parsers and analyzers.</p>
+<p><strong>QueryParser.Parse</strong></p>
+<p>By all accounts, QueryParser is the class to use when dealing with user-entered input. You can use a fairly easy-to-learn syntax and let Lucene handle the heavy lifting of whether to search for an entire phrase or individual words. It also includes a way of parsing AND, OR, or NOT.</p>
+<p>This has the most appeal to me for obvious reasons so it was the one I settled on first. Then came “research and development”. Searching for the phrase with quotes around it came back with false positives. I.e. documents that contained either <em>research</em> or <em>development</em>. So I halted the development and started some research.</p>
+<p><strong>StandardAnalyzer</strong></p>
+<p>This led to much reading about Analyzers. (<span style="text-decoration: line-through;">And</span> So I’ll echo many others’ sentiments by recommending the book, Lucene in Action, which has been a great resource.) I started out indexing and searching with the StandardAnalyzer. But this has a couple of side effects. For one, when indexing, it strips out common stop words, like <em>the, a,</em> and<em> an. </em><span style="text-decoration: line-through;">And</span> As well as <em>and.</em></p>
+<p>On the search side, it will also do some parsing of the query phrase when you use it with QueryParser.Parse. In short, when you search for “research and development” (with quotes) using a StandardAnalyzer, the query is parsed to the following:</p>
+<blockquote><p>contents:”research development”</p></blockquote>
+<p>I.e. The <em>and</em> is taken out of the search phrase altogether. Not quite what I had in mind so a new track was laid.</p>
+<p><strong>SimpleAnalyzer</strong></p>
+<p>The SimpleAnalyzer indexes everything. Every word (and every position of every word if you tell it to). Obviously, the size of your index will grow considerably. In my testing ground, it quintupled in size from 19Mb to 100Mb based on 1600-odd Word and PDF documents.</p>
+<p>On the search side, if you use a SimpleAnalyzer with the QueryParser, it does correctly identify the phrase “research and development” when you include it in quotes. So all appears happy and good…</p>
+<p>…except that it doesn’t handle “r&amp;d” (with or without the quotes) very well. The query is reduced to:</p>
+<blockquote><p>contents:”r d”</p></blockquote>
+<p>I.e. Find all documents with the letter <em>r</em> and the letter <em>d</em> as individual letters in them. Which, truth be told, isn’t such a bad thing on the surface. It means we’ll catch not only documents containing “r&amp;d” but also those containing “R &amp; D”. But by the same token (pun intended), it will also match documents containing “R. Buford D. Justice”</p>
+<p><strong>PhraseQuery</strong></p>
+<p>Another option I looked at was the PhraseQuery. If you use this, it will always search for the exact phrase. None o’ this “research development” or “r d” nonsuch.</p>
+<p>But here, the analyzers come into play as well. If I search for “research and development”, that means the word <em>and</em> needs to be indexed. Which implies a SimpleAnalyzer during indexing. If I search for “r&amp;d”, the SimpleAnalyzer won’t work because it breaks up words separated by ampersand.</p>
+<p><strong>From here…</strong></p>
+<p>That brings everyone up to speed to where I am now. I’ve posed the question on <a href="http://stackoverflow.com/questions/1430049/lucene-net-search-phrase-containing-and">StackOverflow</a> (my first!) and at the moment, the only answer to it suggests I write my own analyzer, one that acts like the StandardAnalyzer but doesn’t throw out the word <em>and</em>. That sounds reasonable to me, at least until someone searches for “research or development”.</p>
+<p>Another option I’m considering is to tell the indexer to index specific phrases like “research and development” or “oil and gas” or other common ones used in the domain. Not sure I like the long-term maintenance of either option but search is a journey, not a destination, I suppose.</p>
+<p>There’s a fundamental argument buried in here somewhere. Lucene gives you so much control over your indexing/searching that if you’re one of those Type A’s that can’t stand when something is just “good enough”, you can very easily drive yourself up the wall trying to optimize things. It really does require you to put some thought into how users will use your search. As much as Microsoft Indexing Services allowed me to throw up a search interface haphazardly, I believe you do yourself an injustice by not considering the ins and outs of the process.</p>
+<p>&nbsp;</p>
+<p>By the way, a couple people asked about the code I used to extract text from Word and PDF docs. Lovingly provided by the venerable (and I hope I used the right word there) <a href="http://www.persistall.com">Brian Donahue</a>, the relevant classes are attached in their entirety. The only thing different about this code snippet compared to others I’ve been sent in the past is that this one worked out of the box with absolutely no help from me. Seriously, I can’t even tell you what the internal method names are, that’s how little I looked at it. Call Parser.Parse(filename) and watch the magic fly.</p>
+<div id="scid:fb3a1972-4489-4e52-abe7-25a00bb07fdf:791bff2a-b825-4e82-8474-7f7e23858bc9" class="wlWriterEditableSmartContent" style="margin: 0px; display: inline; float: none; padding: 0px;">
+<p><a href="http://www.baley.org/content/binary/WindowsLiveWriter/b684f6ecc60b_143CF/Parser_1.txt" target="_blank">Filter.cs</a><br />
+<a href="http://www.baley.org/content/binary/WindowsLiveWriter/b684f6ecc60b_143CF/Filter_1.txt" target="_blank">Parser.cs</a></p>
+</div>
+<p>Kyle the Found-ational</p>
