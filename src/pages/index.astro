@@ -59,13 +59,20 @@ const workingPrinciples = [
   }
 ];
 
-const stacks = [
-  ["Languages", ["C#", "JavaScript", "TypeScript", "SQL"]],
-  ["Backend", ["ASP.NET Core", "Web API", "Entity Framework", "Hangfire"]],
-  ["Frontend", ["Blazor", "React", "Kendo UI", "Telerik", "MudBlazor"]],
-  ["Cloud & DevOps", ["Azure", "Docker", "Docker Swarm", "GitHub Actions", "Bitbucket Pipelines", "Azure DevOps"]],
-  ["Databases", ["SQL Server", "Azure SQL"]],
-  ["Architecture", ["Distributed systems", "Legacy modernization", "CI/CD", "Release management", "Domain modeling"]]
+const clients = [
+  { name: "Verizon", mark: "Verizon", className: "verizon" },
+  { name: "Marriott", mark: "Marriott", className: "marriott" },
+  { name: "Schlumberger", mark: "SLB", className: "slb" },
+  { name: "CN Rail", mark: "CN", className: "cn" }
+];
+
+const industries = [
+  "Finance & Lending",
+  "Telecommunications",
+  "Education",
+  "Transportation",
+  "Energy",
+  "Hospitality"
 ];
 ---
 
@@ -152,24 +159,43 @@ const stacks = [
     </div>
   </section>
 
-  <section class="section alt" id="stack">
+  <section class="section alt" id="experience">
     <div class="container">
       <div class="section-heading">
-        <h2>Technical Stack</h2>
+        <h2>Where I’ve Worked</h2>
         <p>
-          A practical Microsoft-centered stack with enough frontend, DevOps, and architecture experience
-          to move comfortably across the whole delivery path, from customer workflow to production support.
+          I’ve spent nearly all of the last 20 years working remotely with distributed teams,
+          customer-facing groups, and business stakeholders. The common thread is practical delivery
+          across organizations with real operational constraints.
         </p>
       </div>
-      <div class="stack-grid">
-        {stacks.map(([group, items]) => (
-          <article class="card">
-            <h3>{group}</h3>
-            <ul class="stack-list">
-              {(items as string[]).map((item) => <li>{item}</li>)}
-            </ul>
-          </article>
-        ))}
+      <div class="experience-grid">
+        <article class="card experience-card">
+          <h3>Past Clients</h3>
+          <div class="client-grid" aria-label="Selected past clients">
+            {clients.map((client) => (
+              <div class={`client-logo ${client.className}`} aria-label={client.name}>
+                <span>{client.mark}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+        <article class="card experience-card">
+          <h3>Industries</h3>
+          <ul class="industry-list">
+            {industries.map((industry) => <li>{industry}</li>)}
+          </ul>
+          <p>
+            I’ve worked with organizations of all sizes, from startups finding their footing
+            to multinationals coordinating change across large teams and customer bases.
+          </p>
+        </article>
+      </div>
+      <div class="remote-note">
+        <strong>Remote by default for almost 20 years.</strong>
+        <span>
+          Comfortable building trust, clarifying decisions, and keeping delivery moving without needing everyone in the same room.
+        </span>
       </div>
     </div>
   </section>
