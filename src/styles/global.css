@@ -324,46 +324,23 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #fbfaf6;
+  padding: 18px;
 }
 
-.client-logo span {
-  color: var(--text);
-  font-size: 1.28rem;
-  font-weight: 780;
-  letter-spacing: 0;
+.client-logo img {
+  display: block;
+  width: 100%;
+  max-width: 150px;
+  max-height: 52px;
+  object-fit: contain;
 }
 
-.client-logo.verizon span {
-  color: #171717;
+.client-logo.slb img {
+  max-height: 64px;
 }
 
-.client-logo.verizon span::after {
-  content: "";
-  display: inline-block;
-  width: 16px;
-  height: 8px;
-  margin-left: 6px;
-  border-right: 3px solid #d52b1e;
-  border-bottom: 3px solid #d52b1e;
-  transform: rotate(38deg) translateY(-2px);
-}
-
-.client-logo.marriott span {
-  color: #8a1538;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.42rem;
-}
-
-.client-logo.slb span {
-  color: #0067b1;
-  font-size: 1.58rem;
-  letter-spacing: 0.08em;
-}
-
-.client-logo.cn span {
-  color: #c41230;
-  font-size: 1.72rem;
-  font-weight: 860;
+.client-logo.cn img {
+  max-width: 118px;
 }
 
 .industry-list {

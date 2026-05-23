@@ -60,10 +60,10 @@ const workingPrinciples = [
 ];
 
 const clients = [
-  { name: "Verizon", mark: "Verizon", className: "verizon" },
-  { name: "Marriott", mark: "Marriott", className: "marriott" },
-  { name: "Schlumberger", mark: "SLB", className: "slb" },
-  { name: "CN Rail", mark: "CN", className: "cn" }
+  { name: "Verizon", logo: "/assets/logo-verizon.svg", className: "verizon" },
+  { name: "Marriott International", logo: "/assets/logo-marriott-international.svg", className: "marriott" },
+  { name: "SLB", logo: "/assets/logo-slb.svg", className: "slb" },
+  { name: "CN Rail", logo: "/assets/logo-cn-rail.svg", className: "cn" }
 ];
 
 const industries = [
@@ -175,7 +175,7 @@ const industries = [
           <div class="client-grid" aria-label="Selected past clients">
             {clients.map((client) => (
               <div class={`client-logo ${client.className}`} aria-label={client.name}>
-                <span>{client.mark}</span>
+                <img src={client.logo} alt={client.name} loading="lazy" />
               </div>
             ))}
           </div>
