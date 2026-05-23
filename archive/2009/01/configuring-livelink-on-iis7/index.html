@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Configuring Livelink on IIS7 | Kyle Baley</title><meta name="description" content="Archived post by Kyle Baley from January 29, 2009."><link rel="canonical" href="https://kyle.baley.org/archive/2009/01/configuring-livelink-on-iis7/"><meta property="og:title" content="Configuring Livelink on IIS7 | Kyle Baley"><meta property="og:description" content="Archived post by Kyle Baley from January 29, 2009."><meta property="og:type" content="article"><meta property="og:url" content="https://kyle.baley.org/archive/2009/01/configuring-livelink-on-iis7/"><meta property="og:image" content="/assets/architecture-workbench.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/_astro/_slug_.DevIr2Yb.css"></head> <body> <a class="skip-link" href="#main">Skip to content</a> <header class="site-header"> <nav class="nav container" aria-label="Main navigation"> <a class="brand" href="/">Kyle Baley</a> <div class="nav-links"> <a href="/#work">What I Do</a> <a href="/#case-studies">Case Studies</a> <a href="/writing/archive/">Archive</a> <a href="/contact/">Contact</a> </div> </nav> </header> <main id="main">  <article class="container post-shell"> <a href="/writing/archive/">Back to archive</a> <header> <h1>Configuring Livelink on IIS7</h1> <p class="post-meta"> <time datetime="2009-01-29T21:19:54.000Z">January 29, 2009</time> </p> </header> <div class="post-content"><p>I’ve recently had to set up a local Livelink environment because my system is running too smoothly and I need to throw an enterprise-level content management system at it to remind it that there are things in this world that can take you down in a second.</p>
+<p>To minimize the (inevitable) damage, I’ve set up a separate virtual machine for it using a clone of a base Windows 2008 Server image I have. One with IIS7.</p>
+<p>I’ve become quite adept at configuring IIS6 for Livelink (versions 9.5 and 9.7). You create a virtual directory against C:opentextcgi (configured as an application) and another for c:opentextsupport. You also need to allow executables. AND Allow Unknown CGI Extensions and Allow Unknown ISAPI Extensions under Web Service Extensions in IIS6. I’ve always been leery about opening it up like this so for IIS7, I was looking for a more restricted way of allowing livelink.exe to run.</p>
+<p>IIS7 does things similarly but the options are in a different spot. Essentially, you’re configuring it to run CGI applications.</p>
+<p>I’m assuming you’ve run the Livelink install on your machine already. In order to configure IIS7 after it’s done:</p>
+<ul>
+<li>Open IIS</li>
+<li>Click on the <em>server name</em> at the top</li>
+<li>Double-click ISAPI and CGI Restrictions</li>
+</ul>
+<p><a href="http://kyle.baley.org/wp-content/uploads/2009/01/iis7_livelink_1.png"><img class="alignnone size-medium wp-image-818" title="IIS7 - ISAPI and CGI" src="/legacy-assets/iis7_livelink_1-300x220.png" alt="" width="300" height="220" /></a></p>
+<p>&nbsp;</p>
+<ul>
+<li>Click Add and enter the page to your livelink.exe. Make sure you select Allow extension path to execute</li>
+</ul>
+<p><a href="http://kyle.baley.org/wp-content/uploads/2009/01/iis7_livelink_11.png"><img class="alignnone size-medium wp-image-819" title="Config ISAPI" src="/legacy-assets/iis7_livelink_11-300x170.png" alt="" width="300" height="170" /></a></p>
+<ul>
+<li>We’re only partway done. This allows the livelink.exe module to execute when given permission. But by default, IIS7 doesn’t allow CGI applications to execute. In the main IIS window, select the Livelink application and open Handler Mappings</li>
+</ul>
+<p><a href="http://kyle.baley.org/wp-content/uploads/2009/01/iis7_livelink_12.png"><img class="alignnone size-medium wp-image-820" title="IIS7 - Handler Mappings" src="/legacy-assets/iis7_livelink_12-300x220.png" alt="" width="300" height="220" /></a></p>
+<ul>
+<li>Next, select cgi-exe at the top of the list in the main panel, then click Edit Feature Permissions… on the right. In the dialogue box, check off Execute and click OK. (In the screenshot, I haven’t checked Execute because as soon as you do, the UI is updated underneath, making the screenshot harder to explain.)</li>
+</ul>
+<p><a href="http://kyle.baley.org/wp-content/uploads/2009/01/iis7_livelink_13.png"><img class="alignnone size-medium wp-image-821" title="IIS 7 - Handler permissions" src="/legacy-assets/iis7_livelink_13-300x220.png" alt="" width="300" height="220" /></a></p>
+<ul>
+<li>Finally, reset IIS (i.e. run iisreset from the command prompt or the Run dialog).</li>
+</ul>
+<p>After that, you should be able to access your new Livelink installation from Internet Explorer (e.g. http://localhost/livelink/livelink.exe). Firefox is another matter. For whatever reason, it’s not working on my machine. It keeps wanting to download livelink.exe rather than run it as a CGI application. I have reason to believe it is related to content type but I’m nearly positive it worked under IIS6 without any further configuration.</p>
+<p>Ah well, a post for another day. If ambition holds, I’ll put something up on configuring a SQL Server database for a local environment too.</p>
+<p>Kyle the Livelink’d</p>
+</div> </article>  </main> <footer class="site-footer"> <div class="container footer-inner"> <p>Senior .NET engineering, architecture, and fractional technical leadership.</p> <div class="footer-links"> <a href="https://www.linkedin.com/in/kylebaley/">LinkedIn</a> <a href="https://github.com/kbaley">GitHub</a> <a href="mailto:kyle@baley.org">Email</a> </div> </div> </footer> </body></html>

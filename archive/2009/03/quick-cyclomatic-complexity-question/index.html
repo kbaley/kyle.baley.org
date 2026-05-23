@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Quick Cyclomatic Complexity Question | Kyle Baley</title><meta name="description" content="Archived post by Kyle Baley from March 12, 2009."><link rel="canonical" href="https://kyle.baley.org/archive/2009/03/quick-cyclomatic-complexity-question/"><meta property="og:title" content="Quick Cyclomatic Complexity Question | Kyle Baley"><meta property="og:description" content="Archived post by Kyle Baley from March 12, 2009."><meta property="og:type" content="article"><meta property="og:url" content="https://kyle.baley.org/archive/2009/03/quick-cyclomatic-complexity-question/"><meta property="og:image" content="/assets/architecture-workbench.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/_astro/_slug_.DevIr2Yb.css"></head> <body> <a class="skip-link" href="#main">Skip to content</a> <header class="site-header"> <nav class="nav container" aria-label="Main navigation"> <a class="brand" href="/">Kyle Baley</a> <div class="nav-links"> <a href="/#work">What I Do</a> <a href="/#case-studies">Case Studies</a> <a href="/writing/archive/">Archive</a> <a href="/contact/">Contact</a> </div> </nav> </header> <main id="main">  <article class="container post-shell"> <a href="/writing/archive/">Back to archive</a> <header> <h1>Quick Cyclomatic Complexity Question</h1> <p class="post-meta"> <time datetime="2009-03-12T14:38:20.000Z">March 12, 2009</time> </p> </header> <div class="post-content"><p>Should’ve known better to ask this question on <a href="http://twitter.com/kbaley">Twitter</a>. Let it not be said that there are no downsides to always poking fun our tendency to take things too seriously.</p>
+<p>Here’s some code:</p>
+<pre class="c-sharp" name="code">function void Process( Job job )
+{
+    for ( var i = 0; i &lt; 5; i++ )
+    {
+        switch ( job.status )
+        {
+            case ( JOB_STATUS.NEW ):
+                ProcessNewJob( job );
+                break;
+            case ( Job_STATUS.CANCELLED ):
+                CancelJob( job );
+                break;
+            default:
+                UpdateJob( job );
+                break;
+        }
+    }
+}</pre>
+<p>The question is: What is the cyclomatic complexity of this code?</p>
+<p><a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity">Cyclomatic complexity</a> is a measure of the number of paths through your code. So my first intuition was that the answer is 15. One for each case statement, plus the default, and multiplied by 5 for each time through the loop.</p>
+<p>Then it was pointed out to me by someone who has actually used it in practice that the for loop counts as 1 regardless of what’s inside it. This is confirmed <a href="http://www.rkcole.com/articles/other/CodeMetrics-CCN.html">here</a>. Which would make the answer 4. This actually does make some sense to some degree because even though we are looping through five times, we aren’t actually adding any new paths through the code. I think. Maybe.</p>
+<p>A quick Twitter poll seemed to lean toward 4 as well (after discounting answers that amounted to “it depends”). But I’d like to get some more thoughts on it before calling the matter closed.</p>
+<p>Having said that, the most accurate answer was provided by my <a href="http://twitter.com/JocelynCrow/statuses/1316134544">dear and loving cousin</a>, who I can always count on to put things in perspective: I think the answer is you need to up your medication. That question didn’t even make sense on the metaphysical level.</p>
+<p>Kyle the Ontological</p>
+</div> </article>  </main> <footer class="site-footer"> <div class="container footer-inner"> <p>Senior .NET engineering, architecture, and fractional technical leadership.</p> <div class="footer-links"> <a href="https://www.linkedin.com/in/kylebaley/">LinkedIn</a> <a href="https://github.com/kbaley">GitHub</a> <a href="mailto:kyle@baley.org">Email</a> </div> </div> </footer> </body></html>

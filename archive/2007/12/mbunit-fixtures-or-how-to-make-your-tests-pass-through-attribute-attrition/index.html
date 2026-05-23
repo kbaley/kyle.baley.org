@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MbUnit fixtures, or &quot;How to make your tests pass through attribute attrition | Kyle Baley</title><meta name="description" content="Archived post by Kyle Baley from December 20, 2007."><link rel="canonical" href="https://kyle.baley.org/archive/2007/12/mbunit-fixtures-or-how-to-make-your-tests-pass-through-attribute-attrition/"><meta property="og:title" content="MbUnit fixtures, or &#34;How to make your tests pass through attribute attrition | Kyle Baley"><meta property="og:description" content="Archived post by Kyle Baley from December 20, 2007."><meta property="og:type" content="article"><meta property="og:url" content="https://kyle.baley.org/archive/2007/12/mbunit-fixtures-or-how-to-make-your-tests-pass-through-attribute-attrition/"><meta property="og:image" content="/assets/architecture-workbench.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/_astro/_slug_.DevIr2Yb.css"></head> <body> <a class="skip-link" href="#main">Skip to content</a> <header class="site-header"> <nav class="nav container" aria-label="Main navigation"> <a class="brand" href="/">Kyle Baley</a> <div class="nav-links"> <a href="/#work">What I Do</a> <a href="/#case-studies">Case Studies</a> <a href="/writing/archive/">Archive</a> <a href="/contact/">Contact</a> </div> </nav> </header> <main id="main">  <article class="container post-shell"> <a href="/writing/archive/">Back to archive</a> <header> <h1>MbUnit fixtures, or &quot;How to make your tests pass through attribute attrition</h1> <p class="post-meta"> <time datetime="2007-12-20T21:36:37.000Z">December 20, 2007</time> </p> </header> <div class="post-content"><p><a href="http://11011.net/software/vspaste"></a>
+<pre class="code"><span style="color: rgb(0,0,255)">using</span> MbUnit.Framework;
+<span style="color: rgb(0,0,255)">using</span> Rhino.Mocks;</pre>
+<pre class="code"><span style="color: rgb(0,0,255)">namespace</span> Suvius.Applications.LoveDoctor.Tests
+{
+    <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">class</span> <span style="color: rgb(43,145,175)">CritterFixationFixture
+</span>    {
+        <span style="color: rgb(0,0,255)">private</span> <span style="color: rgb(43,145,175)">ISpeciesSelectorPresenterView</span> view;
+        <span style="color: rgb(0,0,255)">private</span> <span style="color: rgb(43,145,175)">MockRepository</span> mocks;
+        <span style="color: rgb(0,0,255)">private</span> <span style="color: rgb(43,145,175)">SpeciesSelectorPresenter</span> presenter;
+
+        [ <span style="color: rgb(43,145,175)">SetUp </span>]
+        <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">void</span> SetUp( )
+        {
+            mocks = <span style="color: rgb(0,0,255)">new</span> <span style="color: rgb(43,145,175)">MockRepository</span>( );
+            view = mocks.DynamicMock&lt;<span style="color: rgb(43,145,175)">ISpeciesSelectorPresenterView</span>&gt;( );
+            presenter = <span style="color: rgb(0,0,255)">new</span> <span style="color: rgb(43,145,175)">SpeciesSelectorPresenter</span>( view );
+        }
+
+        [ <span style="color: rgb(43,145,175)">Test </span>]
+        <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">void</span> Should_initialize_view_with_list_of_projects( )
+        {
+            <span style="color: rgb(0,0,255)">using</span> ( mocks.Record( ) )
+            {
+                view.LoadCritters( );
+            }
+            <span style="color: rgb(0,0,255)">using</span> ( mocks.Playback( ) )
+            {
+                presenter.InitializeView( );
+            }
+        }
+    }
+
+    <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">class</span> <span style="color: rgb(43,145,175)">SpeciesSelectorPresenter
+</span>    {
+        <span style="color: rgb(0,0,255)">private</span> <span style="color: rgb(0,0,255)">readonly</span> <span style="color: rgb(43,145,175)">ISpeciesSelectorPresenterView</span> _view;
+
+        <span style="color: rgb(0,0,255)">public</span> SpeciesSelectorPresenter( <span style="color: rgb(43,145,175)">ISpeciesSelectorPresenterView</span> view )
+        {
+            _view = view;
+        }
+
+        <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">void</span> InitializeView()
+        {
+        }
+    }
+
+    <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">interface</span> <span style="color: rgb(43,145,175)">ISpeciesSelectorPresenterView
+</span>    {
+        <span style="color: rgb(0,0,255)">void</span> LoadCritters( );
+    }
+}</pre>
+<hr />
+<p>How's THAT for throwing you into the fray? I can see all of you now going, &quot;whoa, there, Coding Hillbilly! I ain't e'en got me a cuppa joe yet, buddy.&quot; Sorry, folks, that's how I roll. I think slow and act fast. You gotta keep up.</p>
+<p>The test above sets up an expectation that <font face="Courier New">LoadCritters</font> will be called on the View when we called <font face="Courier New">Presenter.InitializeView</font>. In actual fact, this isn't being done. So here's the poser: why does this test pass?</p>
+<p>All right, I'll tell ya because I like your look. And I don't want to risk any of you actually cutting and pasting that into an IDE and coming up with some cut 'n paste error I made. Plus I gave you a hint in the post title.</p>
+<p>The test isn't actually passing. When it hits <font face="Courier New">view.LoadCritters</font>, it fails silently and kicks out of the test completely. The reason bein' <font face="Courier New">SetUp</font> isn't being called. The reason for *that* bein' I forgot the <font face="Courier New">[ TestFixture ]</font> attribute on the class itself.</p>
+<p>Now as to the question on why the test doesn't fail with a null reference exception: That's an easy answer. I have no idea. If you add the <font face="Courier New">[ TestFixture ]</font> attribute and comment out the code that creates the view, it does fail with the expected exception.</p>
+<p>So I'll leave that to my loyal and, I pray, generous readers.</p>
+<p>Kyle the Deferred</p>
+</div> </article>  </main> <footer class="site-footer"> <div class="container footer-inner"> <p>Senior .NET engineering, architecture, and fractional technical leadership.</p> <div class="footer-links"> <a href="https://www.linkedin.com/in/kylebaley/">LinkedIn</a> <a href="https://github.com/kbaley">GitHub</a> <a href="mailto:kyle@baley.org">Email</a> </div> </div> </footer> </body></html>

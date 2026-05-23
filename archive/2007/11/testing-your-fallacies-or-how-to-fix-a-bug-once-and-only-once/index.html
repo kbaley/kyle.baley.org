@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Testing your fallacies, or &quot;How to fix a bug once and only once | Kyle Baley</title><meta name="description" content="Archived post by Kyle Baley from November 16, 2007."><link rel="canonical" href="https://kyle.baley.org/archive/2007/11/testing-your-fallacies-or-how-to-fix-a-bug-once-and-only-once/"><meta property="og:title" content="Testing your fallacies, or &#34;How to fix a bug once and only once | Kyle Baley"><meta property="og:description" content="Archived post by Kyle Baley from November 16, 2007."><meta property="og:type" content="article"><meta property="og:url" content="https://kyle.baley.org/archive/2007/11/testing-your-fallacies-or-how-to-fix-a-bug-once-and-only-once/"><meta property="og:image" content="/assets/architecture-workbench.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/_astro/_slug_.DevIr2Yb.css"></head> <body> <a class="skip-link" href="#main">Skip to content</a> <header class="site-header"> <nav class="nav container" aria-label="Main navigation"> <a class="brand" href="/">Kyle Baley</a> <div class="nav-links"> <a href="/#work">What I Do</a> <a href="/#case-studies">Case Studies</a> <a href="/writing/archive/">Archive</a> <a href="/contact/">Contact</a> </div> </nav> </header> <main id="main">  <article class="container post-shell"> <a href="/writing/archive/">Back to archive</a> <header> <h1>Testing your fallacies, or &quot;How to fix a bug once and only once</h1> <p class="post-meta"> <time datetime="2007-11-16T18:20:37.000Z">November 16, 2007</time> </p> </header> <div class="post-content"><p>Today, we'll talk on the virtues of restraint, cleverly disguised as an exercise in TDD.</p>
+<p>Here's the bug that I snagged during the stand-up: When I try to delete a Mechanical Doohicky*, I get an unhandled exception.</p>
+<p>Careful and value-added analysis led to the following code that checks to see if the Product is being used by another object:</p>
+<pre class="code">        <span style="color: rgb(0,0,255)">public</span> <span style="color: rgb(0,0,255)">bool</span> isPartUsed( <span style="color: rgb(0,128,128)">IMechanicalDoohicky</span> part )
+        {
+            <span style="color: rgb(0,0,255)">foreach</span> ( <span style="color: rgb(0,128,128)">Heap</span> heap <span style="color: rgb(0,0,255)">in</span> heaps )
+            {
+                <span style="color: rgb(0,0,255)">if</span> ( heap.Engine.Parts.Contains( part ) )
+                {
+                    <span style="color: rgb(0,0,255)">return</span> <span style="color: rgb(0,0,255)">true</span>;
+                }
+            }
+            <span style="color: rgb(0,0,255)">return</span> <span style="color: rgb(0,0,255)">false</span>;
+        }</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>The issue should be readily apparent. Namely, heap.Engine might be null.</p>
+<p>My first reaction to this was: easy fix. Check heap.Engine for null and spend the rest of the hour playing Whack-A-Mole (not the version you're thinking of).</p>
+<p>But nay, coders, let's slow down and see if there's a way we can drag this billable time out a bit in a justifiable way**.</p>
+<p>What we're going to do first is write a test to expose this little bug. For those of you who obsess over analogies, think of it as...oh, I dunno, fixing a leak in a dam. You don't want to shut the water off, then have to turn the water on to make sure the leak is fixed. OK, maybe I'll pass on the analogies. Hillbillies are just too real. But I'm writing the test anyway because it's trendy.</p>
+<p>Over to our test harness, we add a test that will fail specifically because of this bug:</p>
+<pre class="code">        <span style="color: rgb(0,0,255)">private</span> <span style="color: rgb(0,0,255)">bool</span> Should_not_fail_when_checking_if_part_is_used_in_heaps_with_no_engine( )
+        {
+            <span style="color: rgb(0,128,0)">// ... set up part and heaps with one that has no engine ...
+</span><a href="http://11011.net/software/vspaste"></a>            heaps.isPartUsed( part );
+        }
+</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Back to our code and we update it to fix the bug:</p>
+<pre class="code">        <span style="color: rgb(0,0,255)">private</span> <span style="color: rgb(0,0,255)">bool</span> isPartUsed( <span style="color: rgb(0,128,128)">IMechanicalDoohicky </span>part )
+        {
+            <span style="color: rgb(0,0,255)">foreach</span> ( <span style="color: rgb(0,128,128)">Heap </span>heap <span style="color: rgb(0,0,255)">in</span> heaps )
+            {
+                Engine engine = heap.Engine<br />                <span style="color: rgb(0,0,255)">if</span> ( engine != <span style="color: rgb(0,0,255)">null</span> )
+                {
+                    <span style="color: rgb(0,0,255)">if</span> ( engine.Parts.Contains( part ) )
+                    {
+                        <span style="color: rgb(0,0,255)">return</span> <span style="color: rgb(0,0,255)">true</span>;
+                    }
+                }
+<a href="http://11011.net/software/vspaste"></a>            }
+            <span style="color: rgb(0,0,255)">return</span> <span style="color: rgb(0,0,255)">false</span>;
+        }
+</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>So it may seem like a lot of extra work to fix a seemingly simple bug, especially because of the ominous way I commented out all the set up code in the test. But the bug is fixed and I can now prove it without having to launch the UI and going through the pain of setting up the conditions that led to it. And if anyone mucks with the implementation of Engine, we can be reasonably confident this particular bug won't get re-introduced. Plus the test acts as a sort of documentation of the bug that we've fixed.</p>
+<p>Final note: There is a reason I stored heap.Engine in a temporary variable other than avoiding duplication.</p>
+<p>Kyle the Exposed</p>
+<p><font size="1">* Domain objects have been renamed to protect the innocent. I.E. me</font></p>
+<p><font size="1">** My lawyer has advised me that, due to my increased readership in the U.S., I should add that I am officially and legally kidding.</font></p>
+</div> </article>  </main> <footer class="site-footer"> <div class="container footer-inner"> <p>Senior .NET engineering, architecture, and fractional technical leadership.</p> <div class="footer-links"> <a href="https://www.linkedin.com/in/kylebaley/">LinkedIn</a> <a href="https://github.com/kbaley">GitHub</a> <a href="mailto:kyle@baley.org">Email</a> </div> </div> </footer> </body></html>

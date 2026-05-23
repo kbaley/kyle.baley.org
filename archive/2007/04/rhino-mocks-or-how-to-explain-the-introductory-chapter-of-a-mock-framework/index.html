@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Rhino Mocks, or &quot;How to Explain the Introductory Chapter of a Mock Framework | Kyle Baley</title><meta name="description" content="Archived post by Kyle Baley from April 28, 2007."><link rel="canonical" href="https://kyle.baley.org/archive/2007/04/rhino-mocks-or-how-to-explain-the-introductory-chapter-of-a-mock-framework/"><meta property="og:title" content="Rhino Mocks, or &#34;How to Explain the Introductory Chapter of a Mock Framework | Kyle Baley"><meta property="og:description" content="Archived post by Kyle Baley from April 28, 2007."><meta property="og:type" content="article"><meta property="og:url" content="https://kyle.baley.org/archive/2007/04/rhino-mocks-or-how-to-explain-the-introductory-chapter-of-a-mock-framework/"><meta property="og:image" content="/assets/architecture-workbench.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/_astro/_slug_.DevIr2Yb.css"></head> <body> <a class="skip-link" href="#main">Skip to content</a> <header class="site-header"> <nav class="nav container" aria-label="Main navigation"> <a class="brand" href="/">Kyle Baley</a> <div class="nav-links"> <a href="/#work">What I Do</a> <a href="/#case-studies">Case Studies</a> <a href="/writing/archive/">Archive</a> <a href="/contact/">Contact</a> </div> </nav> </header> <main id="main">  <article class="container post-shell"> <a href="/writing/archive/">Back to archive</a> <header> <h1>Rhino Mocks, or &quot;How to Explain the Introductory Chapter of a Mock Framework</h1> <p class="post-meta"> <time datetime="2007-04-28T23:18:56.000Z">April 28, 2007</time> </p> </header> <div class="post-content"><p>There's a good chance I'll lose some credibility with this post and that many people will file it under "stating the obvious". But a wise man once told me, "There aren't any stupid questions, are there?" so I'll proceed assuming someone has had the same trouble I did when I was learning mock objects, and more specifically, <a href="http://www.ayende.com/projects/rhino-mocks.aspx" target="_blank">Rhino Mocks</a>&nbsp;(or RhinoMocks or Rhino.Mocks depending on who you talk to).</p>
+<p>My main conceptual stumbling block was in the use of the term "expectation". To explain, here is the introductory example from the Rhino Mocks documentation:</p>
+<pre>1  [Test]
+2  public void SaveProjectAs_CanBeCanceled()
+3  {
+4    MockRepository mocks = new MocksRepository();
+5    IProjectView projectView = (IProjectView)mocks.CreateMock(typeof(IProjectView));
+6    Project prj = new Project("Example Project");
+7    IProjectPresenter presenter = new ProjectPresenter(prj,projectView);
+8    Expect.Call(projectView.Title).Return(prj.Name);
+9    Expect.Call(projectView.Ask(question,answer)).Return(null);
+10   mocks.ReplayAll();
+11   Assert.IsFalse(presenter.SaveProjectAs());          
+12   mocks.VerifyAll();
+13 }</pre>
+<p>(Note: The example is a little dated due to Rhino Mocks' new CreateMock&lt;T&gt; but that wasn't the confusing part. Nor was the typo in line 4. Read on, reader, read on.)</p>
+<p>I read/scanned the <a href="http://www.ayende.com/Wiki/(S(ndzwo4u5hwdw13jnm4mn5kjy))/Rhino+Mocks+Introduction.ashx" target="_blank">surrounding text</a> several times trying to determine where the magic was happening. Focussing on line 8, here was my interpretation:</p>
+<ul>
+<li>At some point during this test, there will be a call to projectView.Title. When that happens, I expect it's value to be identical to prj.Name. If it isn't, the test fails.</li>
+</ul>
+<p>That is, I thought the expectation itself was doing the testing. Ya, ya, stop laughing. Sue me for assuming the English definition of "expect". (OK, so the expectation is on the .Call, not the .Return; I'm using Reverse Polish Notation, SOP in the Coding Hillbilly handbook.)</p>
+<p>What line 8 *really* says is (to the best of my knowledge at least):</p>
+<ul>
+<li>At some point during the test, I expect a call will be made to projectView.Title. When that happens, return prj.Name as its value. If the call isn't made, the test fails.</li>
+</ul>
+<p>The good part is, realizing this made ReplayAll and VerifyAll that much less confusing particularly around the Replay State that the documentation assumes I know anything about.</p>
+<p>It took a while for me to understand the Replay State. As far as I can tell, MockRepository.ReplayAll turns on a switch. When that switch is on, all calls to methods/properties on the mock objects are recorded and compared to the expectations (set before ReplayAll is called). Then when VerifyAll is called, the switch is turned off and we check to see if all expectations have been met.</p>
+<p>Put another way:</p>
+<ul>
+<li>Create your mock objects</li>
+<li>Tell the mock framework which properties/methods you expect will be called. Along with this, you can specify which values you want to return when those methods/properties are called.</li>
+<li>Start recording (see&nbsp;line 10). For all code executed after this, start comparing it with our expectations.</li>
+<li>Execute code to be tested</li>
+<li>Stop recording (see line 12). See which expectations have not been met and fail the test if any exist.</li>
+</ul>
+<p>So again, the test will fail if you set an expectation that a method will be called and it isn't. I believe the reverse is true as well. That is, if a method is called and you&nbsp;*haven't* set an expectation on it, the test will fail also.&nbsp;But don't quote me on that.</p>
+<p>I'm sure all of this is being explained much more clearly as I type this at the <a href="http://www.calgarycodecamp.com" target="_blank">Calgary Code Camp</a> at either James Kovacs' or Terry Thibodeau's sessions but I'm posting it anyway to justify the time spent ignoring my daughter.</p>
+</div> </article>  </main> <footer class="site-footer"> <div class="container footer-inner"> <p>Senior .NET engineering, architecture, and fractional technical leadership.</p> <div class="footer-links"> <a href="https://www.linkedin.com/in/kylebaley/">LinkedIn</a> <a href="https://github.com/kbaley">GitHub</a> <a href="mailto:kyle@baley.org">Email</a> </div> </div> </footer> </body></html>

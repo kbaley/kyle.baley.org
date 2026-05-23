@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Online Professional Development or, &quot;How to Bring a Flamingo Back to Life | Kyle Baley</title><meta name="description" content="Archived post by Kyle Baley from May 16, 2007."><link rel="canonical" href="https://kyle.baley.org/archive/2007/05/online-professional-development-or-how-to-bring-a-flamingo-back-to-life/"><meta property="og:title" content="Online Professional Development or, &#34;How to Bring a Flamingo Back to Life | Kyle Baley"><meta property="og:description" content="Archived post by Kyle Baley from May 16, 2007."><meta property="og:type" content="article"><meta property="og:url" content="https://kyle.baley.org/archive/2007/05/online-professional-development-or-how-to-bring-a-flamingo-back-to-life/"><meta property="og:image" content="/assets/architecture-workbench.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/_astro/_slug_.DevIr2Yb.css"></head> <body> <a class="skip-link" href="#main">Skip to content</a> <header class="site-header"> <nav class="nav container" aria-label="Main navigation"> <a class="brand" href="/">Kyle Baley</a> <div class="nav-links"> <a href="/#work">What I Do</a> <a href="/#case-studies">Case Studies</a> <a href="/writing/archive/">Archive</a> <a href="/contact/">Contact</a> </div> </nav> </header> <main id="main">  <article class="container post-shell"> <a href="/writing/archive/">Back to archive</a> <header> <h1>Online Professional Development or, &quot;How to Bring a Flamingo Back to Life</h1> <p class="post-meta"> <time datetime="2007-05-17T00:28:06.000Z">May 16, 2007</time> </p> </header> <div class="post-content"><p>The Suvius.Flamingo project is not quite dead although it is, to go with the motif of the National Geograhic show playing behind me, about ninety percent down the python's gullet. But let's see what we can't glean from the carcass.</p>
+<p>I haven't linked to the application because I'm scared to even check to see if it still works. <a href="http://kyle.baley.org/WMP11AndOnlinePlaylists.aspx">Last I checked,</a> Windows Media Player 11 had made the application all but useless so I kind of abandoned it. Now, in a fit of PD, I'm going to see if we can't all learn something from resurrecting the app and re-doing it in a TDD way. So with that, I shall carefully document its development from start to finish. Or at least until something else shiny catches my eye.</p>
+<p>For those that want to play along, I have a Subversion repository and will post the details for it in the near future once I have created a read-only user. If you *really* want to gain my undying gratitude, roll up your sleeves and ping me to become a developer on the project.</p>
+<p>The primary goal is learning. If we end up with a working application at the end, all the better.</p>
+<p>First, the boring part: defining what the application is supposed to do. This will be a moving target but in a good way. Mostly because I'm reserving the right to change the requirements to make development (and blog topics) more interesting.</p>
+<p>At a high level, I'm looking at building a front-end to my online music library. It currently resides at http://radio.baley.org as a directory list of about 300 songs. The other 2500 have yet to be migrated to the new server.</p>
+<p>If I were to free associate some features, they would include:</p>
+<ul>
+<li>Ability to search for music based on one or more criteria, including title, artist, and genre</li>
+<li>Ability to chain search filters together to form a playlist</li>
+<li>Ability to play the playlist in at least one popular media player in a user-friendly way</li>
+<li>Ability to save a playlist</li>
+<li>Ability for an administrator to upload additional songs to the&nbsp;database and glean the metadata from it (as opposed to keying it in manually)</li>
+<li>Ability to update metadata and have it persisted not only in the database but in the underlying file as well</li>
+<li>Ability for users to rate a song</li>
+</ul>
+<p>Woman, I'd better stop there or I'll be here all night. Suffice it to say, there&nbsp;is a lot more I could throw in....ah, what the hell:</p>
+<ul>
+<li>Ability for any user to tag a song with keywords</li>
+<li>Ability to search based on tags</li>
+<li>Ability to apply more than one genre, artist, album, etc to a song. This might be combined with the tagging feature. E.g.&nbsp;Wish You Were Here&nbsp;would be tagged with Pink Floyd, Roger Waters, David Gilmour, Rick Wright, Nick Mason, Wish You Were Here (album), A Collection of Great Dance Songs (album), classic rock, acoustic</li>
+<li>Ability for users to add comments about a song (possibly in a wiki-like fashion)</li>
+<li>Ability to share playlists</li>
+<li>Ability to link songs (i.e. link to other versions of a song). This would also be user-driven</li>
+</ul>
+<p>Let the music begin.</p>
+</div> </article>  </main> <footer class="site-footer"> <div class="container footer-inner"> <p>Senior .NET engineering, architecture, and fractional technical leadership.</p> <div class="footer-links"> <a href="https://www.linkedin.com/in/kylebaley/">LinkedIn</a> <a href="https://github.com/kbaley">GitHub</a> <a href="mailto:kyle@baley.org">Email</a> </div> </div> </footer> </body></html>

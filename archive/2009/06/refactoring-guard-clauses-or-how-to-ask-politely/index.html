@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Refactoring guard clauses, or “How to ask politely” | Kyle Baley</title><meta name="description" content="Archived post by Kyle Baley from June 1, 2009."><link rel="canonical" href="https://kyle.baley.org/archive/2009/06/refactoring-guard-clauses-or-how-to-ask-politely/"><meta property="og:title" content="Refactoring guard clauses, or “How to ask politely” | Kyle Baley"><meta property="og:description" content="Archived post by Kyle Baley from June 1, 2009."><meta property="og:type" content="article"><meta property="og:url" content="https://kyle.baley.org/archive/2009/06/refactoring-guard-clauses-or-how-to-ask-politely/"><meta property="og:image" content="/assets/architecture-workbench.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/_astro/_slug_.DevIr2Yb.css"></head> <body> <a class="skip-link" href="#main">Skip to content</a> <header class="site-header"> <nav class="nav container" aria-label="Main navigation"> <a class="brand" href="/">Kyle Baley</a> <div class="nav-links"> <a href="/#work">What I Do</a> <a href="/#case-studies">Case Studies</a> <a href="/writing/archive/">Archive</a> <a href="/contact/">Contact</a> </div> </nav> </header> <main id="main">  <article class="container post-shell"> <a href="/writing/archive/">Back to archive</a> <header> <h1>Refactoring guard clauses, or “How to ask politely”</h1> <p class="post-meta"> <time datetime="2009-06-01T15:51:21.000Z">June 1, 2009</time> </p> </header> <div class="post-content"><p>This post is brought to you by the letters M and V and P. I mention that at the beginning to set the pre-requisites.</p>
+<p>I woke up this morning, broke open our application, and am currently staring at this method in our presenter.</p>
+<pre class="c-sharp" name="code">public void Start( )
+{
+    if ( !IsAuthorized( ) ) return;
+    if ( !ValidateHeritage( ) ) return;
+
+    if ( !IsCousin( ) ) return;
+    if ( HasSiblings( ) ) return;
+}</pre>
+<p>My first reaction to this was that it didn’t actually do anything. The way it’s currently set up, it appears to check a bunch of guard clauses and exit if they are met. But there isn’t any actual code being executed if the guard clauses aren’t met.</p>
+<p>Digging deeper, I discovered that the guard clauses are actually doing more than guarding. They are calling methods on the View and otherwise changing state. For example, the IsCousin method:</p>
+<pre class="c-sharp" name="code">public bool IsCousin( )
+{
+    if ( _user.AuntsAndUncles.Contains( _prospect.Mother ) 
+         || _user.AuntsAndUncles.Contains( _prospect.Father ) )
+    {
+        _viabilityCount++;
+        View.DisableSafetyChecks( );
+        return true;
+    }
+
+    return false;
+}</pre>
+<p>Clearly, this is ain’t your mother’s guard clause. It’s updating a local variable and doing some fanciness in the UI as well as guarding.</p>
+<p>So maybe it’s just an issue with naming. Obviously, it’s not a guard clause, so maybe I could rename it to make that clearer. An obvious name isn’t leaping out but in any case, something <em>feels</em> wrong about having all these methods return a boolean.</p>
+<p>An alternative I’m considering is separating the guard clauses from the actions:</p>
+<pre class="c-sharp" name="code">public void Start()
+{
+    if ( IsAuthorized( ) == false )
+    {
+        SetNotAuthorized( );
+        return;
+    }
+    if ( ValidHeritage( ) == false ) return;
+
+    if ( IsCousin( ) == false ) return;
+
+    if ( HasSiblings( ) == false ) return;
+    
+    IncreaseViability( );
+    DisableSafetyChecks( );
+}</pre>
+<p>Clearly, this is more verbose. But it looks better to me because the guard clauses don’t actually do anything except check the state of something. The actual flow of code is more obvious (isn’t it?).</p>
+<p>Maybe the original method is fine and I’ve been reading too much on Command-Query Separation lately. Or maybe there’s an alternative. In which case, I’d love to hear it, even given the very limited context I’ve provided.</p>
+<p>And in order to solicit as many opinions as possible, and because I know how much we all love to prove each other wrong, I’ll make the claim that my alternative is THE DEFINITIVE way of doing this.</p>
+<p>Kyle the Reversed</p>
+</div> </article>  </main> <footer class="site-footer"> <div class="container footer-inner"> <p>Senior .NET engineering, architecture, and fractional technical leadership.</p> <div class="footer-links"> <a href="https://www.linkedin.com/in/kylebaley/">LinkedIn</a> <a href="https://github.com/kbaley">GitHub</a> <a href="mailto:kyle@baley.org">Email</a> </div> </div> </footer> </body></html>
