@@ -33,6 +33,8 @@ The generated static site is written to `dist/`.
 
 This site is static and suitable for GitHub Pages, Netlify, Cloudflare Pages, Azure Static Web Apps, or similar hosting.
 
+The production site at `kyle.baley.org` deploys through GitHub Actions on every push to `main`.
+
 Set the build command to:
 
 ```bash
