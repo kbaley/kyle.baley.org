@@ -1,10 +1,9 @@
 ---
 title: "Write Software for the Team You Have"
-description: "A draft article by Kyle Baley about writing software for the team you have rather than the team you wish you had."
+description: "An article on writing software for the team you have rather than the team you wish you had."
 date: 2026-06-01
 category: "Technical Leadership"
-status: "Draft"
-summary: "A starting draft about designing systems around the real team that will build, support, and evolve them."
+summary: "A contractor's architecture test: when the work is handed off, can the client's team understand it, extend it, and actually want to keep working that way?"
 ---
 
 As a contractor, I think a lot about software maintenance. I'm not kidding. I wrote about it [eighteen years ago](/archive/2008/04/whos-the-next-guy/) and, though I wish I was a bit more gender-sensitive in the title, the underlying sentiment holds up. Even if some of the technology does not. Eighteen years later, I still wonder about the same thing, especially now that our industry has produced enough frameworks, patterns, deployment targets, and architecture diagrams to blot out the sun.
