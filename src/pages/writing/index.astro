@@ -1,0 +1,109 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { formatPostDate } from "../../lib/archive";
+import {
+  getArchiveSummary,
+  getCurrentWriting,
+  getLocalWritingItems,
+  westernDevsPosts
+} from "../../lib/writing";
+
+const localWriting = getLocalWritingItems(await getCollection("writing"));
+const currentWriting = getCurrentWriting(localWriting);
+const olderElsewhere = westernDevsPosts.filter((post) => post.date.getUTCFullYear() < 2024);
+const archive = getArchiveSummary();
+---
+
+<BaseLayout
+  title="Writing"
+  description="Current writing, externally published articles, and older technical posts by Kyle Baley."
+>
+  <section class="page-header writing-header">
+    <div class="container">
+      <p class="eyebrow">Writing</p>
+      <h1>Current notes, outside articles, and the older archive.</h1>
+      <p class="lead">
+        Newer writing belongs here first, whether it is published on this site or elsewhere.
+        The old blog remains available as an archive, but this page gives the current work a
+        cleaner place to live.
+      </p>
+    </div>
+  </section>
+
+  <section class="container section writing-section">
+    <div class="section-heading">
+      <h2>Current Writing</h2>
+      <p>
+        Recent articles that still represent what I am thinking about now: pragmatic cloud work,
+        small useful automation, technical tradeoffs, and the human machinery around software.
+      </p>
+    </div>
+
+    <div class="writing-grid">
+      {currentWriting.map((post) => (
+        <article class="writing-card feature">
+          <div class="writing-card-meta">
+            <span>{post.category}</span>
+            <time datetime={post.date.toISOString()}>{formatPostDate(post.date)}</time>
+          </div>
+          <h3>
+            <a href={post.url}>{post.title}</a>
+          </h3>
+          <p>{post.summary}</p>
+          <div class="writing-card-footer">
+            <span>{post.source}</span>
+            {post.isExternal && <span>Published elsewhere</span>}
+          </div>
+        </article>
+      ))}
+
+      <article class="writing-card next-post">
+        <p class="eyebrow">Next on kyle.baley.org</p>
+        <h3>A home for new articles</h3>
+        <p>
+          Future posts can publish directly on this site and appear here without being mixed
+          into the legacy archive. Western Devs pieces stay credited to their original home.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="container writing-section">
+      <div class="section-heading">
+        <h2>Published Elsewhere</h2>
+        <p>
+          Articles from Western Devs are collected here as part of the public body of work,
+          with links back to their original publication.
+        </p>
+      </div>
+
+      <div class="external-list">
+        {olderElsewhere.map((post) => (
+          <a class="external-post" href={post.url}>
+            <span>
+              <time datetime={post.date.toISOString()}>{formatPostDate(post.date)}</time>
+              <strong>{post.title}</strong>
+            </span>
+            <em>{post.category}</em>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container archive-callout">
+      <div>
+        <p class="eyebrow">Legacy Archive</p>
+        <h2>Older blog posts remain preserved.</h2>
+        <p>
+          {archive.count} posts from {archive.oldestYear} through {archive.newestYear}, kept for
+          reference and separated from newer writing so the site no longer feels frozen in time.
+        </p>
+      </div>
+      <a class="button" href="/writing/archive/">Browse Archive</a>
+    </div>
+  </section>
+</BaseLayout>

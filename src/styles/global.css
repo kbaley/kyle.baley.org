@@ -433,6 +433,132 @@ h3 {
   color: var(--muted);
 }
 
+.writing-preview,
+.writing-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.writing-preview {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.writing-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.writing-card {
+  display: flex;
+  min-height: 260px;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 24px;
+}
+
+.writing-card.feature {
+  min-height: 300px;
+}
+
+.writing-card.next-post {
+  justify-content: center;
+  background: #f3f1e9;
+}
+
+.writing-card-meta,
+.writing-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.writing-card-meta span,
+.writing-card-footer span:last-child,
+.external-post em {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: #fbfaf6;
+  color: var(--ink-soft);
+  font-style: normal;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.writing-card h3 {
+  margin-top: 18px;
+  font-size: 1.32rem;
+  line-height: 1.16;
+}
+
+.writing-card h3 a {
+  color: var(--text);
+  text-decoration-thickness: 1px;
+}
+
+.writing-card p {
+  margin: 14px 0 0;
+  color: var(--muted);
+}
+
+.writing-card-footer {
+  margin-top: auto;
+  padding-top: 22px;
+}
+
+.writing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 18px;
+}
+
+.writing-section {
+  padding-top: 0;
+}
+
+.writing-header {
+  padding-bottom: 70px;
+}
+
+.page-header-link {
+  margin-top: 20px;
+}
+
+.external-list {
+  display: grid;
+  gap: 1px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.external-post {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 18px 20px;
+  text-decoration: none;
+}
+
+.external-post span {
+  display: grid;
+  gap: 4px;
+}
+
+.external-post time {
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.external-post strong {
+  color: var(--text);
+}
+
 .page-header {
   padding: 70px 0 38px;
 }
@@ -474,6 +600,10 @@ h3 {
 .post-meta {
   margin: 14px 0 28px;
   color: var(--muted);
+}
+
+.post-eyebrow {
+  margin-top: 24px;
 }
 
 .post-content {
@@ -542,6 +672,8 @@ h3 {
   .service-grid,
   .principle-grid,
   .experience-grid,
+  .writing-grid,
+  .writing-preview,
   .remote-note {
     grid-template-columns: 1fr;
   }
@@ -565,9 +697,16 @@ h3 {
   }
 
   .archive-post,
+  .external-post,
   .contact-row {
     grid-template-columns: 1fr;
     display: grid;
     gap: 4px;
+  }
+
+  .writing-card-meta,
+  .writing-card-footer {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

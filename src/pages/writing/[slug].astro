@@ -1,0 +1,41 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatPostDate } from "../../lib/archive";
+import { getWritingSlug } from "../../lib/writing";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("writing");
+
+  return posts.map((post) => ({
+    params: { slug: getWritingSlug(post.id) },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const status = post.data.status;
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  canonicalPath={`/writing/${getWritingSlug(post.id)}/`}
+  ogType="article"
+>
+  <article class="container post-shell">
+    <a href="/writing/">Back to writing</a>
+    <header>
+      {status && <p class="eyebrow post-eyebrow">{status}</p>}
+      <h1>{post.data.title}</h1>
+      <p class="post-meta">
+        <time datetime={post.data.date.toISOString()}>{formatPostDate(post.data.date)}</time>
+      </p>
+    </header>
+
+    <div class="post-content">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

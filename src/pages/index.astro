@@ -1,5 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { formatPostDate } from "../lib/archive";
+import { getFeaturedWriting, getLocalWritingItems } from "../lib/writing";
 
 const services = [
   {
@@ -74,6 +77,9 @@ const industries = [
   "Energy",
   "Hospitality"
 ];
+
+const localWriting = getLocalWritingItems(await getCollection("writing"));
+const featuredWriting = getFeaturedWriting(localWriting);
 ---
 
 <BaseLayout
@@ -94,7 +100,7 @@ const industries = [
           <a class="button" href="mailto:kyle@baley.org">Start a Conversation</a>
           <a class="text-link" href="https://www.linkedin.com/in/kylebaley/">LinkedIn</a>
           <a class="text-link" href="https://github.com/kbaley">GitHub</a>
-          <a class="text-link" href="/writing/archive/">Blog Archive</a>
+          <a class="text-link" href="/writing/">Writing</a>
         </div>
       </div>
       <div class="hero-media" aria-label="Kyle Baley speaking at a software conference">
@@ -214,16 +220,37 @@ const industries = [
     </div>
   </section>
 
-  <section class="section">
-    <div class="container archive-callout">
-      <div>
-        <h2>Writing Archive</h2>
+  <section class="section" id="writing">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Writing</h2>
         <p>
-          Older technical writing from earlier stages of my career. Some posts may be dated,
-          but they remain here for reference.
+          Recent posts and articles published elsewhere, with the older blog preserved separately
+          as an archive instead of mixed into the current work.
         </p>
       </div>
-      <a class="button" href="/writing/archive/">Browse Archive</a>
+      <div class="writing-preview">
+        {featuredWriting.map((post) => (
+          <article class="writing-card">
+            <div class="writing-card-meta">
+              <span>{post.category}</span>
+              <time datetime={post.date.toISOString()}>{formatPostDate(post.date)}</time>
+            </div>
+            <h3>
+              <a href={post.url}>{post.title}</a>
+            </h3>
+            <p>{post.summary}</p>
+            <div class="writing-card-footer">
+              <span>{post.source}</span>
+              {post.isExternal && <span>Published elsewhere</span>}
+            </div>
+          </article>
+        ))}
+      </div>
+      <div class="writing-actions">
+        <a class="button" href="/writing/">View Writing</a>
+        <a class="text-link" href="/writing/archive/">Browse Legacy Archive</a>
+      </div>
     </div>
   </section>
 </BaseLayout>
