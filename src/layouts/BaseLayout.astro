@@ -4,6 +4,7 @@ type Props = {
   description: string;
   canonicalPath?: string;
   ogType?: string;
+  previewImage?: string;
   noindex?: boolean;
 };
 
@@ -12,12 +13,14 @@ const {
   description,
   canonicalPath = Astro.url.pathname,
   ogType = "website",
+  previewImage = "/assets/architecture-workbench.png",
   noindex = false
 } = Astro.props;
 
 const siteTitle = "Kyle Baley";
 const fullTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
 const canonical = new URL(canonicalPath, Astro.site ?? "https://kyle.baley.org").toString();
+const previewImageUrl = new URL(previewImage, Astro.site ?? "https://kyle.baley.org").toString();
 
 import "../styles/global.css";
 ---
@@ -34,8 +37,9 @@ import "../styles/global.css";
     <meta property="og:description" content={description} />
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content="/assets/architecture-workbench.png" />
+    <meta property="og:image" content={previewImageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={previewImageUrl} />
     <link rel="icon" href="/favicon.svg" />
   </head>
   <body>
