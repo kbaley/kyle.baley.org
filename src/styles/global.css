@@ -644,6 +644,11 @@ h3 {
   background: #fbf2df;
 }
 
+.post-content figure:has(img[src*="youtube_parties"]) {
+  width: min(50%, 360px);
+  margin-inline: auto;
+}
+
 .post-content figcaption {
   margin-top: 0.6rem;
   color: var(--muted);
@@ -711,6 +716,10 @@ h3 {
 
   .book-feature img {
     max-width: 150px;
+  }
+
+  .post-content figure:has(img[src*="youtube_parties"]) {
+    width: 100%;
   }
 
   .hero {

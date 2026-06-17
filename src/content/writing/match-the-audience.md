@@ -3,7 +3,7 @@ title: "Match the Audience"
 description: "A reflection on choosing communication that helps the other person feel understood instead of impressed."
 date: 2026-06-12
 category: "Communication"
-summary: "Communication works better when it is aimed at the person in front of you, using their language, their context, and their need to feel understood instead of dazzled."
+summary: "Communication works better when it's aimed at the person in front of you, using their language, their context, and their need to feel understood instead of dazzled."
 heroImage: "/assets/match-audience-hero.webp"
 heroAlt: "Someone speaking only to be heard"
 ---
@@ -22,7 +22,7 @@ A developer may want implementation detail. A product owner may want tradeoffs a
 
 They just want to know whether they can do their job. You need to decide whether you're going [to help them](https://www.youtube.com/watch?v=iBtcGwHPMKM) or hinder them.
 
-Technical details aren't bad. Indeed, they are often necessary. But they can also become a way of showing off, especially when we use them before we know whether the other person needs them. At that point, the details aren't serving understanding. They are serving our egos.
+Technical details aren't bad. Indeed, they're often necessary. But they can also become a way of showing off, especially when we use them before we know whether the other person needs them. At that point, the details aren't serving understanding. They're serving our egos.
 
 This is a hard thing to admit, because most of us don't walk into a conversation thinking, "Now would be a good time to establish dominance through vocabulary." We just get excited. Or nervous. Or we want to prove we have thought it through. Or we want credit for the complexity we had to survive before arriving at the answer. Or we (maybe subconsciously, maybe not) don't want to implement the feature and spewing tech will make the client think it's too expensive to implement. Or, and let's be honest with ourselves, we want to show off.
 
@@ -36,7 +36,7 @@ But I digress. Back to the quote.
 
 The takeaway I...ummm...take away from it is: you can be the "smartest" person in the room and still not be good at your job. Do you want to be the person the client talks about years afterward that says, "You remember that contractor? Seemed smart enough but he made me feel stupid." Though it's likely they'll phrase "he made me feel stupid" differently. Like "he was kind of an asshole".
 
-If you make someone feel stupid, you are fighting uphill from the start. They may assume you don't know what you are doing because you cannot explain it clearly. Or they may assume you know exactly what you are doing and enjoy making them feel small. Neither assumption brings warm fuzzies.
+If you make someone feel stupid, you're fighting uphill from the start. They may assume you don't know what you're doing because you can't explain it clearly. Or they may assume you know exactly what you're doing and enjoy making them feel small. Neither assumption brings warm fuzzies.
 
 The opposite isn't much better. If you condescend, simplifying everything into baby talk and visible patience, people can feel that too. You might think you are being helpful. They may hear, "This person thinks I'm an idiot." You've likely experienced this yourself when you call any sort of tech support.
 
@@ -50,7 +50,7 @@ The problem is that cleverness isn't the same as clarity. Sometimes it helps. So
 
 The practical advice is painfully simple: listen.
 
-Not "wait for your turn to speak because you already have something clever to say" listen. Actual listening. Listen for what they call things. Listen for what they emphasize. Listen for what they avoid. Listen for the distinction between what they asked and what they are worried about.
+Not "wait for your turn to speak because you already have something clever to say" listen. Actual listening. Listen for what they call things. Listen for what they emphasize. Listen for what they avoid. Listen for the distinction between what they asked and what they're worried about.
 
 <figure>
   <a href="https://xkcd.com/920/">
@@ -71,7 +71,7 @@ Second, it shows the person that you understand them. Not that you understood a 
 
 ## Assume the Best
 
-There is an assumption underneath all of this that is worth making explicit: the person you are talking to is probably good at their job.
+There's an assumption underneath all of this that's worth making explicit: the person you're talking to is probably good at their job.
 
 Keep that in mind. I said _their_ job, not yours. They may not know the architecture, the deployment pipeline, the domain model, or why saying "just add a field" can make a developer stare silently into the middle distance. But they know their work. They know where the process bends. They know which workaround everyone has quietly accepted. They know which customer calls make the room go still.
 
@@ -81,7 +81,7 @@ Assume that competence is real. Assume they have context you don't have. And, un
   <img src="/assets/match-audience-listen.webp" alt="Active listening
   leads to shared understanding and confidence in the solution" />
 
-That assumption changes the whole conversation. You stop treating their words as a flawed bug report that needs to be normalized into your categories. You start treating them as a partial view from another part of the system. Still incomplete, still possibly wrong in places, but valuable because it is coming from a place you cannot stand.
+That assumption changes the whole conversation. You stop treating their words as a flawed bug report that needs to be normalized into your categories. You start treating them as a partial view from another part of the system. Still incomplete, still possibly wrong in places, but valuable because it's coming from a place you can't stand.
 
 This doesn't mean everyone is right, or that every request is good. But correction lands better when it starts from respect. "That's not how this works" is a dead end. "I see why you'd expect that; here's the part of the system that makes it weird" leaves room for both people to keep thinking.
 
@@ -89,7 +89,7 @@ This doesn't mean everyone is right, or that every request is good. But correcti
 
 That plumber story still makes me smile because I had no doubt he knew what he was doing. His enthusiasm gave me confidence. But his explanation didn't give me understanding. It gave me proximity to his understanding.
 
-I don't want to drain the enthusiasm out of technical work. Enthusiasm is wonderful. It is contagious when it is aimed well. The trick is to let it invite people in instead of leaving them outside the glass while we point excitedly at the machinery.
+I don't want to drain the enthusiasm out of technical work. Enthusiasm is wonderful. It's contagious when it's aimed well. The trick is to let it invite people in instead of leaving them outside the glass while we point excitedly at the machinery.
 
 Use the person's language. Check that you understood. Explain from their context before yours. Offer technical depth when it helps, not because it proves you have depth available.
 
