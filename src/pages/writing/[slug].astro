@@ -17,6 +17,8 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 const status = post.data.status;
 const heroImage = post.data.heroImage;
+const previewImage = post.data.previewImage ?? heroImage;
+const previewUrl = post.data.previewUrl;
 const heroAlt = post.data.heroAlt ?? "";
 ---
 
@@ -24,8 +26,9 @@ const heroAlt = post.data.heroAlt ?? "";
   title={post.data.title}
   description={post.data.description}
   canonicalPath={`/writing/${getWritingSlug(post.id)}/`}
+  openGraphPath={previewUrl}
   ogType="article"
-  previewImage={heroImage}
+  previewImage={previewImage}
 >
   <article class="container post-shell">
     <a href="/writing/">Back to writing</a>

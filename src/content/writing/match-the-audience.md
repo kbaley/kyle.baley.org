@@ -5,6 +5,8 @@ date: 2026-06-12
 category: "Communication"
 summary: "Communication works better when it's aimed at the person in front of you, using their language, their context, and their need to feel understood instead of dazzled."
 heroImage: "/assets/match-audience-hero.webp"
+previewImage: "/assets/match-audience-hero-linkedin.jpg"
+previewUrl: "/writing/match-the-audience/?v=2"
 heroAlt: "Someone speaking only to be heard"
 ---
 

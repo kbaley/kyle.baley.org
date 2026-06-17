@@ -3,6 +3,7 @@ type Props = {
   title: string;
   description: string;
   canonicalPath?: string;
+  openGraphPath?: string;
   ogType?: string;
   previewImage?: string;
   noindex?: boolean;
@@ -12,6 +13,7 @@ const {
   title,
   description,
   canonicalPath = Astro.url.pathname,
+  openGraphPath = canonicalPath,
   ogType = "website",
   previewImage = "/assets/architecture-workbench.png",
   noindex = false
@@ -20,6 +22,7 @@ const {
 const siteTitle = "Kyle Baley";
 const fullTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
 const canonical = new URL(canonicalPath, Astro.site ?? "https://kyle.baley.org").toString();
+const openGraphUrl = new URL(openGraphPath, Astro.site ?? "https://kyle.baley.org").toString();
 const previewImageUrl = new URL(previewImage, Astro.site ?? "https://kyle.baley.org").toString();
 
 import "../styles/global.css";
@@ -36,7 +39,7 @@ import "../styles/global.css";
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={ogType} />
-    <meta property="og:url" content={canonical} />
+    <meta property="og:url" content={openGraphUrl} />
     <meta property="og:image" content={previewImageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={previewImageUrl} />
