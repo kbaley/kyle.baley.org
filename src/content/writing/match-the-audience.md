@@ -28,9 +28,12 @@ This is a hard thing to admit, because most of us don't walk into a conversation
 
 ## How It Feels Matters
 
-Maya Angelou has a quote that I absolutely adore: "I've learned that people will forget what you said, people will forget what you did, but people will never forget how you made them feel."
+<blockquote class="pull-quote">
+  <p>I've learned that people will forget what you said, people will forget what you did, but people will never forget how you made them feel.</p>
+  <cite>Maya Angelou</cite>
+</blockquote>
 
-This relates to me in many way. For example, I can tell you instantly whether I liked a book/movie/TV show regardless of when I saw it. But more often than not, I won't be able to give you many details about it, unless it's a movie I've seen dozens of times like _Phantom of the Paradise_ or _Glengarry Glen Ross_. It's the feeling that lingers. I absolutely loathed the entire Cradle series of books pretty much from the second book but at this point, I can't tell you why. Only that I hate-read all of them because I downloaded them free somewhere and I'll be damned if I'm going to let a book sit on my Kindle unread.
+I love this quote and considered it for my home page before Douglas Adams won out. This relates to me in many ways. For example, I can tell you instantly whether I liked a book/movie/TV show/musical regardless of when I saw it. But more often than not, I won't be able to give you many details about it, unless it's a movie I've seen dozens of times like _Phantom of the Paradise_ or _Glengarry Glen Ross_. It's the feeling that lingers. I absolutely loathed the entire Cradle series of books pretty much from the second book but at this point, I can't tell you why. Only that I hate-read all of them because I downloaded them free somewhere and I'll be damned if I'm going to let a book sit on my Kindle unread.
 
 But I digress. Back to the quote.
 
@@ -44,7 +47,7 @@ No one wants to feel stupid. No one wants to feel managed. People want to feel o
 
 This is the part where I should probably make it clear that I am not an expert on this. I like a clever turn of phrase, a satisfying click of a sentence that amuses me. And more than once, I've favored that click over shared understanding. It's a process, not a destination.
 
-The problem is that cleverness isn't the same as clarity. Sometimes it helps. Sometimes it gets in the way and then sits there, all smug and pleased with itself.
+The problem is that cleverness isn't the same as clarity. Sometimes it helps. Sometimes it gets in the way and then sits there, all smug and pleased with ~myself~ itself.
 
 ## Listen Then Translate
 
@@ -71,23 +74,24 @@ Second, it shows the person that you understand them. Not that you understood a 
 
 There's an assumption underneath all of this that's worth making explicit: the person you're talking to is probably good at their job.
 
-Keep in mind, I said _their_ job, not yours. They may not know the architecture, the deployment pipeline, the domain model, or why saying "just add a field" can make a developer stare silently into the middle distance. But they know their work. They know where the process bends. They know which workaround everyone has quietly accepted. They know which customer calls make the room go still.
+Keep in mind, I said _their_ job, not yours. They may not know the architecture, the deployment pipeline, the domain model, or why saying "just add a field" can make a developer stare silently into the middle distance. But they know their work. They know where the process bends. They know which workaround everyone has quietly accepted. They know which customer calls make the room go quiet.
 
 Assume that competence is real. Assume they have context you don't have. And, unless you have strong evidence otherwise, assume they want the project to succeed as much as you (presumably) do.
 
 <figure>
   <img src="/assets/match-audience-listen.webp" alt="Active listening
   leads to shared understanding and confidence in the solution" />
+</figure>
 
 That assumption changes the conversation. You stop treating their words as a flawed bug report that needs to be converted into GitHub issues. You start treating them as a partial view from another part of the system. Still incomplete, still possibly wrong in places, but valuable because it's coming from a place you don't necessarily grasp fully.
 
-This doesn't mean everyone is right, or that every request is good. But correction lands better when it starts from respect. "That's not how this works" is a dead end. "I see why you'd expect that; here's the part of the system that makes it weird" leaves room for both people to keep thinking.
+This doesn't mean everyone is right, or that every request is good. But correction lands better when it starts from respect. "That's not how this works" is a dead end. "I see why you'd expect that; here's the part of the system that makes it weird" leaves room for both people to keep collaborating.
 
 ## Whatever, Man, Just Make It Work
 
 That plumber story still makes me smile because I had no doubt he knew what he was doing. His enthusiasm gave me confidence. But his explanation didn't give me understanding. It gave me proximity to his understanding.
 
-I don't want to drain the enthusiasm out of technical work. Enthusiasm is wonderful. It's contagious when it's aimed well. The trick is to let it invite people in instead of leaving them outside the glass while we point excitedly at the machinery.
+I don't want to drain the enthusiasm out of technical work. Enthusiasm is wonderful. It's contagious when it's aimed well (though I don't recommend vibrating with it). The trick is to let it invite people in instead of leaving them outside the glass while we point excitedly at the machinery.
 
 Use the person's language. Check that you understood. Explain from their context before yours. Offer technical depth when it helps, not because it proves you have depth available.
 
