@@ -1,5 +1,5 @@
 ---
-title: "Match the Audience"
+title: "Match Your Audience"
 description: "A reflection on choosing communication that helps the other person feel understood instead of impressed."
 date: 2026-06-12
 category: "Communication"
@@ -46,7 +46,7 @@ This is the part where I should probably make it clear that I am not an expert o
 
 The problem is that cleverness isn't the same as clarity. Sometimes it helps. Sometimes it gets in the way and then sits there, all smug and pleased with itself.
 
-## Listen Before Translating
+## Listen Then Translate
 
 The practical advice is painfully simple: listen.
 
@@ -63,9 +63,7 @@ Then use their terminology and reflect it back to them. If they call it a custom
 
 Active listening is harder than it looks. It's _really_ easy to pick out a couple of keywords and think "I know where this is going and I have a solution" and then tune out the important bit where they say "we tried _&lt;the thing you're about to suggest&gt;_ and it didn't work".
 
-Reflecting their language has at least two benefits.
-
-First, it verifies your understanding. When you say, "So the customer record looks right until the nightly file runs, and then the billing status changes unexpectedly," they can correct you. That correction is a gift. It is cheaper than confidently building the wrong thing.
+Reflecting their language has at least two benefits. First, it verifies your understanding. When you say, "So the customer record looks right until the nightly file runs, and then the billing status changes unexpectedly," they can correct you. That correction is a gift. It's cheaper than confidently building the wrong thing.
 
 Second, it shows the person that you understand them. Not that you understood a problem in the abstract. That you understood their problem in the form they experience it. It makes them more confident that you can help them.
 
@@ -73,15 +71,15 @@ Second, it shows the person that you understand them. Not that you understood a 
 
 There's an assumption underneath all of this that's worth making explicit: the person you're talking to is probably good at their job.
 
-Keep that in mind. I said _their_ job, not yours. They may not know the architecture, the deployment pipeline, the domain model, or why saying "just add a field" can make a developer stare silently into the middle distance. But they know their work. They know where the process bends. They know which workaround everyone has quietly accepted. They know which customer calls make the room go still.
+Keep in mind, I said _their_ job, not yours. They may not know the architecture, the deployment pipeline, the domain model, or why saying "just add a field" can make a developer stare silently into the middle distance. But they know their work. They know where the process bends. They know which workaround everyone has quietly accepted. They know which customer calls make the room go still.
 
-Assume that competence is real. Assume they have context you don't have. And, unless you have strong evidence otherwise, assume they want the project to succeed.
+Assume that competence is real. Assume they have context you don't have. And, unless you have strong evidence otherwise, assume they want the project to succeed as much as you (presumably) do.
 
 <figure>
   <img src="/assets/match-audience-listen.webp" alt="Active listening
   leads to shared understanding and confidence in the solution" />
 
-That assumption changes the whole conversation. You stop treating their words as a flawed bug report that needs to be normalized into your categories. You start treating them as a partial view from another part of the system. Still incomplete, still possibly wrong in places, but valuable because it's coming from a place you can't stand.
+That assumption changes the conversation. You stop treating their words as a flawed bug report that needs to be converted into GitHub issues. You start treating them as a partial view from another part of the system. Still incomplete, still possibly wrong in places, but valuable because it's coming from a place you don't necessarily grasp fully.
 
 This doesn't mean everyone is right, or that every request is good. But correction lands better when it starts from respect. "That's not how this works" is a dead end. "I see why you'd expect that; here's the part of the system that makes it weird" leaves room for both people to keep thinking.
 
