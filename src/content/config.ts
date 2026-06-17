@@ -8,7 +8,9 @@ const writing = defineCollection({
     date: z.date(),
     category: z.string(),
     status: z.string().optional(),
-    summary: z.string()
+    summary: z.string(),
+    heroImage: z.string().optional(),
+    heroAlt: z.string().optional()
   })
 });
 

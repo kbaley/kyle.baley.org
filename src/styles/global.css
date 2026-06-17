@@ -606,19 +606,50 @@ h3 {
   margin-top: 24px;
 }
 
+.post-hero {
+  margin: 0 0 34px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbf2df;
+}
+
+.post-hero img {
+  width: 100%;
+}
+
 .post-content {
   font-size: 1.05rem;
 }
 
 .post-content h2,
 .post-content h3 {
-  margin-top: 2em;
+  margin-top: 1em;
 }
 
 .post-content p,
 .post-content ul,
 .post-content ol {
   margin: 1.1em 0;
+}
+
+.post-content figure {
+  margin: 2.1rem 0;
+}
+
+.post-content figure img {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbf2df;
+}
+
+.post-content figcaption {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  text-align: center;
 }
 
 .post-content pre {
